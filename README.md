@@ -1,4 +1,4 @@
-# Pho
+# pho
 
 Phonetic Similarity algorithms for Filipino.
 
