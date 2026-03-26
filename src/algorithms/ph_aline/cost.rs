@@ -21,10 +21,10 @@
 ///
 /// - https://dl.acm.org/doi/book/10.5555/936774
 pub struct Costs {
-    skip: i32,
-    substitute: i32,
-    expand_compress: i32,
-    vowel_consonant: i32,
+    pub skip: i32,
+    pub substitute: i32,
+    pub expand_compress: i32,
+    pub vowel_consonant: i32,
 }
 
 /// This constant stores the default costs from Kondrak's PhD Dissertation,
