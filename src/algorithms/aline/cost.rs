@@ -31,12 +31,26 @@ pub struct Costs {
 /// but we also use the `vowel_consonant` value from Natural Language Toolkit
 /// which is 5 instead of 10.
 ///
+/// ## Usage
+///
+/// ```rust
+/// use pho::algorithms::aline::cost::Costs;
+/// let costs = Costs::default();
+///
+/// assert!(*(&costs.skip) == -10, "The default value for skip is not -10!");
+/// assert!(*(&costs.substitute) == 35, "The default value for substitute is not 35!");
+/// ```
+///
 /// ## References
 ///
 /// - https://www.nltk.org/
-pub const DEFAULT_COST: Costs = Costs {
-    skip: -10,
-    substitute: 35,
-    expand_compress: 45,
-    vowel_consonant: 5,
-};
+impl Default for Costs {
+    fn default() -> Self {
+        Self {
+            skip: -10,
+            substitute: 35,
+            expand_compress: 45,
+            vowel_consonant: 5,
+        }
+    }
+}

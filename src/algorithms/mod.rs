@@ -1,2 +1,2 @@
-pub mod ph_aline;
+pub mod aline;
 pub mod ph_editex;
