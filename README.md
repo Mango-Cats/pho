@@ -1,6 +1,6 @@
-# pho
+# 🍜 / pho 
 
-Phonetic Similarity algorithms for Filipino.
+**Pho**netic Similarity algorithms for Filipino.
 
 ---
 
