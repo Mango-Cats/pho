@@ -1,27 +1,3 @@
-/// This struct stores the configuration to be used by an Aline algorithm.
-pub struct PhoneticConfig {
-    pub place: PlaceValues,
-    pub manner: MannerValues,
-    pub high: HighValues,
-    pub back: BackValues,
-}
-
-impl Default for PhoneticConfig {
-    fn default() -> Self {
-        Self {
-            place: PlaceValues::default(),
-            manner: MannerValues::default(),
-            high: HighValues::default(),
-            back: BackValues::default(),
-        }
-    }
-}
-
-/// This enum stores the types of features stored for each phonetic symbol
-pub enum FeatureType {
-    ConsonantFeatures,
-    VowelFeatures,
-}
 /// Has the value of either Plus (+) or Minus (-). Plus denotes the
 /// presence of a feature, while minus denotes the absence. For instance,
 /// if the feature `aspirated` has the minus value, so that feature is
@@ -59,6 +35,26 @@ pub enum Place {
     Glottal,
     Labiovelar, // TODO: no code documentation for this
     Vowel,
+}
+
+impl Place {
+    pub fn value(&self, scores: &PlaceValues) -> f32 {
+        match self {
+            Place::Bilabial => scores.bilabial,
+            Place::Labiodental => scores.labiodental,
+            Place::Dental => scores.dental,
+            Place::Alveolar => scores.alveolar,
+            Place::Retroflex => scores.retroflex,
+            Place::PalatoAlveolar => scores.palato_alveolar,
+            Place::Palatal => scores.palatal,
+            Place::Velar => scores.velar,
+            Place::Uvular => scores.uvular,
+            Place::Pharyngeal => scores.pharyngeal,
+            Place::Glottal => scores.glottal,
+            Place::Labiovelar => scores.labiovelar,
+            Place::Vowel => scores.vowel,
+        }
+    }
 }
 
 /// The values of the place feature. The values are within the
@@ -101,26 +97,6 @@ impl Default for PlaceValues {
     }
 }
 
-impl Place {
-    pub fn value(&self, scores: &PlaceValues) -> f32 {
-        match self {
-            Place::Bilabial => scores.bilabial,
-            Place::Labiodental => scores.labiodental,
-            Place::Dental => scores.dental,
-            Place::Alveolar => scores.alveolar,
-            Place::Retroflex => scores.retroflex,
-            Place::PalatoAlveolar => scores.palato_alveolar,
-            Place::Palatal => scores.palatal,
-            Place::Velar => scores.velar,
-            Place::Uvular => scores.uvular,
-            Place::Pharyngeal => scores.pharyngeal,
-            Place::Glottal => scores.glottal,
-            Place::Labiovelar => scores.labiovelar,
-            Place::Vowel => scores.vowel,
-        }
-    }
-}
-
 /// Represents the manner of articulation or degree of stricture for a specific sound.
 ///
 /// ## Manners of Articulation
@@ -146,6 +122,23 @@ pub enum Manner {
     Mid,
     Low,
     Vowel,
+}
+
+impl Manner {
+    pub fn value(&self, scores: &MannerValues) -> f32 {
+        match self {
+            Manner::Stop => scores.stop,
+            Manner::Affricate => scores.affricate,
+            Manner::Fricative => scores.fricative,
+            Manner::Trill => scores.trill,
+            Manner::Tap => scores.tap,
+            Manner::Approximant => scores.approximant,
+            Manner::High => scores.high,
+            Manner::Mid => scores.mid,
+            Manner::Low => scores.low,
+            Manner::Vowel => scores.vowel,
+        }
+    }
 }
 
 /// The values of the manner feature. The values are within the
@@ -182,27 +175,20 @@ impl Default for MannerValues {
     }
 }
 
-impl Manner {
-    pub fn value(&self, scores: &MannerValues) -> f32 {
-        match self {
-            Manner::Stop => scores.stop,
-            Manner::Affricate => scores.affricate,
-            Manner::Fricative => scores.fricative,
-            Manner::Trill => scores.trill,
-            Manner::Tap => scores.tap,
-            Manner::Approximant => scores.approximant,
-            Manner::High => scores.high,
-            Manner::Mid => scores.mid,
-            Manner::Low => scores.low,
-            Manner::Vowel => scores.vowel,
-        }
-    }
-}
-
 pub enum High {
     High,
     Mid,
     Low,
+}
+
+impl High {
+    pub fn value(&self, scores: &HighValues) -> f32 {
+        match self {
+            High::High => scores.high,
+            High::Mid => scores.mid,
+            High::Low => scores.low,
+        }
+    }
 }
 
 pub struct HighValues {
@@ -221,20 +207,20 @@ impl Default for HighValues {
     }
 }
 
-impl High {
-    pub fn value(&self, scores: &HighValues) -> f32 {
-        match self {
-            High::High => scores.high,
-            High::Mid => scores.mid,
-            High::Low => scores.low,
-        }
-    }
-}
-
 pub enum Back {
     Front,
     Central,
     Back,
+}
+
+impl Back {
+    pub fn value(&self, scores: &BackValues) -> f32 {
+        match self {
+            Back::Front => scores.front,
+            Back::Central => scores.central,
+            Back::Back => scores.back,
+        }
+    }
 }
 
 pub struct BackValues {
@@ -253,14 +239,11 @@ impl Default for BackValues {
     }
 }
 
-impl Back {
-    pub fn value(&self, scores: &BackValues) -> f32 {
-        match self {
-            Back::Front => scores.front,
-            Back::Central => scores.central,
-            Back::Back => scores.back,
-        }
-    }
+/// This enum allows created a product type of the Consonant and Vowel
+/// features in the algorithm.
+pub enum PhoneticFeatures {
+    Consonant(ConsonantFeatures),
+    Vowel(VowelFeatures),
 }
 
 /// This struct stores the features stored by consonants.
