@@ -7,6 +7,29 @@ pub enum Binary {
     Minus,
 }
 
+pub struct BinaryValues {
+    pub plus: f32,
+    pub minus: f32,
+}
+
+impl Binary {
+    pub fn value(&self, values: &BinaryValues) -> f32 {
+        match self {
+            Binary::Plus => values.plus,
+            Binary::Minus => values.minus,
+        }
+    }
+}
+
+impl Default for BinaryValues {
+    fn default() -> Self {
+        Self {
+            plus: 1.0,
+            minus: 0.0,
+        }
+    }
+}
+
 /// Are the possible places of articulation of a specific sound.
 ///
 /// ## Places of Articulation
@@ -118,27 +141,10 @@ pub enum Manner {
     Trill,
     Tap,
     Approximant,
-    High,
-    Mid,
-    Low,
+    HighVowel,
+    MidVowel,
+    LowVowel,
     Vowel,
-}
-
-impl Manner {
-    pub fn value(&self, scores: &MannerValues) -> f32 {
-        match self {
-            Manner::Stop => scores.stop,
-            Manner::Affricate => scores.affricate,
-            Manner::Fricative => scores.fricative,
-            Manner::Trill => scores.trill,
-            Manner::Tap => scores.tap,
-            Manner::Approximant => scores.approximant,
-            Manner::High => scores.high,
-            Manner::Mid => scores.mid,
-            Manner::Low => scores.low,
-            Manner::Vowel => scores.vowel,
-        }
-    }
 }
 
 /// The values of the manner feature. The values are within the
@@ -152,10 +158,27 @@ pub struct MannerValues {
     pub trill: f32,
     pub tap: f32,
     pub approximant: f32,
-    pub high: f32,
-    pub mid: f32,
-    pub low: f32,
+    pub high_vowel: f32,
+    pub mid_vowel: f32,
+    pub low_vowel: f32,
     pub vowel: f32,
+}
+
+impl Manner {
+    pub fn value(&self, scores: &MannerValues) -> f32 {
+        match self {
+            Manner::Stop => scores.stop,
+            Manner::Affricate => scores.affricate,
+            Manner::Fricative => scores.fricative,
+            Manner::Trill => scores.trill,
+            Manner::Tap => scores.tap,
+            Manner::Approximant => scores.approximant,
+            Manner::HighVowel => scores.high_vowel,
+            Manner::MidVowel => scores.mid_vowel,
+            Manner::LowVowel => scores.low_vowel,
+            Manner::Vowel => scores.vowel,
+        }
+    }
 }
 
 impl Default for MannerValues {
@@ -167,9 +190,9 @@ impl Default for MannerValues {
             trill: 0.7,
             tap: 0.65,
             approximant: 0.6,
-            high: 0.4,
-            mid: 0.2,
-            low: 0.0,
+            high_vowel: 0.4,
+            mid_vowel: 0.2,
+            low_vowel: 0.0,
             vowel: 0.5,
         }
     }
@@ -180,6 +203,11 @@ pub enum High {
     Mid,
     Low,
 }
+pub struct HighValues {
+    pub high: f32,
+    pub mid: f32,
+    pub low: f32,
+}
 
 impl High {
     pub fn value(&self, scores: &HighValues) -> f32 {
@@ -189,12 +217,6 @@ impl High {
             High::Low => scores.low,
         }
     }
-}
-
-pub struct HighValues {
-    pub high: f32,
-    pub mid: f32,
-    pub low: f32,
 }
 
 impl Default for HighValues {
@@ -237,6 +259,14 @@ impl Default for BackValues {
             back: 0.0,
         }
     }
+}
+
+pub struct FeatureValues {
+    pub place: PlaceValues,
+    pub manner: MannerValues,
+    pub high: HighValues,
+    pub back: BackValues,
+    pub binary: BinaryValues,
 }
 
 /// This enum allows created a product type of the Consonant and Vowel
