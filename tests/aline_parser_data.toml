@@ -1,0 +1,110 @@
+[costs]
+skip             = -10
+substitute       = 35
+expand_compress  = 45
+vowel_consonant  = 5
+
+[salience]
+syllabic  = 5
+place     = 40
+manner    = 50
+voice     = 5
+nasal     = 20
+retroflex = 10
+lateral   = 10
+aspirated = 5
+long      = 0
+high      = 3
+back      = 2
+round     = 2
+
+[place_values]
+bilabial        = 1.0
+labiodental     = 0.95
+dental          = 0.9
+alveolar        = 0.85
+retroflex       = 0.8
+palato_alveolar = 0.75
+palatal         = 0.7
+velar           = 0.6
+uvular          = 0.5
+pharyngeal      = 0.3
+glottal         = 0.1
+labiovelar      = 1.0
+vowel           = -1.0
+
+[manner_values]
+stop        = 1.0
+affricate   = 0.9
+fricative   = 0.85
+trill       = 0.7
+tap         = 0.65
+approximant = 0.6
+high_vowel  = 0.4
+mid_vowel   = 0.2
+low_vowel   = 0.0
+vowel       = 0.5
+
+[height_values]
+high = 1.0
+mid  = 0.5
+low  = 0.0
+
+[backness_values]
+front   = 1.0
+central = 0.5
+back    = 0.0
+
+[binary_values]
+plus  = 1.0
+minus = 0.0
+
+[sounds.s]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds.b]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds.a]
+type      = "vowel"
+place     = "vowel"
+manner    = "low_vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds.i]
+type      = "vowel"
+place     = "vowel"
+manner    = "high_vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
