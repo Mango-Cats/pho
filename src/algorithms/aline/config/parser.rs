@@ -19,9 +19,8 @@ pub fn config_from_toml(file_name: &str) -> Result<AlineConfig, String> {
         return Err("file must be a .toml".to_string());
     }
     let content = fs::read_to_string(file_name).map_err(|e| e.to_string())?;
-    let root = content
-        .parse::<Value>()
-        .map_err(|e| format!("TOML parse error: {e}"))?;
+    let root: toml::Value =
+        toml::from_str(&content).map_err(|e| format!("TOML parse error: {e}"))?;
     Ok(AlineConfig {
         costs: parse_costs(&root)?,
         salience: parse_salience(&root)?,
