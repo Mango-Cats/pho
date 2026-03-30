@@ -1,3 +1,22 @@
+/// This struct stores the configuration to be used by an Aline algorithm.
+pub struct PhoneticConfig {
+    pub place: PlaceValues,
+    pub manner: MannerValues,
+    pub high: HighValues,
+    pub back: BackValues,
+}
+
+impl Default for PhoneticConfig {
+    fn default() -> Self {
+        Self {
+            place: PlaceValues::default(),
+            manner: MannerValues::default(),
+            high: HighValues::default(),
+            back: BackValues::default(),
+        }
+    }
+}
+
 /// This enum stores the types of features stored for each phonetic symbol
 pub enum FeatureType {
     ConsonantFeatures,
@@ -240,24 +259,6 @@ impl Back {
             Back::Front => scores.front,
             Back::Central => scores.central,
             Back::Back => scores.back,
-        }
-    }
-}
-
-pub struct PhoneticConfig {
-    pub place: PlaceValues,
-    pub manner: MannerValues,
-    pub high: HighValues,
-    pub back: BackValues,
-}
-
-impl Default for PhoneticConfig {
-    fn default() -> Self {
-        Self {
-            place: PlaceValues::default(),
-            manner: MannerValues::default(),
-            high: HighValues::default(),
-            back: BackValues::default(),
         }
     }
 }
