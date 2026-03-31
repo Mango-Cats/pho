@@ -1,3 +1,9 @@
+//! aline::cost
+//!
+//! This file contains the `Costs` struct used by the Aline algorithm.
+//! This struct contains the constants that are used for the similarity
+//! reward or penalty.
+
 /// This struct holds the cost constants for the Aline algorithm.
 ///
 /// ## Cost Variables
@@ -27,24 +33,25 @@ pub struct Costs {
     pub vowel_consonant: i32,
 }
 
-/// This constant stores the default costs from Kondrak's PhD Dissertation,
-/// but we also use the `vowel_consonant` value from Natural Language Toolkit
-/// which is 5 instead of 10.
-///
-/// ## Usage
-///
-/// ```rust
-/// use pho::algorithms::aline::cost::Costs;
-/// let costs = Costs::default();
-///
-/// assert!(*(&costs.skip) == -10, "The default value for skip is not -10!");
-/// assert!(*(&costs.substitute) == 35, "The default value for substitute is not 35!");
-/// ```
-///
-/// ## References
-///
-/// - https://www.nltk.org/
 impl Default for Costs {
+    /// The default costs values from Kondrak's PhD Dissertation,
+    /// but we also use the `vowel_consonant` value from Natural Language Toolkit
+    /// which is 5 instead of 10.
+    ///
+    /// ## Usage
+    ///
+    /// ```rust
+    /// use pho::algorithms::aline::cost::Costs;
+    /// let costs = Costs::default();
+    ///
+    /// assert!(*(&costs.skip) == -10, "The default value for skip is not -10!");
+    /// assert!(*(&costs.substitute) == 35, "The default value for substitute is not 35!");
+    /// ```
+    ///
+    /// ## References
+    ///
+    /// - https://dl.acm.org/doi/book/10.5555/936774
+    /// - https://www.nltk.org/
     fn default() -> Self {
         Self {
             skip: -10,

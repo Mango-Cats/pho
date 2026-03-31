@@ -1,5 +1,8 @@
-//! The code below parses feature types for the Aline algorithm
-//! from a TOML file.
+//! aline::config::parser
+//!
+//! The code below parses an Aline configuration TOML file and creates an
+//! AlineConfig struct that can be used later on. This allows the
+//! implementation of the Aline algorithm here to be language-agnostic.
 
 use std::fs;
 use toml::Value;
@@ -14,6 +17,11 @@ use crate::algorithms::aline::{
     salience::Salience,
 };
 
+/// Create an AlineConfig from a TOML file.
+///
+/// This function takes in a string slice, the `file_name`, and returns
+/// a `Result` that is an `AlineConfig` if parsing is successful. Otherwise,
+/// it returns a error as a string.
 pub fn config_from_toml(file_name: &str) -> Result<AlineConfig, String> {
     if !file_name.ends_with(".toml") {
         return Err("file must be a .toml".to_string());
