@@ -1,3 +1,21 @@
+//! aline::features
+//!
+//! This file contains the phonetic features used by the Aline algorithm.
+//! The features are as follows: Binary (presence or absence), Place
+//! (of articulation), Manner (of articulation), and High and Back for
+//! vowels.
+//!
+//! This also contains the `Phoneme` trait, the `ConsonantFeatures`
+//! and `VowelFeatures` structs, and the `PhoneticFeatures` enum which
+//! includes both structs.
+//!
+//! Finally, this file also includes the default values for these which
+//! are from Kondrak's original thesis.
+//!
+//! ## References
+//!
+//! - https://dl.acm.org/doi/book/10.5555/936774
+
 use crate::algorithms::aline::salience::Salience;
 
 /// Has the value of either Plus (+) or Minus (-). Plus denotes the
@@ -10,6 +28,7 @@ pub enum Binary {
     Minus,
 }
 
+/// This stores the value of the Binary feature.
 #[derive(Debug, Clone)]
 pub struct BinaryValues {
     pub plus: f32,
@@ -66,27 +85,7 @@ pub enum Place {
     Vowel,
 }
 
-impl Place {
-    pub fn value(&self, values: &PlaceValues) -> f32 {
-        match self {
-            Place::Bilabial => values.bilabial,
-            Place::Labiodental => values.labiodental,
-            Place::Dental => values.dental,
-            Place::Alveolar => values.alveolar,
-            Place::Retroflex => values.retroflex,
-            Place::PalatoAlveolar => values.palato_alveolar,
-            Place::Palatal => values.palatal,
-            Place::Velar => values.velar,
-            Place::Uvular => values.uvular,
-            Place::Pharyngeal => values.pharyngeal,
-            Place::Glottal => values.glottal,
-            Place::Labiovelar => values.labiovelar,
-            Place::Vowel => values.vowel,
-        }
-    }
-}
-
-/// The values of the place feature. The values are within the
+/// This stores the values of the place feature. The values are within the
 /// range of [0,1] with 0 denoting the place of the sound is at the back
 /// of the mouth (hence glottal is 0) and 1 denoting the front (hence
 /// bilabial is 1).
@@ -105,6 +104,26 @@ pub struct PlaceValues {
     pub glottal: f32,
     pub labiovelar: f32,
     pub vowel: f32,
+}
+
+impl Place {
+    pub fn value(&self, values: &PlaceValues) -> f32 {
+        match self {
+            Place::Bilabial => values.bilabial,
+            Place::Labiodental => values.labiodental,
+            Place::Dental => values.dental,
+            Place::Alveolar => values.alveolar,
+            Place::Retroflex => values.retroflex,
+            Place::PalatoAlveolar => values.palato_alveolar,
+            Place::Palatal => values.palatal,
+            Place::Velar => values.velar,
+            Place::Uvular => values.uvular,
+            Place::Pharyngeal => values.pharyngeal,
+            Place::Glottal => values.glottal,
+            Place::Labiovelar => values.labiovelar,
+            Place::Vowel => values.vowel,
+        }
+    }
 }
 
 impl Default for PlaceValues {
@@ -155,24 +174,7 @@ pub enum Manner {
     Vowel,
 }
 
-impl Manner {
-    pub fn value(&self, values: &MannerValues) -> f32 {
-        match self {
-            Manner::Stop => values.stop,
-            Manner::Affricate => values.affricate,
-            Manner::Fricative => values.fricative,
-            Manner::Trill => values.trill,
-            Manner::Tap => values.tap,
-            Manner::Approximant => values.approximant,
-            Manner::HighVowel => values.high_vowel,
-            Manner::MidVowel => values.mid_vowel,
-            Manner::LowVowel => values.low_vowel,
-            Manner::Vowel => values.vowel,
-        }
-    }
-}
-
-/// The values of the manner feature. The values are within the
+/// This stores the values of the manner feature. The values are within the
 /// range of [0, 1] with 0 denoting minimal stricture or maximum openness
 /// of the vocal tract (hence a low vowel is 0.0) and 1 denoting complete
 /// blockage of airflow (hence a stop is 1.0).
@@ -188,6 +190,23 @@ pub struct MannerValues {
     pub mid_vowel: f32,
     pub low_vowel: f32,
     pub vowel: f32,
+}
+
+impl Manner {
+    pub fn value(&self, values: &MannerValues) -> f32 {
+        match self {
+            Manner::Stop => values.stop,
+            Manner::Affricate => values.affricate,
+            Manner::Fricative => values.fricative,
+            Manner::Trill => values.trill,
+            Manner::Tap => values.tap,
+            Manner::Approximant => values.approximant,
+            Manner::HighVowel => values.high_vowel,
+            Manner::MidVowel => values.mid_vowel,
+            Manner::LowVowel => values.low_vowel,
+            Manner::Vowel => values.vowel,
+        }
+    }
 }
 
 impl Default for MannerValues {
@@ -206,7 +225,7 @@ impl Default for MannerValues {
         }
     }
 }
-
+/// Are the
 #[derive(Debug, Clone, PartialEq)]
 pub enum High {
     High,
@@ -441,31 +460,31 @@ impl PhoneticFeatures {
         let p = self.as_phoneme();
         let q = other.as_phoneme();
 
-        let diff = diff_feature(
+        let diff = feature_difference(
             p.place().value(&values.place),
             q.place().value(&values.place),
             salience.place,
-        ) + diff_feature(
+        ) + feature_difference(
             p.manner().value(&values.manner),
             q.manner().value(&values.manner),
             salience.manner,
-        ) + diff_feature(
+        ) + feature_difference(
             p.syllabic().value(&values.binary),
             q.syllabic().value(&values.binary),
             salience.syllabic,
-        ) + diff_feature(
+        ) + feature_difference(
             p.voice().value(&values.binary),
             q.voice().value(&values.binary),
             salience.voice,
-        ) + diff_feature(
+        ) + feature_difference(
             p.nasal().value(&values.binary),
             q.nasal().value(&values.binary),
             salience.nasal,
-        ) + diff_feature(
+        ) + feature_difference(
             p.retroflex().value(&values.binary),
             q.retroflex().value(&values.binary),
             salience.retroflex,
-        ) + diff_feature(
+        ) + feature_difference(
             p.lateral().value(&values.binary),
             q.lateral().value(&values.binary),
             salience.lateral,
@@ -475,19 +494,19 @@ impl PhoneticFeatures {
         // this only occures when both sounds are vowels
         let vowel_diff = match (self, other) {
             (PhoneticFeatures::Vowel(a), PhoneticFeatures::Vowel(b)) => {
-                diff_feature(
+                feature_difference(
                     a.high.value(&values.high),
                     b.high.value(&values.high),
                     salience.high,
-                ) + diff_feature(
+                ) + feature_difference(
                     a.back.value(&values.back),
                     b.back.value(&values.back),
                     salience.back,
-                ) + diff_feature(
+                ) + feature_difference(
                     a.round.value(&values.binary),
                     b.round.value(&values.binary),
                     salience.round,
-                ) + diff_feature(
+                ) + feature_difference(
                     a.long.value(&values.binary),
                     b.long.value(&values.binary),
                     salience.long,
@@ -503,6 +522,6 @@ impl PhoneticFeatures {
 /// Computes the salience-weighted absolute difference between two feature values.
 /// This mirrors: `salience[f] * |similarity_matrix[p[f]] - similarity_matrix[q[f]]|`
 #[inline]
-fn diff_feature(a: f32, b: f32, salience: u32) -> f32 {
+fn feature_difference(a: f32, b: f32, salience: u32) -> f32 {
     salience as f32 * (a - b).abs()
 }
