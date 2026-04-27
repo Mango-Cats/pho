@@ -1,9 +1,9 @@
 name: Enhancement Request
 description: Suggest an improvement or a new feature for the project.
 title: "[ENHANCEMENT]: "
-labels: ["enhancement", "working", "help wanted", "testing"]
+labels: ["enhancement"]
 body:
-  - markdown:
+  - type: markdown
     attributes:
       value: |
         ### Issue Guidelines & Formatting
