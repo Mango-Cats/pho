@@ -1,9 +1,9 @@
 name: Documentation Request
 description: Improvements or additions to docs.
 title: "[DOCS]: "
-labels: ["documentation", "working", "help wanted"]
+labels: ["documentation"]
 body:
-  - markdown:
+  - type: markdown
     attributes:
       value: |
         ### Issue Guidelines & Formatting
