@@ -1,0 +1,35 @@
+name: Enhancement Request
+description: Suggest an improvement or a new feature for the project.
+title: "[ENHANCEMENT]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why do you want to suggest this enhancement? What problem does it solve?
+      placeholder: "Currently, there is no coherent or simple function to compute..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Are there specific files or functions related to this enhancement?
+      placeholder: "Example format (for entire files): src/logic.py; (for specific functions or variables) f(...) @ src/logic.py"
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: Give an example of what this enhancement will look like (e.g. a code snippet).
+      placeholder: |
+        ```python
+        # New expected behavior
+        result = f(input_data)
+        ```
+    validations:
+      required: true

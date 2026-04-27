@@ -1,0 +1,26 @@
+name: Feature Request
+description: Suggest a brand new idea for this project.
+title: "[REQUEST]: "
+labels: ["request", "working", "help wanted", "testing"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why do you want to suggest this new feature?
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Does this interact with any existing functions or files?
+    validations:
+      required: false
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: Provide an example of the proposed API or feature usage.
+    validations:
+      required: true

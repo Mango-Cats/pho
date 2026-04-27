@@ -1,0 +1,27 @@
+name: Documentation Request
+description: Improvements or additions to docs.
+title: "[DOCS]: "
+labels: ["documentation", "working", "help wanted"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of Changes
+      description: What documentation needs to be added, updated, or clarified?
+      placeholder: "The docstring for f(...) is missing an explanation of its parameters."
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Files
+      description: Which specific files, guides, or docstrings need updating?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Proposed Text (Optional)
+      description: If you have a specific phrasing in mind, what should the new documentation say?
+    validations:
+      required: false

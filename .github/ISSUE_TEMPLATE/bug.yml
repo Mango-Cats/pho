@@ -1,0 +1,31 @@
+name: Bug Report
+description: Report something that is broken.
+title: "[BUG]: "
+labels: ["bug", "testing"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What is the current buggy behavior? What did you expect to happen?
+      placeholder: "When I run f(...), it crashes instead of returning a value."
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Files or Functions
+      description: Which functions or files are causing the issue?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Steps to Reproduce
+      description: Provide a minimal reproducible example or the steps to trigger the bug.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
