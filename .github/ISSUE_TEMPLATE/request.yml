@@ -1,9 +1,9 @@
 name: Feature Request
 description: Suggest a brand new idea for this project.
 title: "[REQUEST]: "
-labels: ["request", "working", "help wanted", "testing"]
+labels: ["request"]
 body:
-  - markdown:
+  - type: markdown:
     attributes:
       value: |
         ### Issue Guidelines & Formatting
