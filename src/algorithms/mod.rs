@@ -10,8 +10,8 @@ pub enum SimilarityAlgorithmConfig {
     AlineConfig,
     EditexConfig,
 }
-
-#[warn(dead_code)]
+#[allow(unused_variables)]
+#[allow(dead_code)]
 impl SimilarityAlgorithm {
     /// This is he shared similarity
     fn similarity(
@@ -22,11 +22,11 @@ impl SimilarityAlgorithm {
         // set of variables) while others don't.
         similarity_config: Option<&SimilarityAlgorithmConfig>,
     ) -> f32 {
-        match self {
-            SimilarityAlgorithm::Aline => todo!(),
-            SimilarityAlgorithm::Editex => todo!(),
-            _ => panic!("`SimilarityAlgorithm` doesn't cover all possible cases"),
-        }
-        10.1
+        // match self {
+        //     SimilarityAlgorithm::Aline => todo!(),
+        //     SimilarityAlgorithm::Editex => todo!(),
+        //     _ => panic!("`SimilarityAlgorithm` doesn't cover all possible cases"),
+        // }
+        todo!()
     }
 }
