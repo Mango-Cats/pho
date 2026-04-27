@@ -16,10 +16,9 @@ use crate::algorithms::aline::{
     },
     salience::Salience,
 };
-use crate::config::parse_toml_file;
 
 #[derive(Debug, Deserialize)]
-struct RawAlineConfig {
+pub struct RawAlineConfig {
     costs: Costs,
     salience: Salience,
     place_values: PlaceValues,
@@ -59,7 +58,7 @@ enum RawSound {
 }
 
 impl RawAlineConfig {
-    fn into_config(self) -> AlineConfig {
+    pub fn into_config(self) -> AlineConfig {
         let sounds = self
             .sounds
             .into_iter()
@@ -130,13 +129,4 @@ impl RawSound {
             }),
         }
     }
-}
-
-/// Create an AlineConfig from a TOML file.
-///
-/// This preserves the existing API while delegating generic TOML parsing to
-/// the shared parser and converting the document into ALINE types.
-pub fn config_from_toml(file_name: &str) -> Result<AlineConfig, String> {
-    let raw: RawAlineConfig = parse_toml_file(file_name)?;
-    Ok(raw.into_config())
 }
