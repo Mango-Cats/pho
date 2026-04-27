@@ -1,19 +1,26 @@
 #[cfg(test)]
 mod tests {
-    use pho::algorithms::aline::{
-        config::parser::config_from_toml,
-        features::{Back, Binary, High, Manner, PhoneticFeatures, Place},
+    use core::panic;
+
+    use pho::{
+        algorithms::aline::{
+            config::{parser::RawAlineConfig, types::AlineConfig},
+            features::{Back, Binary, High, Manner, PhoneticFeatures, Place},
+        },
+        config::parse_toml_file,
     };
 
     // Path to the sample config — adjust if your test working directory differs.
     // `cargo test` runs from the crate root by default.
     const TOML_PATH: &str = "tests/aline_parser_data.toml";
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     /// Unwrap the config or panic with a readable message.
-    fn load() -> pho::algorithms::aline::config::types::AlineConfig {
-        config_from_toml(TOML_PATH).unwrap_or_else(|e| panic!("failed to parse {TOML_PATH}: {e}"))
+    fn load() -> AlineConfig {
+        let raw_config: Result<RawAlineConfig, String> = parse_toml_file(TOML_PATH);
+        match raw_config {
+            Ok(r) => r.into_config(),
+            Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
+        }
     }
 
     #[test]
@@ -399,14 +406,14 @@ mod tests {
 
     #[test]
     fn rejects_non_toml_extension() {
-        let result = config_from_toml("config.json");
-        assert!(result.is_err(), "expected error for non-.toml extension");
-        assert_eq!(result.err().unwrap(), "file must be a .toml");
+        let non_toml: Result<RawAlineConfig, String> = parse_toml_file("notatoml.json");
+        assert!(non_toml.is_err());
+        assert_eq!(non_toml.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let result = config_from_toml("nonexistent.toml");
-        assert!(result.is_err());
+        let nonexistent: Result<RawAlineConfig, String> = parse_toml_file("nonexistent.toml");
+        assert!(nonexistent.is_err());
     }
 }
