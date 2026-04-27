@@ -3,6 +3,27 @@ description: Suggest a brand new idea for this project.
 title: "[REQUEST]: "
 labels: ["request", "working", "help wanted", "testing"]
 body:
+  - markdown:
+    attributes:
+      value: |
+        ### Issue Guidelines & Formatting
+        * **Use Markdown:** Format your text clearly and wrap all code snippets, logs, or examples in code blocks (\`\`\`).
+        * **Be Specific:** Keep your descriptions concise. If relevant, `@mention` specific team members, link to commit SHAs, and reference related issues or pull requests.
+
+        ### Label Guide
+        We use labels to categorize the type of issue and track its current status. 
+
+        **Status Labels:**
+        * **`working`**: Work is currently in progress.
+        * **`help wanted`**: Not yet in progress; we are looking for somebody to work on it.
+        * **`testing`**: Implementation is done and is currently undergoing testing.
+
+        **Type Labels:**
+        * **`bug`**: Something is broken or behaving unexpectedly.
+        * **`documentation`**: Improvements, fixes, or additions to the project's documentation.
+        * **`feature`**: A request for a brand new capability or tool.
+        * **`enhancement`**: A suggested improvement or optimization for an existing feature.
+  
   - type: textarea
     id: motivation
     attributes:
@@ -10,6 +31,7 @@ body:
       description: Why do you want to suggest this new feature?
     validations:
       required: true
+
   - type: textarea
     id: related
     attributes:
@@ -17,6 +39,7 @@ body:
       description: Does this interact with any existing functions or files?
     validations:
       required: false
+
   - type: textarea
     id: example
     attributes:
@@ -24,3 +47,12 @@ body:
       description: Provide an example of the proposed API or feature usage.
     validations:
       required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Add links to related issues, pull requests, external documentation, or commit SHAs.
+      placeholder: "e.g., #123, https://..."
+    validations:
+      required: false
