@@ -1,3 +1,4 @@
+#![allow(unused_variables, dead_code)]
 pub mod aline;
 pub mod editex;
 
@@ -10,8 +11,7 @@ pub enum SimilarityAlgorithmConfig {
     AlineConfig,
     EditexConfig,
 }
-#[allow(unused_variables)]
-#[allow(dead_code)]
+
 impl SimilarityAlgorithm {
     /// This is he shared similarity
     fn similarity(
