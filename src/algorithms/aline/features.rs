@@ -143,6 +143,35 @@ impl FeatureValues {
     }
 }
 
+/// Stores the phonetic features of a consonant sound.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ConsonantFeatures {
+    pub aspirated: Binary,
+    pub lateral: Binary,
+    pub manner: Manner,
+    pub nasal: Binary,
+    pub place: Place,
+    pub retroflex: Binary,
+    pub syllabic: Binary,
+    pub voice: Binary,
+}
+
+/// Stores the phonetic features of a vowel sound.
+#[derive(Debug, Clone, Deserialize)]
+pub struct VowelFeatures {
+    pub back: Back,
+    pub high: High,
+    pub lateral: Binary,
+    pub long: Binary,
+    pub nasal: Binary,
+    pub retroflex: Binary,
+    pub round: Binary,
+    pub syllabic: Binary,
+    pub voice: Binary,
+    pub place: Place,
+    pub manner: Manner,
+}
+
 /// Shared interface for consonants and vowels. The ALINE sigma function
 /// compares any two sounds using whichever features they have in common,
 /// so both types need to expose the shared features through a common interface.
@@ -155,19 +184,6 @@ pub trait Phoneme {
     fn retroflex(&self) -> &Binary;
     fn lateral(&self) -> &Binary;
     fn is_vowel(&self) -> bool;
-}
-
-/// Stores the phonetic features of a consonant sound.
-#[derive(Debug, Clone, Deserialize)]
-pub struct ConsonantFeatures {
-    pub aspirated: Binary,
-    pub lateral: Binary,
-    pub manner: Manner,
-    pub nasal: Binary,
-    pub place: Place,
-    pub retroflex: Binary,
-    pub syllabic: Binary,
-    pub voice: Binary,
 }
 
 impl Phoneme for ConsonantFeatures {
@@ -195,21 +211,6 @@ impl Phoneme for ConsonantFeatures {
     fn is_vowel(&self) -> bool {
         false
     }
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct VowelFeatures {
-    pub back: Back,
-    pub high: High,
-    pub lateral: Binary,
-    pub long: Binary,
-    pub nasal: Binary,
-    pub retroflex: Binary,
-    pub round: Binary,
-    pub syllabic: Binary,
-    pub voice: Binary,
-    pub place: Place,
-    pub manner: Manner,
 }
 
 impl Phoneme for VowelFeatures {
