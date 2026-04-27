@@ -1,9 +1,9 @@
 name: Bug Report
 description: Report something that is broken.
 title: "[BUG]: "
-labels: ["bug", "testing"]
+labels: ["bug"]
 body:
-  - markdown:
+  - type: markdown
     attributes:
       value: |
         ### Issue Guidelines & Formatting
