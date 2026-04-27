@@ -47,7 +47,7 @@ pub enum Binary {
     Minus,
 }
 
-/// Are the possible places of articulation of a specific sound.
+/// The possible places of articulation of a sound.
 #[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Place {
@@ -66,7 +66,7 @@ pub enum Place {
     Vowel,
 }
 
-/// Represents the manner of articulation or degree of stricture for a specific sound.
+/// The manner of articulation or degree of stricture for a sound.
 #[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Manner {
@@ -109,8 +109,8 @@ pub struct FeatureValues {
 }
 
 impl FeatureValues {
-    /// Creates a new FeatureValues struct, panicking immediately
-    /// if any of the feature categories do not sum to 1.0 (within a small tolerance).
+    /// Creates a new `FeatureValues`, panicking if any category does not
+    /// sum to 1.0 (within a small tolerance).
     pub fn new(
         place: EnumMap<Place, f32>,
         manner: EnumMap<Manner, f32>,
@@ -143,38 +143,40 @@ impl FeatureValues {
     }
 }
 
+/// Features shared by every sound. [`Phoneme`] is implemented here once
+/// to avoid duplicating getters across [`ConsonantFeatures`] and [`VowelFeatures`].
+#[derive(Debug, Clone, Deserialize)]
+pub struct CommonFeatures {
+    pub place: Place,
+    pub manner: Manner,
+    pub syllabic: Binary,
+    pub voice: Binary,
+    pub nasal: Binary,
+    pub retroflex: Binary,
+    pub lateral: Binary,
+}
+
 /// Stores the phonetic features of a consonant sound.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ConsonantFeatures {
+    #[serde(flatten)]
+    pub common: CommonFeatures,
     pub aspirated: Binary,
-    pub lateral: Binary,
-    pub manner: Manner,
-    pub nasal: Binary,
-    pub place: Place,
-    pub retroflex: Binary,
-    pub syllabic: Binary,
-    pub voice: Binary,
 }
 
 /// Stores the phonetic features of a vowel sound.
 #[derive(Debug, Clone, Deserialize)]
 pub struct VowelFeatures {
+    #[serde(flatten)]
+    pub common: CommonFeatures,
     pub back: Back,
     pub high: High,
-    pub lateral: Binary,
     pub long: Binary,
-    pub nasal: Binary,
-    pub retroflex: Binary,
     pub round: Binary,
-    pub syllabic: Binary,
-    pub voice: Binary,
-    pub place: Place,
-    pub manner: Manner,
 }
 
-/// Shared interface for consonants and vowels. The ALINE sigma function
-/// compares any two sounds using whichever features they have in common,
-/// so both types need to expose the shared features through a common interface.
+/// Shared interface for the sigma function. Implemented once on
+/// [`CommonFeatures`] and accessed via [`PhoneticFeatures::common()`].
 pub trait Phoneme {
     fn place(&self) -> &Place;
     fn manner(&self) -> &Manner;
@@ -183,10 +185,9 @@ pub trait Phoneme {
     fn nasal(&self) -> &Binary;
     fn retroflex(&self) -> &Binary;
     fn lateral(&self) -> &Binary;
-    fn is_vowel(&self) -> bool;
 }
 
-impl Phoneme for ConsonantFeatures {
+impl Phoneme for CommonFeatures {
     fn place(&self) -> &Place {
         &self.place
     }
@@ -208,41 +209,11 @@ impl Phoneme for ConsonantFeatures {
     fn lateral(&self) -> &Binary {
         &self.lateral
     }
-    fn is_vowel(&self) -> bool {
-        false
-    }
 }
 
-impl Phoneme for VowelFeatures {
-    fn place(&self) -> &Place {
-        &self.place
-    }
-    fn manner(&self) -> &Manner {
-        &self.manner
-    }
-    fn syllabic(&self) -> &Binary {
-        &self.syllabic
-    }
-    fn voice(&self) -> &Binary {
-        &self.voice
-    }
-    fn nasal(&self) -> &Binary {
-        &self.nasal
-    }
-    fn retroflex(&self) -> &Binary {
-        &self.retroflex
-    }
-    fn lateral(&self) -> &Binary {
-        &self.lateral
-    }
-    fn is_vowel(&self) -> bool {
-        true
-    }
-}
-
-/// A product type over consonant and vowel features. Pattern match on
-/// this when you need vowel-specific features; use `.as_phoneme()` when
-/// you only need the shared interface.
+/// An enum consonant and vowel features. Pattern match on
+/// this when you need sound-specific features; use `.common()` when you
+/// only need the common interface.
 #[derive(Debug, Clone)]
 pub enum PhoneticFeatures {
     Consonant(ConsonantFeatures),
@@ -250,13 +221,16 @@ pub enum PhoneticFeatures {
 }
 
 impl PhoneticFeatures {
-    /// Returns a reference to the shared `Phoneme` trait object so callers
-    /// don't need to match on the variant just to read common features.
-    pub fn as_phoneme(&self) -> &dyn Phoneme {
+    /// Returns the common features as a [`Phoneme`] trait object.
+    pub fn common(&self) -> &dyn Phoneme {
         match self {
-            PhoneticFeatures::Consonant(c) => c,
-            PhoneticFeatures::Vowel(v) => v,
+            PhoneticFeatures::Consonant(c) => &c.common,
+            PhoneticFeatures::Vowel(v) => &v.common,
         }
+    }
+
+    pub fn is_vowel(&self) -> bool {
+        matches!(self, PhoneticFeatures::Vowel(_))
     }
 
     /// Computes the phonetic similarity between two sounds (the ALINE `sigma`
@@ -267,7 +241,7 @@ impl PhoneticFeatures {
     /// `sigma(p, q) = C_sub - diff(p, q)`
     ///
     /// where `diff` sums the salience-weighted absolute difference between
-    /// each shared feature value.
+    /// each common feature value.
     pub fn sigma(
         &self,
         other: &PhoneticFeatures,
@@ -275,55 +249,49 @@ impl PhoneticFeatures {
         salience: &Salience,
         c_sub: i32,
     ) -> f32 {
-        let p = self.as_phoneme();
-        let q = other.as_phoneme();
+        let p = self.common();
+        let q = other.common();
 
-        // Values are retrieved safely in O(1) time by indexing the EnumMap
-        let diff = feature_difference(
+        let diff = fd(
             values.place[*p.place()],
             values.place[*q.place()],
             salience.place,
-        ) + feature_difference(
+        ) + fd(
             values.manner[*p.manner()],
             values.manner[*q.manner()],
             salience.manner,
-        ) + feature_difference(
+        ) + fd(
             values.binary[*p.syllabic()],
             values.binary[*q.syllabic()],
             salience.syllabic,
-        ) + feature_difference(
+        ) + fd(
             values.binary[*p.voice()],
             values.binary[*q.voice()],
             salience.voice,
-        ) + feature_difference(
+        ) + fd(
             values.binary[*p.nasal()],
             values.binary[*q.nasal()],
             salience.nasal,
-        ) + feature_difference(
+        ) + fd(
             values.binary[*p.retroflex()],
             values.binary[*q.retroflex()],
             salience.retroflex,
-        ) + feature_difference(
+        ) + fd(
             values.binary[*p.lateral()],
             values.binary[*q.lateral()],
             salience.lateral,
         );
 
-        // vowel-only features
         let vowel_diff = match (self, other) {
             (PhoneticFeatures::Vowel(a), PhoneticFeatures::Vowel(b)) => {
-                feature_difference(values.high[a.high], values.high[b.high], salience.high)
-                    + feature_difference(values.back[a.back], values.back[b.back], salience.back)
-                    + feature_difference(
+                fd(values.high[a.high], values.high[b.high], salience.high)
+                    + fd(values.back[a.back], values.back[b.back], salience.back)
+                    + fd(
                         values.binary[a.round],
                         values.binary[b.round],
                         salience.round,
                     )
-                    + feature_difference(
-                        values.binary[a.long],
-                        values.binary[b.long],
-                        salience.long,
-                    )
+                    + fd(values.binary[a.long], values.binary[b.long], salience.long)
             }
             _ => 0.0,
         };
@@ -332,9 +300,9 @@ impl PhoneticFeatures {
     }
 }
 
-/// Computes the salience-weighted absolute difference between two feature values.
-/// This mirrors: `salience[f] * |similarity_matrix[p[f]] - similarity_matrix[q[f]]|`
+/// Salience-weighted absolute difference between two feature values.
+/// Mirrors: `salience[f] * |matrix[p[f]] - matrix[q[f]]|`
 #[inline]
-fn feature_difference(a: f32, b: f32, salience: u32) -> f32 {
+fn fd(a: f32, b: f32, salience: u32) -> f32 {
     salience as f32 * (a - b).abs()
 }

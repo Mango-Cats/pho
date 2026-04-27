@@ -213,7 +213,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
         };
-        assert!(matches!(c.place, Place::Alveolar));
+        assert!(matches!(c.common.place, Place::Alveolar));
     }
 
     #[test]
@@ -222,7 +222,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
         };
-        assert!(matches!(c.manner, Manner::Fricative));
+        assert!(matches!(c.common.manner, Manner::Fricative));
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
         };
-        assert!(matches!(c.voice, Binary::Minus));
+        assert!(matches!(c.common.voice, Binary::Minus));
     }
 
     #[test]
@@ -240,7 +240,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
         };
-        assert!(matches!(c.nasal, Binary::Minus));
+        assert!(matches!(c.common.nasal, Binary::Minus));
     }
 
     #[test]
@@ -249,7 +249,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
         };
-        assert!(matches!(c.lateral, Binary::Minus));
+        assert!(matches!(c.common.lateral, Binary::Minus));
     }
 
     #[test]
@@ -263,7 +263,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
         };
-        assert!(matches!(c.place, Place::Bilabial));
+        assert!(matches!(c.common.place, Place::Bilabial));
     }
 
     #[test]
@@ -272,7 +272,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
         };
-        assert!(matches!(c.manner, Manner::Stop));
+        assert!(matches!(c.common.manner, Manner::Stop));
     }
 
     #[test]
@@ -281,7 +281,7 @@ mod tests {
         let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
         };
-        assert!(matches!(c.voice, Binary::Plus));
+        assert!(matches!(c.common.voice, Binary::Plus));
     }
 
     #[test]
@@ -322,7 +322,7 @@ mod tests {
         let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
         };
-        assert!(matches!(v.syllabic, Binary::Plus));
+        assert!(matches!(v.common.syllabic, Binary::Plus));
     }
 
     #[test]
