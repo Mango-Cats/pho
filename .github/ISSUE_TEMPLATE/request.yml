@@ -3,7 +3,7 @@ description: Suggest a brand new idea for this project.
 title: "[REQUEST]: "
 labels: ["request"]
 body:
-  - type: markdown:
+  - type: markdown
     attributes:
       value: |
         ### Issue Guidelines & Formatting
