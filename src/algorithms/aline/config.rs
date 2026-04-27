@@ -1,20 +1,39 @@
-//! aline::config::parser
+//! aline::config::types
 //!
-//! This module maps a TOML configuration document into ALINE runtime types.
-//! Generic file parsing lives in `crate::config` so this module can stay
-//! focused on ALINE-specific schema and validation.
-
-use serde::Deserialize;
-use std::collections::HashMap;
-
-use super::types::AlineConfig;
+//! This file contains the `AlineConfig` struct which stores similarity
+//! values and phonetic features that is used by the Aline algorithm.
 use crate::algorithms::aline::{
     cost::Costs,
-    features::{
-        Back, BackValues, Binary, BinaryValues, ConsonantFeatures, FeatureValues, High, HighValues,
-        Manner, MannerValues, PhoneticFeatures, Place, PlaceValues, VowelFeatures,
-    },
+    features::{FeatureValues, PhoneticFeatures},
     salience::Salience,
+};
+
+use std::collections::HashMap;
+
+/// This struct stores the similarity values and phonetic features
+/// that is used by the Aline algorithm.
+pub struct AlineConfig {
+    pub costs: Costs,
+    pub salience: Salience,
+    pub values: FeatureValues,
+    pub sounds: HashMap<String, PhoneticFeatures>,
+}
+
+// aline::config::parser
+//
+// This module maps a TOML configuration document into ALINE runtime types.
+// Generic file parsing lives in `crate::config` so this module can stay
+// focused on ALINE-specific schema and validation.
+//
+// FIXME: The stuff below this used to belong in config::parser.rs
+// but i put it here to remove redundancy. But this needs a lot of fixes.
+// Especially on duplicates and kaing things more succinct.
+
+use serde::Deserialize;
+
+use crate::algorithms::aline::features::{
+    Back, BackValues, Binary, BinaryValues, ConsonantFeatures, High, HighValues, Manner,
+    MannerValues, Place, PlaceValues, VowelFeatures,
 };
 
 #[derive(Debug, Deserialize)]

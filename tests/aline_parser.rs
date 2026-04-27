@@ -4,7 +4,7 @@ mod tests {
 
     use pho::{
         algorithms::aline::{
-            config::{parser::RawAlineConfig, types::AlineConfig},
+            config::{AlineConfig, RawAlineConfig},
             features::{Back, Binary, High, Manner, PhoneticFeatures, Place},
         },
         config::parse_toml_file,
