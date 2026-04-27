@@ -1,3 +1,6 @@
+use serde::Deserialize;
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Salience {
     pub syllabic: u32,  // 5
     pub place: u32,     // 40

@@ -4,6 +4,8 @@
 //! This struct contains the constants that are used for the similarity
 //! reward or penalty.
 
+use serde::Deserialize;
+
 /// This struct holds the cost constants for the Aline algorithm.
 ///
 /// ## Cost Variables
@@ -26,6 +28,7 @@
 /// ## References
 ///
 /// - https://dl.acm.org/doi/book/10.5555/936774
+#[derive(Debug, Clone, Deserialize)]
 pub struct Costs {
     pub skip: i32,
     pub substitute: i32,

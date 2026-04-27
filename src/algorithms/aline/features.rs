@@ -17,19 +17,21 @@
 //! - https://dl.acm.org/doi/book/10.5555/936774
 
 use crate::algorithms::aline::salience::Salience;
+use serde::Deserialize;
 
 /// Has the value of either Plus (+) or Minus (-). Plus denotes the
 /// presence of a feature, while minus denotes the absence. For instance,
 /// if the feature `aspirated` has the minus value, so that feature is
 /// not aspirated.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Binary {
     Plus,
     Minus,
 }
 
 /// This stores the value of the Binary feature.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BinaryValues {
     pub plus: f32,
     pub minus: f32,
@@ -68,7 +70,8 @@ impl Default for BinaryValues {
 /// - Pharyngeal: Produced in the pharynx.
 /// - Glottal: Produced at the vocal folds/glottis.
 /// - Labiovelar: Simultaneous bilabial and velar articulation.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Place {
     Bilabial,
     Labiodental,
@@ -89,7 +92,7 @@ pub enum Place {
 /// range of [0,1] with 0 denoting the place of the sound is at the back
 /// of the mouth (hence glottal is 0) and 1 denoting the front (hence
 /// bilabial is 1).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct PlaceValues {
     pub bilabial: f32,
     pub labiodental: f32,
@@ -160,7 +163,8 @@ impl Default for PlaceValues {
 /// - MidVowel: Vowel produced with the tongue midway between high and low positions.
 /// - LowVowel: Vowel produced with the tongue low and the mouth relatively open.
 /// - Vowel: A generic vowel representation characterized by an open vocal tract.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Manner {
     Stop,
     Affricate,
@@ -178,7 +182,7 @@ pub enum Manner {
 /// range of [0, 1] with 0 denoting minimal stricture or maximum openness
 /// of the vocal tract (hence a low vowel is 0.0) and 1 denoting complete
 /// blockage of airflow (hence a stop is 1.0).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MannerValues {
     pub stop: f32,
     pub affricate: f32,
@@ -226,14 +230,15 @@ impl Default for MannerValues {
     }
 }
 /// Are the
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum High {
     High,
     Mid,
     Low,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct HighValues {
     pub high: f32,
     pub mid: f32,
@@ -260,7 +265,8 @@ impl Default for HighValues {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Back {
     Front,
     Central,
@@ -277,7 +283,7 @@ impl Back {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct BackValues {
     pub front: f32,
     pub central: f32,
