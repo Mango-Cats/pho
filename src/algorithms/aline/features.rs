@@ -158,7 +158,7 @@ pub trait Phoneme {
 }
 
 /// Stores the phonetic features of a consonant sound.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ConsonantFeatures {
     pub aspirated: Binary,
     pub lateral: Binary,
@@ -197,7 +197,7 @@ impl Phoneme for ConsonantFeatures {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct VowelFeatures {
     pub back: Back,
     pub high: High,

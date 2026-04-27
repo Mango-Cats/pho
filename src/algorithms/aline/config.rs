@@ -1,17 +1,15 @@
-//! aline::config::types
-//!
-//! This file contains the `AlineConfig` struct which stores similarity
-//! values and phonetic features that is used by the Aline algorithm.
 use crate::algorithms::aline::{
     cost::Costs,
-    features::{FeatureValues, PhoneticFeatures},
+    features::{
+        Back, Binary, ConsonantFeatures, FeatureValues, High, Manner, PhoneticFeatures, Place,
+        VowelFeatures,
+    },
     salience::Salience,
 };
-
+use serde::{Deserialize, Deserializer};
 use std::collections::HashMap;
 
-/// This struct stores the similarity values and phonetic features
-/// that is used by the Aline algorithm.
+#[derive(Debug, Deserialize)]
 pub struct AlineConfig {
     pub costs: Costs,
     pub salience: Salience,
@@ -19,133 +17,72 @@ pub struct AlineConfig {
     pub sounds: HashMap<String, PhoneticFeatures>,
 }
 
-// aline::config::parser
-//
-// This module maps a TOML configuration document into ALINE runtime types.
-// Generic file parsing lives in `crate::config` so this module can stay
-// focused on ALINE-specific schema and validation.
-//
-// FIXME: The stuff below this used to belong in config::parser.rs
-// but i put it here to remove redundancy. But this needs a lot of fixes.
-// Especially on duplicates and kaing things more succinct.
-
-use serde::Deserialize;
-
-use crate::algorithms::aline::features::{
-    Back, BackValues, Binary, BinaryValues, ConsonantFeatures, High, HighValues, Manner,
-    MannerValues, Place, PlaceValues, VowelFeatures,
-};
-
-#[derive(Debug, Deserialize)]
-pub struct RawAlineConfig {
-    costs: Costs,
-    salience: Salience,
-    place_values: PlaceValues,
-    manner_values: MannerValues,
-    height_values: HighValues,
-    backness_values: BackValues,
-    binary_values: BinaryValues,
-    sounds: HashMap<String, RawSound>,
+#[derive(Deserialize)]
+struct RawConsonant {
+    place: Place,
+    manner: Manner,
+    syllabic: Binary,
+    voice: Binary,
+    nasal: Binary,
+    retroflex: Binary,
+    lateral: Binary,
+    aspirated: Binary,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
+struct RawVowel {
+    place: Place,
+    manner: Manner,
+    back: Back,
+    high: High,
+    lateral: Binary,
+    long: Binary,
+    nasal: Binary,
+    retroflex: Binary,
+    round: Binary,
+    syllabic: Binary,
+    voice: Binary,
+}
+
+#[derive(Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 enum RawSound {
-    Consonant {
-        aspirated: Binary,
-        lateral: Binary,
-        manner: Manner,
-        nasal: Binary,
-        place: Place,
-        retroflex: Binary,
-        syllabic: Binary,
-        voice: Binary,
-    },
-    Vowel {
-        back: Back,
-        high: High,
-        round: Binary,
-        long: Binary,
-        place: Place,
-        manner: Manner,
-        lateral: Binary,
-        nasal: Binary,
-        retroflex: Binary,
-        syllabic: Binary,
-        voice: Binary,
-    },
+    Consonant(RawConsonant),
+    Vowel(RawVowel),
 }
 
-impl RawAlineConfig {
-    pub fn into_config(self) -> AlineConfig {
-        let sounds = self
-            .sounds
-            .into_iter()
-            .map(|(symbol, raw_sound)| (symbol, raw_sound.into_features()))
-            .collect();
-
-        AlineConfig {
-            costs: self.costs,
-            salience: self.salience,
-            values: FeatureValues {
-                place: self.place_values,
-                manner: self.manner_values,
-                high: self.height_values,
-                back: self.backness_values,
-                binary: self.binary_values,
-            },
-            sounds,
+impl From<RawSound> for PhoneticFeatures {
+    fn from(raw: RawSound) -> Self {
+        match raw {
+            RawSound::Consonant(c) => PhoneticFeatures::Consonant(ConsonantFeatures {
+                place: c.place,
+                manner: c.manner,
+                syllabic: c.syllabic,
+                voice: c.voice,
+                nasal: c.nasal,
+                retroflex: c.retroflex,
+                lateral: c.lateral,
+                aspirated: c.aspirated,
+            }),
+            RawSound::Vowel(v) => PhoneticFeatures::Vowel(VowelFeatures {
+                place: v.place,
+                manner: v.manner,
+                back: v.back,
+                high: v.high,
+                lateral: v.lateral,
+                long: v.long,
+                nasal: v.nasal,
+                retroflex: v.retroflex,
+                round: v.round,
+                syllabic: v.syllabic,
+                voice: v.voice,
+            }),
         }
     }
 }
 
-impl RawSound {
-    fn into_features(self) -> PhoneticFeatures {
-        match self {
-            RawSound::Consonant {
-                aspirated,
-                lateral,
-                manner,
-                nasal,
-                place,
-                retroflex,
-                syllabic,
-                voice,
-            } => PhoneticFeatures::Consonant(ConsonantFeatures {
-                aspirated,
-                lateral,
-                manner,
-                nasal,
-                place,
-                retroflex,
-                syllabic,
-                voice,
-            }),
-            RawSound::Vowel {
-                back,
-                high,
-                round,
-                long,
-                place,
-                manner,
-                lateral,
-                nasal,
-                retroflex,
-                syllabic,
-                voice,
-            } => PhoneticFeatures::Vowel(VowelFeatures {
-                back,
-                high,
-                round,
-                long,
-                place,
-                manner,
-                lateral,
-                nasal,
-                retroflex,
-                syllabic,
-                voice,
-            }),
-        }
+impl<'de> Deserialize<'de> for PhoneticFeatures {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        RawSound::deserialize(deserializer).map(Into::into)
     }
 }

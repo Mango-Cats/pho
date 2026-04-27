@@ -1,8 +1,8 @@
 [costs]
-skip             = -10
-substitute       = 35
-expand_compress  = 45
-vowel_consonant  = 5
+skip            = -10
+substitute      = 35
+expand_compress = 45
+vowel_consonant = 5
 
 [salience]
 syllabic  = 5
@@ -18,7 +18,7 @@ high      = 3
 back      = 2
 round     = 2
 
-[place_values]
+[values.place]
 bilabial        = 1.0
 labiodental     = 0.95
 dental          = 0.9
@@ -33,7 +33,7 @@ glottal         = 0.1
 labiovelar      = 1.0
 vowel           = -1.0
 
-[manner_values]
+[values.manner]
 stop        = 1.0
 affricate   = 0.9
 fricative   = 0.85
@@ -45,17 +45,17 @@ mid_vowel   = 0.2
 low_vowel   = 0.0
 vowel       = 0.5
 
-[height_values]
+[values.high]
 high = 1.0
 mid  = 0.5
 low  = 0.0
 
-[backness_values]
+[values.back]
 front   = 1.0
 central = 0.5
 back    = 0.0
 
-[binary_values]
+[values.binary]
 plus  = 1.0
 minus = 0.0
 

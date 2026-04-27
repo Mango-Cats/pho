@@ -1,24 +1,18 @@
 #[cfg(test)]
 mod tests {
-    use core::panic;
-
     use pho::{
         algorithms::aline::{
-            config::{AlineConfig, RawAlineConfig},
+            config::AlineConfig,
             features::{Back, Binary, High, Manner, PhoneticFeatures, Place},
         },
         config::parse_toml_file,
     };
 
-    // Path to the sample config — adjust if your test working directory differs.
-    // `cargo test` runs from the crate root by default.
     const TOML_PATH: &str = "tests/aline_parser_data.toml";
 
-    /// Unwrap the config or panic with a readable message.
     fn load() -> AlineConfig {
-        let raw_config: Result<RawAlineConfig, String> = parse_toml_file(TOML_PATH);
-        match raw_config {
-            Ok(r) => r.into_config(),
+        match parse_toml_file(TOML_PATH) {
+            Ok(config) => config,
             Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
         }
     }
@@ -105,82 +99,82 @@ mod tests {
 
     #[test]
     fn place_values_bilabial() {
-        assert_eq!(load().values.place.bilabial, 1.0);
+        assert_eq!(load().values.place[Place::Bilabial], 1.0);
     }
 
     #[test]
     fn place_values_alveolar() {
-        assert_eq!(load().values.place.alveolar, 0.85);
+        assert_eq!(load().values.place[Place::Alveolar], 0.85);
     }
 
     #[test]
     fn place_values_glottal() {
-        assert_eq!(load().values.place.glottal, 0.1);
+        assert_eq!(load().values.place[Place::Glottal], 0.1);
     }
 
     #[test]
     fn place_values_vowel() {
-        assert_eq!(load().values.place.vowel, -1.0);
+        assert_eq!(load().values.place[Place::Vowel], -1.0);
     }
 
     #[test]
     fn manner_values_stop() {
-        assert_eq!(load().values.manner.stop, 1.0);
+        assert_eq!(load().values.manner[Manner::Stop], 1.0);
     }
 
     #[test]
     fn manner_values_fricative() {
-        assert_eq!(load().values.manner.fricative, 0.85);
+        assert_eq!(load().values.manner[Manner::Fricative], 0.85);
     }
 
     #[test]
     fn manner_values_approximant() {
-        assert_eq!(load().values.manner.approximant, 0.6);
+        assert_eq!(load().values.manner[Manner::Approximant], 0.6);
     }
 
     #[test]
     fn manner_values_low_vowel() {
-        assert_eq!(load().values.manner.low_vowel, 0.0);
+        assert_eq!(load().values.manner[Manner::LowVowel], 0.0);
     }
 
     #[test]
     fn height_values_high() {
-        assert_eq!(load().values.high.high, 1.0);
+        assert_eq!(load().values.high[High::High], 1.0);
     }
 
     #[test]
     fn height_values_mid() {
-        assert_eq!(load().values.high.mid, 0.5);
+        assert_eq!(load().values.high[High::Mid], 0.5);
     }
 
     #[test]
     fn height_values_low() {
-        assert_eq!(load().values.high.low, 0.0);
+        assert_eq!(load().values.high[High::Low], 0.0);
     }
 
     #[test]
     fn backness_values_front() {
-        assert_eq!(load().values.back.front, 1.0);
+        assert_eq!(load().values.back[Back::Front], 1.0);
     }
 
     #[test]
     fn backness_values_central() {
-        assert_eq!(load().values.back.central, 0.5);
+        assert_eq!(load().values.back[Back::Central], 0.5);
     }
 
     #[test]
     fn backness_values_back() {
-        assert_eq!(load().values.back.back, 0.0);
+        assert_eq!(load().values.back[Back::Back], 0.0);
     }
 
     #[test]
     fn binary_values_plus() {
-        assert_eq!(load().values.binary.plus, 1.0);
+        assert_eq!(load().values.binary[Binary::Plus], 1.0);
     }
 
     #[test]
     fn binary_values_minus() {
-        assert_eq!(load().values.binary.minus, 0.0);
+        assert_eq!(load().values.binary[Binary::Minus], 0.0);
     }
 
     #[test]
@@ -210,210 +204,178 @@ mod tests {
 
     #[test]
     fn sound_s_is_consonant() {
-        let config = load();
-        assert!(
-            matches!(config.sounds["s"], PhoneticFeatures::Consonant(_)),
-            "'s' should be a consonant"
-        );
+        assert!(matches!(load().sounds["s"], PhoneticFeatures::Consonant(_)));
     }
 
     #[test]
     fn sound_s_place() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["s"] {
-            assert!(matches!(c.place, Place::Alveolar));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
-        }
+        };
+        assert!(matches!(c.place, Place::Alveolar));
     }
 
     #[test]
     fn sound_s_manner() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["s"] {
-            assert!(matches!(c.manner, Manner::Fricative));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
-        }
+        };
+        assert!(matches!(c.manner, Manner::Fricative));
     }
 
     #[test]
     fn sound_s_voice_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["s"] {
-            assert!(matches!(c.voice, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
-        }
+        };
+        assert!(matches!(c.voice, Binary::Minus));
     }
 
     #[test]
     fn sound_s_nasal_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["s"] {
-            assert!(matches!(c.nasal, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
-        }
+        };
+        assert!(matches!(c.nasal, Binary::Minus));
     }
 
     #[test]
     fn sound_s_lateral_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["s"] {
-            assert!(matches!(c.lateral, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["s"] else {
             panic!("'s' is not a consonant");
-        }
+        };
+        assert!(matches!(c.lateral, Binary::Minus));
     }
 
     #[test]
     fn sound_b_is_consonant() {
-        let config = load();
-        assert!(
-            matches!(config.sounds["b"], PhoneticFeatures::Consonant(_)),
-            "'b' should be a consonant"
-        );
+        assert!(matches!(load().sounds["b"], PhoneticFeatures::Consonant(_)));
     }
 
     #[test]
     fn sound_b_place() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["b"] {
-            assert!(matches!(c.place, Place::Bilabial));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
-        }
+        };
+        assert!(matches!(c.place, Place::Bilabial));
     }
 
     #[test]
     fn sound_b_manner() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["b"] {
-            assert!(matches!(c.manner, Manner::Stop));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
-        }
+        };
+        assert!(matches!(c.manner, Manner::Stop));
     }
 
     #[test]
     fn sound_b_voice_is_plus() {
         let config = load();
-        if let PhoneticFeatures::Consonant(c) = &config.sounds["b"] {
-            assert!(matches!(c.voice, Binary::Plus));
-        } else {
+        let PhoneticFeatures::Consonant(c) = &config.sounds["b"] else {
             panic!("'b' is not a consonant");
-        }
+        };
+        assert!(matches!(c.voice, Binary::Plus));
     }
 
     #[test]
     fn sound_a_is_vowel() {
-        let config = load();
-        assert!(
-            matches!(config.sounds["a"], PhoneticFeatures::Vowel(_)),
-            "'a' should be a vowel"
-        );
+        assert!(matches!(load().sounds["a"], PhoneticFeatures::Vowel(_)));
     }
 
     #[test]
     fn sound_a_high_is_low() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["a"] {
-            assert!(matches!(v.high, High::Low));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
-        }
+        };
+        assert!(matches!(v.high, High::Low));
     }
 
     #[test]
     fn sound_a_back_is_front() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["a"] {
-            assert!(matches!(v.back, Back::Front));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
-        }
+        };
+        assert!(matches!(v.back, Back::Front));
     }
 
     #[test]
     fn sound_a_round_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["a"] {
-            assert!(matches!(v.round, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
-        }
+        };
+        assert!(matches!(v.round, Binary::Minus));
     }
 
     #[test]
     fn sound_a_syllabic_is_plus() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["a"] {
-            assert!(matches!(v.syllabic, Binary::Plus));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
-        }
+        };
+        assert!(matches!(v.syllabic, Binary::Plus));
     }
 
     #[test]
     fn sound_a_long_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["a"] {
-            assert!(matches!(v.long, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["a"] else {
             panic!("'a' is not a vowel");
-        }
+        };
+        assert!(matches!(v.long, Binary::Minus));
     }
 
     #[test]
     fn sound_i_is_vowel() {
-        let config = load();
-        assert!(
-            matches!(config.sounds["i"], PhoneticFeatures::Vowel(_)),
-            "'i' should be a vowel"
-        );
+        assert!(matches!(load().sounds["i"], PhoneticFeatures::Vowel(_)));
     }
 
     #[test]
     fn sound_i_high_is_high() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["i"] {
-            assert!(matches!(v.high, High::High));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["i"] else {
             panic!("'i' is not a vowel");
-        }
+        };
+        assert!(matches!(v.high, High::High));
     }
 
     #[test]
     fn sound_i_back_is_front() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["i"] {
-            assert!(matches!(v.back, Back::Front));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["i"] else {
             panic!("'i' is not a vowel");
-        }
+        };
+        assert!(matches!(v.back, Back::Front));
     }
 
     #[test]
     fn sound_i_round_is_minus() {
         let config = load();
-        if let PhoneticFeatures::Vowel(v) = &config.sounds["i"] {
-            assert!(matches!(v.round, Binary::Minus));
-        } else {
+        let PhoneticFeatures::Vowel(v) = &config.sounds["i"] else {
             panic!("'i' is not a vowel");
-        }
+        };
+        assert!(matches!(v.round, Binary::Minus));
     }
 
     #[test]
     fn rejects_non_toml_extension() {
-        let non_toml: Result<RawAlineConfig, String> = parse_toml_file("notatoml.json");
-        assert!(non_toml.is_err());
-        assert_eq!(non_toml.err().unwrap(), "file must be a .toml");
+        let result: Result<AlineConfig, String> = parse_toml_file("notatoml.json");
+        assert!(result.is_err());
+        assert_eq!(result.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let nonexistent: Result<RawAlineConfig, String> = parse_toml_file("nonexistent.toml");
-        assert!(nonexistent.is_err());
+        let result: Result<AlineConfig, String> = parse_toml_file("nonexistent.toml");
+        assert!(result.is_err());
     }
 }
