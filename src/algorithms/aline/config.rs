@@ -30,4 +30,5 @@ pub struct AlineConfig {
     pub salience: Salience,
     pub values: FeatureValues,
     pub sounds: HashMap<String, PhoneticFeatures>,
+    pub epsilon: f32,
 }
