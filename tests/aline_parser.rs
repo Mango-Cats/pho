@@ -6,7 +6,7 @@ mod tests {
             features::{Back, Binary, High, Manner, Place},
             phonemes::PhoneticFeatures,
         },
-        parser::parse_toml_file,
+        config::parse_toml_file,
     };
 
     const TOML_PATH: &str = "tests/aline_parser_data.toml";
