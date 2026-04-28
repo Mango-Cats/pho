@@ -1,5 +1,4 @@
-use super::features::{Back, Binary, FeatureValues, High, Manner, Place};
-use super::salience::Salience;
+use super::features::{Back, Binary, High, Manner, Place};
 use serde::Deserialize;
 
 /// Features shared by every sound. [`Phoneme`] is implemented here once
@@ -34,8 +33,10 @@ pub struct VowelFeatures {
     pub round: Binary,
 }
 
-/// Shared interface for the sigma function. Implemented once on
-/// [`CommonFeatures`] and accessed via [`PhoneticFeatures::common()`].
+/// Shared interface for accessing common features.
+///
+/// Implemented once on [`CommonFeatures`] and accessed via
+/// [`PhoneticFeatures::common()`].
 pub trait Phoneme {
     fn place(&self) -> &Place;
     fn manner(&self) -> &Manner;
@@ -92,80 +93,7 @@ impl PhoneticFeatures {
         matches!(self, PhoneticFeatures::Vowel(_))
     }
 
-    // IMPORTANT ============================
-    // FIXME: i think this should take in a AlineConfig instead right?
-    // and it should be a function OUTSIDE this?
-    // IMPORTANT END ========================
-    /// Computes the phonetic similarity between two sounds (the ALINE `sigma`
-    /// function). Returns a score in the range [0, C_sub] where a higher score
-    /// means the two sounds are more similar.
-    ///
-    /// The score is computed as:
-    /// `sigma(p, q) = C_sub - diff(p, q)`
-    ///
-    /// where `diff` sums the salience-weighted absolute difference between
-    /// each common feature value.
-    pub fn sigma(
-        &self,
-        other: &PhoneticFeatures,
-        values: &FeatureValues,
-        salience: &Salience,
-        c_sub: i32,
-    ) -> f32 {
-        let p = self.common();
-        let q = other.common();
-
-        let diff = fd(
-            values.place[*p.place()],
-            values.place[*q.place()],
-            salience.place,
-        ) + fd(
-            values.manner[*p.manner()],
-            values.manner[*q.manner()],
-            salience.manner,
-        ) + fd(
-            values.binary[*p.syllabic()],
-            values.binary[*q.syllabic()],
-            salience.syllabic,
-        ) + fd(
-            values.binary[*p.voice()],
-            values.binary[*q.voice()],
-            salience.voice,
-        ) + fd(
-            values.binary[*p.nasal()],
-            values.binary[*q.nasal()],
-            salience.nasal,
-        ) + fd(
-            values.binary[*p.retroflex()],
-            values.binary[*q.retroflex()],
-            salience.retroflex,
-        ) + fd(
-            values.binary[*p.lateral()],
-            values.binary[*q.lateral()],
-            salience.lateral,
-        );
-
-        let vowel_diff = match (self, other) {
-            (PhoneticFeatures::Vowel(a), PhoneticFeatures::Vowel(b)) => {
-                fd(values.high[a.high], values.high[b.high], salience.high)
-                    + fd(values.back[a.back], values.back[b.back], salience.back)
-                    + fd(
-                        values.binary[a.round],
-                        values.binary[b.round],
-                        salience.round,
-                    )
-                    + fd(values.binary[a.long], values.binary[b.long], salience.long)
-            }
-            _ => 0.0,
-        };
-
-        (c_sub as f32) - (diff + vowel_diff)
+    pub fn is_consonant(&self) -> bool {
+        return !self.is_vowel();
     }
-}
-
-/// Salience-weighted absolute difference between two feature values.
-/// Mirrors: `salience[f] * |matrix[p[f]] - matrix[q[f]]|`
-#[inline]
-fn fd(a: f32, b: f32, salience: u32) -> f32 {
-    salience as f32 * (a - b).abs()
 }
