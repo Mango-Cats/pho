@@ -1,3 +1,5 @@
+epsilon = 0.001
+
 [costs]
 skip            = -10
 substitute      = 35

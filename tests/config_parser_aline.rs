@@ -39,6 +39,15 @@ mod tests {
     }
 
     #[test]
+    fn epsilon_parses() {
+        let epsilon = load().epsilon;
+        assert!(
+            (epsilon - 0.001).abs() < 1e-6,
+            "expected epsilon≈0.001, got {epsilon}"
+        );
+    }
+
+    #[test]
     fn salience_place() {
         assert_eq!(load().salience.place, 40);
     }
