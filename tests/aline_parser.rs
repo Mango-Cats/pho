@@ -1,11 +1,12 @@
 #[cfg(test)]
 mod tests {
-    use pho::{
-        algorithms::aline::{
+    use pho::algorithms::{
+        aline::{
             config::AlineConfig,
-            features::{Back, Binary, High, Manner, PhoneticFeatures, Place},
+            features::{Back, Binary, High, Manner, Place},
+            phonemes::PhoneticFeatures,
         },
-        config::parse_toml_file,
+        parser::parse_toml_file,
     };
 
     const TOML_PATH: &str = "tests/aline_parser_data.toml";

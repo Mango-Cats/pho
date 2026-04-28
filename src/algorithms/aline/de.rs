@@ -8,7 +8,7 @@
 
 use serde::{Deserialize, Deserializer};
 
-use crate::algorithms::aline::features::{ConsonantFeatures, PhoneticFeatures, VowelFeatures};
+use crate::algorithms::aline::phonemes::{ConsonantFeatures, PhoneticFeatures, VowelFeatures};
 
 #[derive(Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
