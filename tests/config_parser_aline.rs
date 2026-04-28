@@ -9,7 +9,7 @@ mod tests {
         config::parse_toml_file,
     };
 
-    const TOML_PATH: &str = "tests/aline_parser_data.toml";
+    const TOML_PATH: &str = "tests/config_parser_aline_data.toml";
 
     fn load() -> AlineConfig {
         match parse_toml_file(TOML_PATH) {
