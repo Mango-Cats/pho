@@ -35,6 +35,7 @@ pub fn export_toml_file<T>(file_name: &str, config: &T) -> Result<(), String>
 where
     T: Serialize,
 {
+    // maybe instead of doing this just append toml
     if !file_name.ends_with(".toml") {
         return Err("file must be a .toml".to_string());
     }
