@@ -1,5 +1,4 @@
 epsilon = 0.001
-
 [costs]
 skip            = -10
 substitute      = 35
@@ -7,45 +6,45 @@ expand_compress = 45
 vowel_consonant = 5
 
 [salience]
-syllabic  = 5
-place     = 40
-manner    = 50
-voice     = 5
-nasal     = 20
-retroflex = 10
-lateral   = 10
-aspirated = 5
-long      = 0
-high      = 3
-back      = 2
-round     = 2
+syllabic   = 5
+place      = 40
+manner     = 50
+voice      = 5
+nasal      = 20
+retroflex  = 10
+lateral    = 10
+aspirated  = 5
+long       = 0
+high       = 3
+back       = 2
+round      = 2
 
 [values.place]
-bilabial        = 1.0
-labiodental     = 0.95
-dental          = 0.9
-alveolar        = 0.85
-retroflex       = 0.8
-palato_alveolar = 0.75
-palatal         = 0.7
-velar           = 0.6
-uvular          = 0.5
-pharyngeal      = 0.3
-glottal         = 0.1
-labiovelar      = 1.0
-vowel           = -1.0
+bilabial         = 1.0
+labiodental      = 0.95
+dental           = 0.9
+alveolar         = 0.85
+retroflex        = 0.8
+palato_alveolar  = 0.75
+palatal          = 0.7
+velar            = 0.6
+uvular           = 0.5
+pharyngeal       = 0.3
+glottal          = 0.1
+labiovelar       = 1.0
+vowel            = -1.0
 
 [values.manner]
-stop        = 1.0
-affricate   = 0.9
-fricative   = 0.85
-trill       = 0.7
-tap         = 0.65
-approximant = 0.6
-high_vowel  = 0.4
-mid_vowel   = 0.2
-low_vowel   = 0.0
-vowel       = 0.5
+stop         = 1.0
+affricate    = 0.9
+fricative    = 0.85
+trill        = 0.7
+tap          = 0.65
+approximant  = 0.6
+high_vowel   = 0.4
+mid_vowel    = 0.2
+low_vowel    = 0.0
+vowel        = 0.5
 
 [values.high]
 high = 1.0
@@ -61,21 +60,24 @@ back    = 0.0
 plus  = 1.0
 minus = 0.0
 
-[sounds.s]
-type      = "consonant"
-place     = "alveolar"
-manner    = "fricative"
-syllabic  = "minus"
-voice     = "minus"
+[sounds."A"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "plus"
 nasal     = "minus"
 retroflex = "minus"
-lateral   = "minus"
-aspirated = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
 
-[sounds.b]
+[sounds."B"]
 type      = "consonant"
 place     = "bilabial"
-manner    = "stop"
+manner    = "trill"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "minus"
@@ -83,10 +85,88 @@ retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
 
-[sounds.a]
+[sounds."E"]
 type      = "vowel"
 place     = "vowel"
-manner    = "low_vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."I"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."N"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."O"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."R"]
+type      = "consonant"
+place     = "uvular"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."U"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."a"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
 back      = "front"
 high      = "low"
 lateral   = "minus"
@@ -97,10 +177,104 @@ round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 
-[sounds.i]
+[sounds."b"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."c"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."d"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."e"]
 type      = "vowel"
 place     = "vowel"
-manner    = "high_vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."e̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."f"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."g"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."h"]
+type      = "consonant"
+place     = "glottal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."i"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
 back      = "front"
 high      = "high"
 lateral   = "minus"
@@ -110,3 +284,946 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+
+[sounds."j"]
+type      = "consonant"
+place     = "palatal"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."k"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."l"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+
+[sounds."m"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."n"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."o"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."o̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."p"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."q"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."r"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."s"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."t"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."u"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."v"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."w"]
+type      = "consonant"
+place     = "labiovelar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."x"]
+type      = "consonant"
+place     = "velar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."y"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."z"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ä"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."æ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ç"]
+type      = "consonant"
+place     = "palatal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ð"]
+type      = "consonant"
+place     = "dental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ø"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ø̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ħ"]
+type      = "consonant"
+place     = "pharyngeal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ŋ"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."œ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɐ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɑ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɒ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɔ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɖ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɘ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ə"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɛ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɜ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɞ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɟ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɢ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɣ"]
+type      = "consonant"
+place     = "velar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɤ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɤ̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɦ"]
+type      = "consonant"
+place     = "glottal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɨ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɬ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+
+[sounds."ɮ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+
+[sounds."ɯ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɰ"]
+type      = "consonant"
+place     = "velar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɱ"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɲ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɳ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɴ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɵ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɶ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ɸ"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɹ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɻ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɽ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "tap"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ɾ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "tap"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʀ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʁ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʂ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʃ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʈ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʉ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ʊ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ʋ"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʌ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ʏ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+
+[sounds."ʐ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʒ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʔ"]
+type      = "consonant"
+place     = "glottal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʕ"]
+type      = "consonant"
+place     = "pharyngeal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʙ"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."ʝ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."β"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."θ"]
+type      = "consonant"
+place     = "dental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
+[sounds."χ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+
