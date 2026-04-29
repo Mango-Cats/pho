@@ -209,7 +209,23 @@ mod tests {
 
     #[test]
     fn sounds_count() {
-        assert_eq!(load().sounds.len(), 4, "expected exactly 4 sounds");
+        assert!(
+            load().sounds.len() >= 80,
+            "expected a reasonably complete IPA inventory"
+        );
+    }
+
+    #[test]
+    fn sounds_contains_regression_symbols() {
+        let config = load();
+        for sym in [
+            "ə", "ð", "θ", "ʃ", "ŋ", "ɲ", "ɾ", "ʔ", "ø", "œ", "A", "E", "I", "O", "U", "e̞", "ø̞",
+        ] {
+            assert!(
+                config.sounds.contains_key(sym),
+                "expected sound '{sym}' in map"
+            );
+        }
     }
 
     #[test]
