@@ -1,9 +1,9 @@
 use super::features::{Back, Binary, High, Manner, Place};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Features shared by every sound. [`Phoneme`] is implemented here once
 /// to avoid duplicating getters across [`ConsonantFeatures`] and [`VowelFeatures`].
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CommonFeatures {
     pub place: Place,
     pub manner: Manner,
@@ -15,7 +15,7 @@ pub struct CommonFeatures {
 }
 
 /// Stores the phonetic features of a consonant sound.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConsonantFeatures {
     #[serde(flatten)]
     pub common: CommonFeatures,
@@ -23,7 +23,7 @@ pub struct ConsonantFeatures {
 }
 
 /// Stores the phonetic features of a vowel sound.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct VowelFeatures {
     #[serde(flatten)]
     pub common: CommonFeatures,
@@ -74,7 +74,8 @@ impl Phoneme for CommonFeatures {
 /// An enum consonant and vowel features. Pattern match on
 /// this when you need sound-specific features; use `.common()` when you
 /// only need the common interface.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum PhoneticFeatures {
     Consonant(ConsonantFeatures),
     Vowel(VowelFeatures),

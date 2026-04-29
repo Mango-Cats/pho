@@ -34,12 +34,12 @@
 //! - https://dl.acm.org/doi/book/10.5555/936774
 
 use enum_map::{Enum, EnumMap};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Has the value of either [`Binary::Plus`] (+) or [`Binary::Minus`]
 /// (-). Plus denotes the presence of a feature, while minus denotes
 /// the absence.
-#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Binary {
     Plus,
@@ -47,7 +47,7 @@ pub enum Binary {
 }
 
 /// The possible places of articulation of a sound.
-#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Place {
     Bilabial,
@@ -66,7 +66,7 @@ pub enum Place {
 }
 
 /// The manner of articulation or degree of stricture for a sound.
-#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Manner {
     Stop,
@@ -81,7 +81,7 @@ pub enum Manner {
     Vowel,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum High {
     High,
@@ -89,7 +89,7 @@ pub enum High {
     Low,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Enum, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Back {
     Front,
@@ -98,7 +98,7 @@ pub enum Back {
 }
 
 /// Central struct storing all phonetic feature values.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct FeatureValues {
     pub place: EnumMap<Place, f32>,
     pub manner: EnumMap<Manner, f32>,

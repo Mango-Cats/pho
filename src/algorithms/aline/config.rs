@@ -21,10 +21,10 @@
 use crate::algorithms::aline::{
     cost::Costs, features::FeatureValues, phonemes::PhoneticFeatures, salience::Salience,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct AlineConfig {
     pub costs: Costs,
     pub salience: Salience,
