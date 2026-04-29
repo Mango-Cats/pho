@@ -31,14 +31,21 @@ where
 ///
 /// This is the inverse of [`parse_toml_file`]. The caller owns the schema
 /// through `T`.
-pub fn export_toml_file<T>(file_name: &str, config: &T) -> Result<(), String>
+pub fn export_toml_file<T>(
+    file_name: &str,
+    config: &T,
+    append_extension: bool,
+) -> Result<(), String>
 where
     T: Serialize,
 {
-    // maybe instead of doing this just append toml
-    if !file_name.ends_with(".toml") {
+    let file_name = if file_name.ends_with(".toml") {
+        file_name.to_string()
+    } else if append_extension {
+        format!("{file_name}.toml")
+    } else {
         return Err("file must be a .toml".to_string());
-    }
+    };
 
     let content =
         toml::to_string_pretty(config).map_err(|e| format!("TOML serialize error: {e}"))?;
