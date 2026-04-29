@@ -1,6 +1,6 @@
 #![allow(unused_variables, dead_code)]
 pub mod aline;
-pub mod config;
+pub mod config_io;
 pub mod editex;
 
 pub enum SimilarityAlgorithm {
