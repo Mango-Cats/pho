@@ -1,4 +1,4 @@
-//! aline::cost
+//! aline::config::cost
 //!
 //! This file contains the `Costs` struct used by the Aline algorithm.
 //! This struct contains the constants that are used for the similarity

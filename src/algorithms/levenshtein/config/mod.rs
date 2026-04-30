@@ -1,5 +1,8 @@
-use super::cost::Cost;
 use serde::{Deserialize, Serialize};
+
+pub mod costs;
+
+pub use costs::Costs;
 
 /// Configuration for the Levenshtein distance algorithm.
 ///
@@ -8,7 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct LevenshteinConfig {
     /// Edit operation costs.
-    pub costs: Cost,
+    pub costs: Costs,
     /// Whether to perform case-insensitive comparison.
     pub case_insensitive: bool,
 }

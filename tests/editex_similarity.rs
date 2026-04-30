@@ -1,10 +1,10 @@
-use pho::algorithms::{
-    config_io::parse_toml_file,
-    editex::{
+use pho::{
+    algorithms::editex::{
         self,
         config::EditexConfig,
         edit::{delete, replace},
     },
+    config_io::parse_toml_file,
 };
 
 const TOML_PATH: &str = "tests/config_sample_editex.toml";

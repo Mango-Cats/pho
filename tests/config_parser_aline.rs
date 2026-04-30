@@ -1,10 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use pho::algorithms::{
-        aline::{
-            config::AlineConfig,
-            features::{Back, Binary, High, Manner, Place},
-            phonemes::PhoneticFeatures,
+    use pho::{
+        algorithms::aline::config::{
+            AlineConfig, Back, Binary, High, Manner, PhoneticFeatures, Place,
         },
         config_io::parse_toml_file,
     };

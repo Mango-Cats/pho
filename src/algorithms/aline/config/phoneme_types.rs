@@ -1,5 +1,7 @@
-use super::features::{Back, Binary, High, Manner, Place};
 use serde::{Deserialize, Serialize};
+
+use super::feature_types::{Back, Binary, High, Manner, Place};
+use super::phoneme_trait::Phoneme;
 
 /// Features shared by every sound. [`Phoneme`] is implemented here once
 /// to avoid duplicating getters across [`ConsonantFeatures`] and [`VowelFeatures`].
@@ -33,44 +35,6 @@ pub struct VowelFeatures {
     pub round: Binary,
 }
 
-/// Shared interface for accessing common features.
-///
-/// Implemented once on [`CommonFeatures`] and accessed via
-/// [`PhoneticFeatures::common()`].
-pub trait Phoneme {
-    fn place(&self) -> &Place;
-    fn manner(&self) -> &Manner;
-    fn syllabic(&self) -> &Binary;
-    fn voice(&self) -> &Binary;
-    fn nasal(&self) -> &Binary;
-    fn retroflex(&self) -> &Binary;
-    fn lateral(&self) -> &Binary;
-}
-
-impl Phoneme for CommonFeatures {
-    fn place(&self) -> &Place {
-        &self.place
-    }
-    fn manner(&self) -> &Manner {
-        &self.manner
-    }
-    fn syllabic(&self) -> &Binary {
-        &self.syllabic
-    }
-    fn voice(&self) -> &Binary {
-        &self.voice
-    }
-    fn nasal(&self) -> &Binary {
-        &self.nasal
-    }
-    fn retroflex(&self) -> &Binary {
-        &self.retroflex
-    }
-    fn lateral(&self) -> &Binary {
-        &self.lateral
-    }
-}
-
 /// An enum consonant and vowel features. Pattern match on
 /// this when you need sound-specific features; use `.common()` when you
 /// only need the common interface.
@@ -95,6 +59,6 @@ impl PhoneticFeatures {
     }
 
     pub fn is_consonant(&self) -> bool {
-        return !self.is_vowel();
+        !self.is_vowel()
     }
 }

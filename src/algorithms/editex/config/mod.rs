@@ -2,10 +2,12 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use super::cost::Cost;
+pub mod costs;
+
+pub use costs::Costs;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct EditexConfig {
-    pub costs: Cost,
+    pub costs: Costs,
     pub group: HashMap<char, Vec<usize>>,
 }
