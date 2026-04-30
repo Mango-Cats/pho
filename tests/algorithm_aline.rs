@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{
-        AlineAlgorithm, AlgorithmTrait,
+        AlgorithmTrait, AlineAlgorithm,
         aline::{self, config::AlineConfig},
     },
     config_io::parse_toml_file,

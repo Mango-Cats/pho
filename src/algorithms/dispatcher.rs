@@ -1,6 +1,6 @@
 use crate::algorithms::{aline, editex, jaro_winkler, levenshtein};
 
-use super::{AlgorithmConfig, Algorithm};
+use super::{Algorithm, AlgorithmConfig};
 
 impl Algorithm {
     pub fn similarity(
