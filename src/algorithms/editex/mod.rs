@@ -76,17 +76,21 @@ fn edit_distance(x: &[char], y: &[char], config: &EditexConfig) -> f32 {
     let idx = |i: usize, j: usize| -> usize { i * (n + 1) + j };
 
     for i in 1..=m {
-        d[idx(i, 0)] = d[idx(i - 1, 0)] + delete(x[i - 1], x.get(i - 2).copied(), config);
+        let previous = if i >= 2 { Some(x[i - 2]) } else { None };
+        d[idx(i, 0)] = d[idx(i - 1, 0)] + delete(x[i - 1], previous, config);
     }
 
     for j in 1..=n {
-        d[idx(0, j)] = d[idx(0, j - 1)] + delete(y[j - 1], y.get(j - 2).copied(), config);
+        let previous = if j >= 2 { Some(y[j - 2]) } else { None };
+        d[idx(0, j)] = d[idx(0, j - 1)] + delete(y[j - 1], previous, config);
     }
 
     for i in 1..=m {
         for j in 1..=n {
-            let delete_score = d[idx(i - 1, j)] + delete(x[i - 1], x.get(i - 2).copied(), config);
-            let insert_score = d[idx(i, j - 1)] + delete(y[j - 1], y.get(j - 2).copied(), config);
+            let x_previous = if i >= 2 { Some(x[i - 2]) } else { None };
+            let y_previous = if j >= 2 { Some(y[j - 2]) } else { None };
+            let delete_score = d[idx(i - 1, j)] + delete(x[i - 1], x_previous, config);
+            let insert_score = d[idx(i, j - 1)] + delete(y[j - 1], y_previous, config);
             let replace_score = d[idx(i - 1, j - 1)] + replace(x[i - 1], y[j - 1], config);
 
             d[idx(i, j)] = delete_score.min(insert_score).min(replace_score);
