@@ -1,4 +1,5 @@
 use pho::algorithms::{
+    AlineAlgorithm, SimilarityAlgorithmTrait,
     aline::{self, config::AlineConfig},
     config_io::parse_toml_file,
 };
@@ -24,6 +25,14 @@ fn assert_approx(actual: f32, expected: f32, tol: f32, word1: &str, word2: &str)
 fn self_similarity_is_one() {
     let config = load();
     let score = aline::similarity("s", "s", &config).unwrap();
+    assert_approx(score, 1.0, 1e-6, "s", "s");
+}
+
+#[test]
+fn wrapper_self_similarity_is_one() {
+    let config = load();
+    let algo = AlineAlgorithm::new(config);
+    let score = algo.similarity("s", "s").unwrap();
     assert_approx(score, 1.0, 1e-6, "s", "s");
 }
 
