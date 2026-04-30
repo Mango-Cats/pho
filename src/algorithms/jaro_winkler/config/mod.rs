@@ -22,3 +22,14 @@ pub struct JaroWinklerConfig {
     /// Whether to perform case-insensitive comparison.
     pub case_insensitive: bool,
 }
+
+impl JaroWinklerConfig {
+    /// Validate documented invariants for this config.
+    pub fn validate(&self) -> Result<(), String> {
+        if !(0.0..=0.25).contains(&self.prefix_scale) {
+            return Err("prefix_scale must be in [0.0, 0.25]".to_string());
+        }
+
+        Ok(())
+    }
+}

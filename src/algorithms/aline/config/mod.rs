@@ -27,3 +27,10 @@ pub struct AlineConfig {
     pub sounds: HashMap<String, PhoneticFeatures>,
     pub epsilon: f32,
 }
+
+impl AlineConfig {
+    /// Validate documented invariants for this config.
+    pub fn validate(&self) -> Result<(), String> {
+        self.values.validate()
+    }
+}

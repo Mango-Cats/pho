@@ -19,3 +19,15 @@ pub enum AlgorithmConfig {
     JaroWinklerConfig(jaro_winkler::config::JaroWinklerConfig),
     LevenshteinConfig(levenshtein::config::LevenshteinConfig),
 }
+
+impl AlgorithmConfig {
+    /// Validate invariants for configs that define them.
+    pub fn validate(&self) -> Result<(), String> {
+        match self {
+            AlgorithmConfig::AlineConfig(config) => config.validate(),
+            AlgorithmConfig::JaroWinklerConfig(config) => config.validate(),
+            AlgorithmConfig::EditexConfig(_) => Ok(()),
+            AlgorithmConfig::LevenshteinConfig(_) => Ok(()),
+        }
+    }
+}

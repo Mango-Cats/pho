@@ -50,4 +50,23 @@ impl FeatureValues {
             binary,
         }
     }
+
+    /// Validate that each category is normalized to 1.0 (within tolerance).
+    pub fn validate(&self) -> Result<(), String> {
+        let check_normalized = |sum: f32, name: &str| {
+            if (sum - 1.0).abs() < 0.0001 {
+                Ok(())
+            } else {
+                Err(format!("{} values must sum to 1.0, but got {}", name, sum))
+            }
+        };
+
+        check_normalized(self.place.values().copied().sum(), "Place")?;
+        check_normalized(self.manner.values().copied().sum(), "Manner")?;
+        check_normalized(self.high.values().copied().sum(), "High")?;
+        check_normalized(self.back.values().copied().sum(), "Back")?;
+        check_normalized(self.binary.values().copied().sum(), "Binary")?;
+
+        Ok(())
+    }
 }
