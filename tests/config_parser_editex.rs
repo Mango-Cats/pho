@@ -25,7 +25,7 @@ mod tests {
 
     #[test]
     fn group_has_expected_size() {
-        assert_eq!(load().group.len(), 24);
+        assert_eq!(load().group.len(), 25);
     }
 
     #[test]
@@ -36,6 +36,11 @@ mod tests {
     #[test]
     fn group_c() {
         assert_eq!(load().group[&'c'], vec![2, 9]);
+    }
+
+    #[test]
+    fn group_h() {
+        assert_eq!(load().group[&'h'], vec![0]);
     }
 
     #[test]
