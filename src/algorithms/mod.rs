@@ -37,7 +37,6 @@ pub mod ensemble;
 pub mod jaro_winkler;
 pub mod levenshtein;
 
-mod dispatcher;
 mod errors;
 mod registry;
 mod traits;
