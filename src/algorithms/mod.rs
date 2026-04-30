@@ -1,3 +1,6 @@
+//! # Algorithms
+//!
+
 pub mod aline;
 pub mod editex;
 pub mod jaro_winkler;

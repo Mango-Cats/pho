@@ -2,9 +2,6 @@ use super::feature_types::{Binary, Manner, Place};
 use super::phoneme_types::CommonFeatures;
 
 /// Shared interface for accessing common features.
-///
-/// Implemented once on [`CommonFeatures`] and accessed via
-/// [`PhoneticFeatures::common()`].
 pub trait Phoneme {
     fn place(&self) -> &Place;
     fn manner(&self) -> &Manner;

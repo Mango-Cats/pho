@@ -19,15 +19,15 @@ use serde::{Deserialize, Serialize};
 /// is replaced with another).
 ///
 /// 3. `expand_compress` is the constant for when a phoneme matches two
-/// phonemes in another. Example: "suit" can be pronounced as [sut] and
-/// [suwt], so the /u/ sound is expanded to the /uw/ sound.
+/// phonemes in another. Example: "suit" can be pronounced as /sut/ and
+/// /suwt/, so the /u/ sound is expanded to the /uw/ sound.
 ///
 /// 4. `vowel_consonant` is the relative weight for vowels versus
 /// consonants.
 ///
 /// ## References
 ///
-/// - https://dl.acm.org/doi/book/10.5555/936774
+/// - <https://dl.acm.org/doi/book/10.5555/936774>
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Costs {
     pub skip: i32,
