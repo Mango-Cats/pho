@@ -21,13 +21,15 @@
 //! combining diacritics). To avoid splitting these incorrectly, inputs are
 //! tokenized into Unicode grapheme clusters.
 
-use crate::algorithms::aline::{
-    config::AlineConfig,
-    features::{Binary, FeatureValues},
-    phonemes::PhoneticFeatures,
-    salience::Salience,
+use crate::algorithms::{
+    aline::{
+        config::AlineConfig,
+        features::{Binary, FeatureValues},
+        phonemes::PhoneticFeatures,
+        salience::Salience,
+    },
+    validation::UnknownTokenError,
 };
-use std::{error::Error, fmt};
 
 pub mod config;
 pub mod cost;
@@ -36,34 +38,11 @@ pub mod features;
 pub mod phonemes;
 pub mod salience;
 
-/// Error returned when an input string contains a segment that is not present
-/// in the configured sound inventory.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct UnknownSegmentError {
-    pub segment: String,
-    /// 0-based position in the segmented sequence.
-    pub position: usize,
-    /// Which input this occurred in (e.g. "x" or "y").
-    pub input_name: &'static str,
-}
-
-impl fmt::Display for UnknownSegmentError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Unknown segment '{}' at position {} in {} (not found in ALINE config sound inventory)",
-            self.segment, self.position, self.input_name
-        )
-    }
-}
-
-impl Error for UnknownSegmentError {}
-
 /// Compute normalized phonetic similarity between two IPA strings.
 ///
 /// Returns a score in $[0, 1]$ where 1.0 means identical and 0.0 means
 /// maximally dissimilar under the configured costs and feature weights.
-pub fn similarity(x: &str, y: &str, config: &AlineConfig) -> Result<f32, UnknownSegmentError> {
+pub fn similarity(x: &str, y: &str, config: &AlineConfig) -> Result<f32, UnknownTokenError> {
     let x_segments = tokenize_and_validate(x, config, "x")?;
     let y_segments = tokenize_and_validate(y, config, "y")?;
 
@@ -86,7 +65,7 @@ fn tokenize_and_validate(
     input: &str,
     config: &AlineConfig,
     input_name: &'static str,
-) -> Result<Vec<String>, UnknownSegmentError> {
+) -> Result<Vec<String>, UnknownTokenError> {
     use unicode_segmentation::UnicodeSegmentation;
 
     let segments: Vec<String> = UnicodeSegmentation::graphemes(input, true)
@@ -95,10 +74,11 @@ fn tokenize_and_validate(
 
     for (idx, segment) in segments.iter().enumerate() {
         if !config.sounds.contains_key(segment) {
-            return Err(UnknownSegmentError {
-                segment: segment.clone(),
+            return Err(UnknownTokenError {
+                token: segment.clone(),
                 position: idx,
                 input_name,
+                context: "ALINE config sound inventory",
             });
         }
     }

@@ -2,6 +2,7 @@
 pub mod aline;
 pub mod config_io;
 pub mod editex;
+pub mod validation;
 
 pub enum SimilarityAlgorithm {
     Aline,

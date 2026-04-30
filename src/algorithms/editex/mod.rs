@@ -12,47 +12,24 @@
 //! same group are cheaper to substitute, insert, or delete than characters in
 //! different groups.
 
-use crate::algorithms::editex::{
-    config::EditexConfig,
-    edit::{delete, replace},
+use crate::algorithms::{
+    editex::{
+        config::EditexConfig,
+        edit::{delete, replace},
+    },
+    validation::UnknownTokenError,
 };
-use std::{error::Error, fmt};
 
 pub mod config;
 pub mod cost;
 pub mod edit;
 pub mod group;
 
-/// Error returned when an input string contains a character that is not present
-/// in the configured Editex groups.
-/// FIXME i think i can combine this with the UkSE in Aline?
-///
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct UnknownSymbolError {
-    pub symbol: char,
-    /// 0-based position in the input string.
-    pub position: usize,
-    /// Which input this occurred in (e.g. "x" or "y").
-    pub input_name: &'static str,
-}
-
-impl fmt::Display for UnknownSymbolError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Unknown symbol '{}' at position {} in {} (not found in Editex config groups)",
-            self.symbol, self.position, self.input_name
-        )
-    }
-}
-
-impl Error for UnknownSymbolError {}
-
 /// Compute normalized phonetic similarity between two strings.
 ///
 /// Returns a score in $[0, 1]$ where 1.0 means identical and 0.0 means
 /// maximally dissimilar under the configured Editex costs and groups.
-pub fn similarity(x: &str, y: &str, config: &EditexConfig) -> Result<f32, UnknownSymbolError> {
+pub fn similarity(x: &str, y: &str, config: &EditexConfig) -> Result<f32, UnknownTokenError> {
     let x_chars = tokenize_and_validate(x, config, "x")?;
     let y_chars = tokenize_and_validate(y, config, "y")?;
 
@@ -73,15 +50,16 @@ fn tokenize_and_validate(
     input: &str,
     config: &EditexConfig,
     input_name: &'static str,
-) -> Result<Vec<char>, UnknownSymbolError> {
+) -> Result<Vec<char>, UnknownTokenError> {
     let chars: Vec<char> = input.chars().map(|c| c.to_ascii_lowercase()).collect();
 
     for (idx, symbol) in chars.iter().enumerate() {
         if !config.group.contains_key(symbol) {
-            return Err(UnknownSymbolError {
-                symbol: *symbol,
+            return Err(UnknownTokenError {
+                token: symbol.to_string(),
                 position: idx,
                 input_name,
+                context: "Editex config groups",
             });
         }
     }
