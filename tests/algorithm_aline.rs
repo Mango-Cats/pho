@@ -1,5 +1,8 @@
 use pho::{
-    algorithms::{aline::{self, config::AlineConfig}, AlineAlgorithm, SimilarityAlgorithmTrait},
+    algorithms::{
+        AlineAlgorithm, AlgorithmTrait,
+        aline::{self, config::AlineConfig},
+    },
     config_io::parse_toml_file,
 };
 

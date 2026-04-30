@@ -7,11 +7,7 @@ use super::distance::edit_distance;
 ///
 /// Returns a score in $[0, 1]$ where 1.0 means identical strings and 0.0 means
 /// maximally dissimilar under the configured costs.
-pub fn similarity(
-    x: &str,
-    y: &str,
-    config: &LevenshteinConfig,
-) -> Result<f32, UnknownTokenError> {
+pub fn similarity(x: &str, y: &str, config: &LevenshteinConfig) -> Result<f32, UnknownTokenError> {
     let x_processed = if config.case_insensitive {
         x.to_lowercase()
     } else {

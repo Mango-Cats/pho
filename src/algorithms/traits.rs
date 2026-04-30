@@ -7,7 +7,7 @@
 ///
 /// ```no_run
 /// use pho::{
-///     algorithms::{AlineAlgorithm, SimilarityAlgorithmTrait},
+///     algorithms::{AlineAlgorithm, AlgorithmTrait},
 ///     config_io::parse_toml_file,
 /// };
 ///
@@ -18,6 +18,6 @@
 ///     Ok(())
 /// }
 /// ```
-pub trait SimilarityAlgorithmTrait {
+pub trait AlgorithmTrait {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, String>;
 }

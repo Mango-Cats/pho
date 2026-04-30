@@ -2,7 +2,7 @@
 mod tests {
     use core::panic;
 
-    use pho::{config_io::parse_toml_file, algorithms::editex::config::EditexConfig};
+    use pho::{algorithms::editex::config::EditexConfig, config_io::parse_toml_file};
 
     const TOML_PATH: &str = "tests/config_sample_editex.toml";
 

@@ -1,11 +1,11 @@
 use crate::algorithms::{aline, editex, jaro_winkler, levenshtein};
 
-use super::SimilarityAlgorithmTrait;
+use super::AlgorithmTrait;
 
 /// Generates a thin wrapper type around an algorithm module.
 ///
 /// Each wrapper stores the algorithm's config and exposes a unified
-/// `SimilarityAlgorithmTrait` implementation.
+/// `AlgorithmTrait` implementation.
 macro_rules! define_algorithm {
     ($name:ident, $config:ty, $module:ident) => {
         /// Algorithm wrapper that carries its configuration.
@@ -20,7 +20,7 @@ macro_rules! define_algorithm {
             }
         }
 
-        impl SimilarityAlgorithmTrait for $name {
+        impl AlgorithmTrait for $name {
             fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
                 $module::similarity(x, y, &self.config).map_err(|e| e.to_string())
             }
