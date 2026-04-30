@@ -1,4 +1,3 @@
-#![allow(unused_variables, dead_code)]
 pub mod aline;
 pub mod config_io;
 pub mod editex;
@@ -9,26 +8,31 @@ pub enum SimilarityAlgorithm {
     Editex,
 }
 
-pub enum SimilarityAlgorithmConfig {
-    AlineConfig,
-    EditexConfig,
+pub enum AlgorithmConfig {
+    AlineConfig(aline::config::AlineConfig),
+    EditexConfig(editex::config::EditexConfig),
 }
 
 impl SimilarityAlgorithm {
-    /// This is he shared similarity
-    fn similarity(
+    pub fn similarity(
         self,
-        x: &'static str,
-        y: &'static str,
-        // this is option since some algorithms have a config (or a
-        // set of variables) while others don't.
-        similarity_config: Option<&SimilarityAlgorithmConfig>,
-    ) -> f32 {
-        // match self {
-        //     SimilarityAlgorithm::Aline => todo!(),
-        //     SimilarityAlgorithm::Editex => todo!(),
-        //     _ => panic!("`SimilarityAlgorithm` doesn't cover all possible cases"),
-        // }
-        todo!()
+        x: &str,
+        y: &str,
+        similarity_config: Option<&AlgorithmConfig>,
+    ) -> Result<f32, String> {
+        match self {
+            SimilarityAlgorithm::Aline => {
+                let Some(AlgorithmConfig::AlineConfig(config)) = similarity_config else {
+                    return Err("ALINE requires an AlineConfig".to_string());
+                };
+                aline::similarity(x, y, config).map_err(|e| e.to_string())
+            }
+            SimilarityAlgorithm::Editex => {
+                let Some(AlgorithmConfig::EditexConfig(config)) = similarity_config else {
+                    return Err("Editex requires an EditexConfig".to_string());
+                };
+                editex::similarity(x, y, config).map_err(|e| e.to_string())
+            }
+        }
     }
 }
