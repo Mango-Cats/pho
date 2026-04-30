@@ -22,6 +22,18 @@
 //! - Strings where typos are more likely at the end than the beginning
 //! - Record linkage and deduplication tasks
 //!
+//! ## Example
+//!
+//! ```rust
+//! use pho::{algorithms::jaro_winkler, config_io::parse_toml_file};
+//! use pho::algorithms::jaro_winkler::config::JaroWinklerConfig;
+//!
+//! let config: JaroWinklerConfig =
+//!     parse_toml_file("tests/config_sample_jaro_winkler.toml").unwrap();
+//! let score = jaro_winkler::similarity("dixon", "dixon", &config).unwrap();
+//! assert!((score - 1.0).abs() < 1e-6);
+//! ```
+//!
 //! ## References
 //!
 //! - Jaro, M. A. (1989). "Advances in record linkage methodology"

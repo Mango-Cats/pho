@@ -11,6 +11,19 @@
 //! The edit costs are driven by phonetic groups in the config. Characters in the
 //! same group are cheaper to substitute, insert, or delete than characters in
 //! different groups.
+//!
+//! ## Example
+//!
+//! ```rust
+//! use pho::{algorithms::editex, config_io::parse_toml_file};
+//! use pho::algorithms::editex::config::EditexConfig;
+//!
+//! let config: EditexConfig = parse_toml_file("tests/config_sample_editex.toml").unwrap();
+//! let distance = editex::distance("Smith", "Smyth", &config).unwrap();
+//! let similarity = editex::similarity("Smith", "Smyth", &config).unwrap();
+//! assert!(distance >= 0.0);
+//! assert!((0.0..=1.0).contains(&similarity));
+//! ```
 
 pub mod config;
 pub mod edit;

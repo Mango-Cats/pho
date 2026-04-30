@@ -20,6 +20,17 @@
 //! IPA strings may contain multi-codepoint graphemes (e.g. letters with
 //! combining diacritics). To avoid splitting these incorrectly, inputs are
 //! tokenized into Unicode grapheme clusters.
+//!
+//! ## Example
+//!
+//! ```rust
+//! use pho::{algorithms::aline, config_io::parse_toml_file};
+//! use pho::algorithms::aline::config::AlineConfig;
+//!
+//! let config: AlineConfig = parse_toml_file("tests/config_sample_aline.toml").unwrap();
+//! let score = aline::similarity("s", "s", &config).unwrap();
+//! assert!((score - 1.0).abs() < 1e-6);
+//! ```
 
 mod alignment;
 pub mod config;
