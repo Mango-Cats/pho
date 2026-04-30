@@ -8,21 +8,17 @@ pub(crate) fn edit_distance(x: &[char], y: &[char], config: &LevenshteinConfig) 
     let x_length = x.len();
     let y_length = y.len();
 
-    // Flattened (x_length + 1) x (y_length + 1) DP table
     let mut distance = vec![0.0f32; (x_length + 1) * (y_length + 1)];
     let index = |i: usize, j: usize| -> usize { i * (y_length + 1) + j };
 
-    // Initialize first row: cost of inserting all characters of y
     for j in 1..=y_length {
         distance[index(0, j)] = distance[index(0, j - 1)] + config.costs.insert;
     }
 
-    // Initialize first column: cost of deleting all characters of x
     for i in 1..=x_length {
         distance[index(i, 0)] = distance[index(i - 1, 0)] + config.costs.delete;
     }
 
-    // Fill the DP table
     for i in 1..=x_length {
         for j in 1..=y_length {
             let deletion_cost = distance[index(i - 1, j)] + config.costs.delete;

@@ -4,7 +4,7 @@ use super::config::EditexConfig;
 
 /// Convert input into lowercase ASCII chars and validate each exists in the
 /// configured groups.
-pub(crate) fn tokenize_and_validate(
+pub(super) fn tokenize_and_validate(
     input: &str,
     config: &EditexConfig,
     input_name: &'static str,

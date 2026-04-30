@@ -20,4 +20,4 @@ mod distance;
 mod similarity;
 mod tokenize;
 
-pub use similarity::similarity;
+pub use similarity::{distance, similarity};

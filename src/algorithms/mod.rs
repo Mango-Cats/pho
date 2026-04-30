@@ -1,5 +1,4 @@
 pub mod aline;
-pub mod config_io;
 pub mod editex;
 pub mod jaro_winkler;
 pub mod levenshtein;

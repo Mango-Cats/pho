@@ -2,7 +2,7 @@ use super::config::EditexConfig;
 use super::edit::{delete, replace};
 
 /// Editex distance using substitution/insertion/deletion costs.
-pub(crate) fn edit_distance(x: &[char], y: &[char], config: &EditexConfig) -> f32 {
+pub(super) fn edit_distance(x: &[char], y: &[char], config: &EditexConfig) -> f32 {
     let m = x.len();
     let n = y.len();
 
@@ -34,7 +34,7 @@ pub(crate) fn edit_distance(x: &[char], y: &[char], config: &EditexConfig) -> f3
     d[idx(m, n)]
 }
 
-pub(crate) fn total_delete_cost(chars: &[char], config: &EditexConfig) -> f32 {
+pub(super) fn total_delete_cost(chars: &[char], config: &EditexConfig) -> f32 {
     let mut total = 0.0;
 
     for (idx, symbol) in chars.iter().enumerate() {

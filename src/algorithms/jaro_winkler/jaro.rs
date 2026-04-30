@@ -15,7 +15,6 @@ pub(crate) fn jaro_similarity(x: &[char], y: &[char]) -> f32 {
         return 0.0;
     }
 
-    // Maximum allowed distance for matching characters
     let match_distance = (x_length.max(y_length) / 2).saturating_sub(1);
 
     let mut x_matches = vec![false; x_length];
@@ -24,7 +23,6 @@ pub(crate) fn jaro_similarity(x: &[char], y: &[char]) -> f32 {
     let mut matching_characters = 0;
     let mut transpositions = 0;
 
-    // Find matching characters
     for i in 0..x_length {
         let start = i.saturating_sub(match_distance);
         let end = (i + match_distance + 1).min(y_length);
@@ -45,7 +43,6 @@ pub(crate) fn jaro_similarity(x: &[char], y: &[char]) -> f32 {
         return 0.0;
     }
 
-    // Count transpositions
     let mut y_position = 0;
     for i in 0..x_length {
         if !x_matches[i] {
@@ -66,7 +63,6 @@ pub(crate) fn jaro_similarity(x: &[char], y: &[char]) -> f32 {
     let matching_characters_f32 = matching_characters as f32;
     let transpositions_f32 = (transpositions / 2) as f32;
 
-    // Jaro similarity formula
     (matching_characters_f32 / x_length as f32
         + matching_characters_f32 / y_length as f32
         + (matching_characters_f32 - transpositions_f32) / matching_characters_f32)
