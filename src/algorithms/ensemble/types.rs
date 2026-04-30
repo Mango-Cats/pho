@@ -1,5 +1,4 @@
-use super::similarity;
-use crate::algorithms::{Algorithm, AlgorithmConfig, AlgorithmTrait};
+use crate::algorithms::{Algorithm, AlgorithmConfig};
 
 /// Bundle an algorithm with its config and ensemble weight.
 #[derive(Debug)]
