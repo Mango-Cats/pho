@@ -16,11 +16,11 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::levenshtein, config_io::parse_toml_file};
+//! use pho::{algorithms::levenshtein, config_io::read};
 //! use pho::algorithms::levenshtein::config::LevenshteinConfig;
 //!
 //! let config: LevenshteinConfig =
-//!     parse_toml_file("tests/config_sample_levenshtein.toml").unwrap();
+//!     read("tests/config_sample_levenshtein.toml").unwrap();
 //! let score = levenshtein::similarity("kitten", "sitting", &config).unwrap();
 //! assert!((0.0..=1.0).contains(&score));
 //! ```

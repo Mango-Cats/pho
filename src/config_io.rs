@@ -15,7 +15,7 @@ use std::fs;
 /// The target schema can be:
 ///     - pho::algorithms::aline::config::AlineConfig
 ///     - pho::algorithms::editex::config::EditexConfig
-pub fn parse_toml_file<T>(file_name: &str) -> Result<T, String>
+pub fn read<T>(file_name: &str) -> Result<T, String>
 where
     T: DeserializeOwned,
 {
@@ -29,13 +29,9 @@ where
 
 /// Serialize a config type into a pretty TOML document and write it to disk.
 ///
-/// This is the inverse of [`parse_toml_file`]. The caller owns the schema
+/// This is the inverse of [`read`]. The caller owns the schema
 /// through `T`.
-pub fn export_toml_file<T>(
-    file_name: &str,
-    config: &T,
-    append_extension: bool,
-) -> Result<(), String>
+pub fn export<T>(file_name: &str, config: &T, append_extension: bool) -> Result<(), String>
 where
     T: Serialize,
 {

@@ -24,10 +24,10 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::aline, config_io::parse_toml_file};
+//! use pho::{algorithms::aline, config_io::read};
 //! use pho::algorithms::aline::config::AlineConfig;
 //!
-//! let config: AlineConfig = parse_toml_file("tests/config_sample_aline.toml").unwrap();
+//! let config: AlineConfig = read("tests/config_sample_aline.toml").unwrap();
 //! let score = aline::similarity("s", "s", &config).unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);
 //! ```

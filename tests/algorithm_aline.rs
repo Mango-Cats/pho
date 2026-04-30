@@ -3,13 +3,13 @@ use pho::{
         AlgorithmTrait, AlineAlgorithm,
         aline::{self, config::AlineConfig},
     },
-    config_io::parse_toml_file,
+    config_io::read,
 };
 
 const TOML_PATH: &str = "tests/config_sample_aline.toml";
 
 fn load() -> AlineConfig {
-    match parse_toml_file(TOML_PATH) {
+    match read(TOML_PATH) {
         Ok(config) => config,
         Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
     }

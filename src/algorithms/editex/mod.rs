@@ -15,10 +15,10 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::editex, config_io::parse_toml_file};
+//! use pho::{algorithms::editex, config_io::read};
 //! use pho::algorithms::editex::config::EditexConfig;
 //!
-//! let config: EditexConfig = parse_toml_file("tests/config_sample_editex.toml").unwrap();
+//! let config: EditexConfig = read("tests/config_sample_editex.toml").unwrap();
 //! let distance = editex::distance("Smith", "Smyth", &config).unwrap();
 //! let similarity = editex::similarity("Smith", "Smyth", &config).unwrap();
 //! assert!(distance >= 0.0);

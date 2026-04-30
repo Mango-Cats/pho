@@ -8,11 +8,11 @@
 /// ```no_run
 /// use pho::{
 ///     algorithms::{AlineAlgorithm, AlgorithmTrait},
-///     config_io::parse_toml_file,
+///     config_io::read,
 /// };
 ///
 /// fn main() -> Result<(), String> {
-///     let config = parse_toml_file("tests/config_sample_aline.toml")?;
+///     let config = read("tests/config_sample_aline.toml")?;
 ///     let algo = AlineAlgorithm::new(config);
 ///     let _score = algo.similarity("s", "s")?;
 ///     Ok(())

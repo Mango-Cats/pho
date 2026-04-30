@@ -1,12 +1,12 @@
 use pho::{
     algorithms::editex::{self, config::EditexConfig},
-    config_io::parse_toml_file,
+    config_io::read,
 };
 
 const TOML_PATH: &str = "tests/config_sample_editex.toml";
 
 fn load() -> EditexConfig {
-    match parse_toml_file(TOML_PATH) {
+    match read(TOML_PATH) {
         Ok(config) => config,
         Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
     }
