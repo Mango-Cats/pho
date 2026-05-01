@@ -1,12 +1,12 @@
 use crate::algorithms::UnknownTokenError;
 
-use super::config::EditexConfig;
+use super::config::Editex;
 
 /// Convert input into lowercase ASCII chars and validate each exists in the
 /// configured groups.
 pub(super) fn tokenize_and_validate(
     input: &str,
-    config: &EditexConfig,
+    config: &Editex,
     input_name: &'static str,
 ) -> Result<Vec<char>, UnknownTokenError> {
     let chars: Vec<char> = input.chars().map(|c| c.to_ascii_lowercase()).collect();

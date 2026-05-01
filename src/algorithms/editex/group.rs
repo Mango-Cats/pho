@@ -1,6 +1,6 @@
-use super::config::EditexConfig;
+use super::config::Editex;
 
-pub(super) fn same_group(a: char, b: char, config: &EditexConfig) -> bool {
+pub(super) fn same_group(a: char, b: char, config: &Editex) -> bool {
     let Some(a_groups) = config.group.get(&a) else {
         return false;
     };

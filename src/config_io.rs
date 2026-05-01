@@ -12,9 +12,11 @@ use std::fs::{self, read_to_string};
 /// The caller owns the target schema through `T`, which keeps this parser
 /// reusable across multiple algorithms.
 ///
-/// The target schema can be:
-///     - pho::algorithms::aline::config::AlineConfig
-///     - pho::algorithms::editex::config::EditexConfig
+/// The target schema can be any direct algorithm struct, for example:
+///     - pho::algorithms::Aline
+///     - pho::algorithms::Editex
+///     - pho::algorithms::JaroWinkler
+///     - pho::algorithms::Levenshtein
 pub fn import<T>(file_name: &str) -> Result<T, String>
 where
     T: DeserializeOwned,

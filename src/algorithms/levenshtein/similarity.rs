@@ -1,17 +1,13 @@
 use crate::algorithms::UnknownTokenError;
 
-use super::config::LevenshteinConfig;
+use super::config::Levenshtein;
 use super::distance::edit_distance;
 
 /// Compute normalized similarity between two strings using Levenshtein distance.
 ///
 /// Returns a score in $[0, 1]$ where 1.0 means identical strings and 0.0 means
 /// maximally dissimilar under the configured costs.
-pub(crate) fn similarity(
-    x: &str,
-    y: &str,
-    config: &LevenshteinConfig,
-) -> Result<f32, UnknownTokenError> {
+pub(crate) fn similarity(x: &str, y: &str, config: &Levenshtein) -> Result<f32, UnknownTokenError> {
     let x_processed = if config.case_insensitive {
         x.to_lowercase()
     } else {

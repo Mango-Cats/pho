@@ -9,7 +9,7 @@ pub use costs::Costs;
 /// This structure holds the cost parameters that control how
 /// different edit operations are weighted when computing string distance.
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct LevenshteinConfig {
+pub struct Levenshtein {
     /// Edit operation costs.
     pub costs: Costs,
     /// Whether to perform case-insensitive comparison.

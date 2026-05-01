@@ -1,10 +1,10 @@
-use super::config::LevenshteinConfig;
+use super::config::Levenshtein;
 
 /// Compute the Levenshtein edit distance between two character sequences.
 ///
 /// Uses a dynamic programming table where `distance[i][j]` represents the
 /// minimum cost to transform `x[0..i]` into `y[0..j]`.
-pub(crate) fn edit_distance(x: &[char], y: &[char], config: &LevenshteinConfig) -> f32 {
+pub(crate) fn edit_distance(x: &[char], y: &[char], config: &Levenshtein) -> f32 {
     let x_length = x.len();
     let y_length = y.len();
 

@@ -1,6 +1,6 @@
-use super::{config::EditexConfig, group::same_group};
+use super::{config::Editex, group::same_group};
 
-pub(super) fn replace(a: char, b: char, config: &EditexConfig) -> f32 {
+pub(super) fn replace(a: char, b: char, config: &Editex) -> f32 {
     if a == b {
         return 0.0;
     }
@@ -12,7 +12,7 @@ pub(super) fn replace(a: char, b: char, config: &EditexConfig) -> f32 {
     }
 }
 
-pub(super) fn delete(current: char, previous: Option<char>, config: &EditexConfig) -> f32 {
+pub(super) fn delete(current: char, previous: Option<char>, config: &Editex) -> f32 {
     let Some(previous) = previous else {
         return config.costs.diff;
     };

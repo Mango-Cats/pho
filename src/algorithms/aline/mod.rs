@@ -24,11 +24,9 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{AlineAlgorithm, AlgorithmTrait}, config_io::import};
-//! use pho::algorithms::aline::config::AlineConfig;
+//! use pho::{algorithms::{Aline, AlgorithmTrait}, config_io::import};
 //!
-//! let config: AlineConfig = import("tests/config_sample_aline.toml").unwrap();
-//! let algo = AlineAlgorithm::new(&config);
+//! let algo: Aline = import("tests/config_sample_aline.toml").unwrap();
 //! let score = algo.similarity("s", "s").unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);
 //! ```
@@ -38,28 +36,36 @@ pub mod config;
 mod scoring;
 mod tokenize;
 
-use crate::algorithms::UnknownTokenError;
+use crate::algorithms::{AlgorithmTrait, errors::AlgorithmErrors};
+
 use alignment::alignment_score;
-use config::AlineConfig;
+use config::Aline;
 use tokenize::tokenize_and_validate;
 
-/// Compute normalized phonetic similarity between two IPA strings.
-///
-/// Returns a score in $[0, 1]$ where 1.0 means identical and 0.0 means
-/// maximally dissimilar under the configured costs and feature weights.
-pub(crate) fn similarity(x: &str, y: &str, config: &AlineConfig) -> Result<f32, UnknownTokenError> {
-    let x_segments = tokenize_and_validate(x, config, "x")?;
-    let y_segments = tokenize_and_validate(y, config, "y")?;
+impl AlgorithmTrait for Aline {
+    /// Compute normalized phonetic similarity between two IPA strings.
+    ///
+    /// Returns a score in [0, 1] where 1.0 means identical and 0.0 means
+    /// maximally dissimilar under the configured costs and feature weights.
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmErrors> {
+        // Map the UnknownTokenError into the AlgorithmErrors enum
+        let x_valid =
+            tokenize_and_validate(x, self, "x").map_err(AlgorithmErrors::UnknownTokenError)?;
 
-    let score = alignment_score(&x_segments, &y_segments, config);
+        let y_valid =
+            tokenize_and_validate(y, self, "y").map_err(AlgorithmErrors::UnknownTokenError)?;
 
-    // Get the possible maximum similarity score to normalize `score`
-    let x_self = alignment_score(&x_segments, &x_segments, config);
-    let y_self = alignment_score(&y_segments, &y_segments, config);
-    let denom = x_self.max(y_self);
+        // If we reach this point, x_valid and y_valid are guaranteed to be Vec<String>
+        let score = alignment_score(&x_valid, &y_valid, self);
 
-    if denom == 0.0 {
-        return Ok(0.0);
+        let x_self = alignment_score(&x_valid, &x_valid, self);
+        let y_self = alignment_score(&y_valid, &y_valid, self);
+        let denom = x_self.max(y_self);
+
+        if denom == 0.0 {
+            return Ok(0.0);
+        }
+
+        Ok(score / denom)
     }
-    Ok(score / denom)
 }

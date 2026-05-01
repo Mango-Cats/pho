@@ -20,7 +20,7 @@ pub use phoneme_types::{CommonFeatures, ConsonantFeatures, PhoneticFeatures, Vow
 pub use salience::Salience;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct AlineConfig {
+pub struct Aline {
     pub costs: Costs,
     pub salience: Salience,
     pub values: FeatureValues,
@@ -28,7 +28,7 @@ pub struct AlineConfig {
     pub epsilon: f32,
 }
 
-impl AlineConfig {
+impl Aline {
     /// Validate documented invariants for this config.
     pub fn validate(&self) -> Result<(), String> {
         self.values.validate()

@@ -1,12 +1,12 @@
 use crate::algorithms::UnknownTokenError;
 
-use super::config::AlineConfig;
+use super::config::Aline;
 
 /// Split an IPA string into grapheme clusters, and validate each segment exists
 /// in the configured inventory.
 pub(crate) fn tokenize_and_validate(
     input: &str,
-    config: &AlineConfig,
+    config: &Aline,
     input_name: &'static str,
 ) -> Result<Vec<String>, UnknownTokenError> {
     use unicode_segmentation::UnicodeSegmentation;

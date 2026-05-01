@@ -2,14 +2,14 @@
 mod tests {
     use pho::{
         algorithms::aline::config::{
-            AlineConfig, Back, Binary, High, Manner, PhoneticFeatures, Place,
+            Aline, Back, Binary, High, Manner, PhoneticFeatures, Place,
         },
         config_io::import,
     };
 
     const TOML_PATH: &str = "tests/config_sample_aline.toml";
 
-    fn load() -> AlineConfig {
+    fn load() -> Aline {
         match import(TOML_PATH) {
             Ok(config) => config,
             Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
@@ -392,14 +392,14 @@ mod tests {
 
     #[test]
     fn rejects_non_toml_extension() {
-        let result: Result<AlineConfig, String> = import("notatoml.json");
+        let result: Result<Aline, String> = import("notatoml.json");
         assert!(result.is_err());
         assert_eq!(result.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let result: Result<AlineConfig, String> = import("nonexistent.toml");
+        let result: Result<Aline, String> = import("nonexistent.toml");
         assert!(result.is_err());
     }
 }

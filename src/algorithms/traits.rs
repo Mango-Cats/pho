@@ -1,3 +1,5 @@
+use crate::algorithms::errors::AlgorithmErrors;
+
 /// Common interface for similarity algorithms.
 ///
 /// Implementations should return a normalized similarity score and convert
@@ -7,17 +9,16 @@
 ///
 /// ```no_run
 /// use pho::{
-///     algorithms::{AlineAlgorithm, AlgorithmTrait},
+///     algorithms::{Aline, AlgorithmTrait},
 ///     config_io::import,
 /// };
 ///
 /// fn main() -> Result<(), String> {
-///     let config = import("tests/config_sample_aline.toml")?;
-///     let algo = AlineAlgorithm::new(&config);
-///     let _score = algo.similarity("s", "s")?;
+///     let config: Aline = import("tests/config_sample_aline.toml")?;
+///     let _score = config.similarity("s", "s")?;
 ///     Ok(())
 /// }
 /// ```
 pub trait AlgorithmTrait {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, String>;
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmErrors>;
 }

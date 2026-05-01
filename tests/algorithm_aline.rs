@@ -1,11 +1,11 @@
 use pho::{
-    algorithms::{AlgorithmTrait, AlineAlgorithm, aline::config::AlineConfig},
+    algorithms::{AlgorithmTrait, Aline},
     config_io::import,
 };
 
 const TOML_PATH: &str = "tests/config_sample_aline.toml";
 
-fn load() -> AlineConfig {
+fn load() -> Aline {
     match import(TOML_PATH) {
         Ok(config) => config,
         Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
@@ -23,16 +23,14 @@ fn assert_approx(actual: f32, expected: f32, tol: f32, word1: &str, word2: &str)
 #[test]
 fn self_similarity_is_one() {
     let config = load();
-    let algo = AlineAlgorithm::new(&config);
-    let score = algo.similarity("s", "s").unwrap();
+    let score = config.similarity("s", "s").unwrap();
     assert_approx(score, 1.0, 1e-6, "s", "s");
 }
 
 #[test]
 fn wrapper_self_similarity_is_one() {
     let config = load();
-    let algo = AlineAlgorithm::new(&config);
-    let score = algo.similarity("s", "s").unwrap();
+    let score = config.similarity("s", "s").unwrap();
     assert_approx(score, 1.0, 1e-6, "s", "s");
 }
 
@@ -41,7 +39,6 @@ fn matches_nltk_reference_similarity_table() {
     // Reference scores are from the NLTK ALINE implementation (Kondrak 2002)
     // using the same costs/salience/feature matrix.
     let config = load();
-    let algo = AlineAlgorithm::new(&config);
 
     let tol = 1e-3;
 
@@ -124,7 +121,7 @@ fn matches_nltk_reference_similarity_table() {
     ];
 
     for &(w1, w2, expected) in CASES {
-        let actual = algo.similarity(w1, w2).unwrap();
+        let actual = config.similarity(w1, w2).unwrap();
         assert_approx(actual, expected, tol, w1, w2);
     }
 }

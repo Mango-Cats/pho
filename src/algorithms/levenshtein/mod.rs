@@ -16,12 +16,10 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{AlgorithmTrait, LevenshteinAlgorithm}, config_io::import};
-//! use pho::algorithms::levenshtein::config::LevenshteinConfig;
+//! use pho::{algorithms::{Levenshtein, AlgorithmTrait}, config_io::import};
 //!
-//! let config: LevenshteinConfig =
+//! let algo: Levenshtein =
 //!     import("tests/config_sample_levenshtein.toml").unwrap();
-//! let algo = LevenshteinAlgorithm::new(&config);
 //! let score = algo.similarity("kitten", "sitting").unwrap();
 //! assert!((0.0..=1.0).contains(&score));
 //! ```
@@ -36,4 +34,14 @@ pub mod config;
 mod distance;
 mod similarity;
 
+use crate::algorithms::AlgorithmTrait;
+
+use config::Levenshtein;
+
 pub(crate) use similarity::similarity;
+
+impl AlgorithmTrait for Levenshtein {
+	fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
+		similarity(x, y, self).map_err(|e| e.to_string())
+	}
+}

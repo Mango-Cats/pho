@@ -1,5 +1,10 @@
 use std::{error::Error, fmt};
 
+pub enum AlgorithmErrors {
+    UnknownTokenError(UnknownTokenError),
+    Special(String),
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UnknownTokenError {
     pub token: String,

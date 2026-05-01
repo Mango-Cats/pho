@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 /// The Jaro-Winkler metric is a variant of the Jaro distance metric that
 /// gives more favorable ratings to strings with common prefixes.
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct JaroWinklerConfig {
+pub struct JaroWinkler {
     /// Scaling factor for the common prefix bonus.
     ///
     /// Standard value is 0.1. Higher values give more weight to matching
@@ -23,7 +23,7 @@ pub struct JaroWinklerConfig {
     pub case_insensitive: bool,
 }
 
-impl JaroWinklerConfig {
+impl JaroWinkler {
     /// Validate documented invariants for this config.
     pub fn validate(&self) -> Result<(), String> {
         if !(0.0..=0.25).contains(&self.prefix_scale) {

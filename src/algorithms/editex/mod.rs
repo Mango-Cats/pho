@@ -15,11 +15,9 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{AlgorithmTrait, EditexAlgorithm}, config_io::import};
-//! use pho::algorithms::editex::config::EditexConfig;
+//! use pho::{algorithms::{Editex, AlgorithmTrait}, config_io::import};
 //!
-//! let config: EditexConfig = import("tests/config_sample_editex.toml").unwrap();
-//! let algo = EditexAlgorithm::new(&config);
+//! let algo: Editex = import("tests/config_sample_editex.toml").unwrap();
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
 //! assert!((0.0..=1.0).contains(&similarity));
 //! ```
@@ -32,4 +30,14 @@ mod distance;
 mod similarity;
 mod tokenize;
 
+use crate::algorithms::AlgorithmTrait;
+
+use config::Editex;
+
 pub(crate) use similarity::similarity;
+
+impl AlgorithmTrait for Editex {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
+        similarity(x, y, self).map_err(|e| e.to_string())
+    }
+}

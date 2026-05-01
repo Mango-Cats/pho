@@ -1,8 +1,8 @@
-use super::config::{AlineConfig, Binary, FeatureValues, PhoneticFeatures, Salience};
+use super::config::{Aline, Binary, FeatureValues, PhoneticFeatures, Salience};
 
 /// Score for an insertion/deletion (indel). Constant in ALINE.
 #[inline]
-pub(crate) fn indel_score(config: &AlineConfig) -> f32 {
+pub(crate) fn indel_score(config: &Aline) -> f32 {
     config.costs.skip as f32
 }
 
@@ -11,7 +11,7 @@ pub(crate) fn indel_score(config: &AlineConfig) -> f32 {
 /// Mirrors NLTK's `sigma_sub(p, q)`:
 /// `C_sub - delta(p, q) - V(p) - V(q)`
 #[inline]
-pub(crate) fn substitution_score(p: &str, q: &str, config: &AlineConfig) -> f32 {
+pub(crate) fn substitution_score(p: &str, q: &str, config: &Aline) -> f32 {
     let c_sub = config.costs.substitute as f32;
     c_sub
         - feature_distance(p, q, &config.values, &config.salience, config)
@@ -24,7 +24,7 @@ pub(crate) fn substitution_score(p: &str, q: &str, config: &AlineConfig) -> f32 
 /// Mirrors NLTK's `sigma_exp(p, q1q2)`:
 /// `C_exp - delta(p, q1) - delta(p, q2) - V(p) - max(V(q1), V(q2))`.
 #[inline]
-pub(crate) fn expansion_score(p: &str, q1: &str, q2: &str, config: &AlineConfig) -> f32 {
+pub(crate) fn expansion_score(p: &str, q1: &str, q2: &str, config: &Aline) -> f32 {
     let c_exp = config.costs.expand_compress as f32;
     let v_p = vowel_weight(p, config);
     let v_q = vowel_weight(q1, config).max(vowel_weight(q2, config));
@@ -39,7 +39,7 @@ pub(crate) fn expansion_score(p: &str, q1: &str, q2: &str, config: &AlineConfig)
 ///
 /// Mirrors NLTK's `V(p)`: 0 for consonants, `C_vwl` for vowels.
 #[inline]
-fn vowel_weight(segment: &str, config: &AlineConfig) -> f32 {
+fn vowel_weight(segment: &str, config: &Aline) -> f32 {
     let Some(sound) = config.sounds.get(segment) else {
         return 0.0;
     };
@@ -61,7 +61,7 @@ fn feature_distance(
     q: &str,
     values: &FeatureValues,
     salience: &Salience,
-    config: &AlineConfig,
+    config: &Aline,
 ) -> f32 {
     let p_sound = &config.sounds[p];
     let q_sound = &config.sounds[q];

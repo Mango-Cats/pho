@@ -7,7 +7,7 @@ pub mod costs;
 pub use costs::Costs;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct EditexConfig {
+pub struct Editex {
     pub costs: Costs,
     pub group: HashMap<char, Vec<usize>>,
 }

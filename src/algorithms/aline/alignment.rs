@@ -1,10 +1,10 @@
-use super::config::AlineConfig;
+use super::config::Aline;
 use super::scoring::{expansion_score, indel_score, substitution_score};
 
 /// Raw optimal local alignment score.
 ///
 /// Mirrors NLTK's `_align_score` DP, including expansion/compression edits.
-pub(crate) fn alignment_score(x: &[String], y: &[String], config: &AlineConfig) -> f32 {
+pub(crate) fn alignment_score(x: &[String], y: &[String], config: &Aline) -> f32 {
     let m = x.len();
     let n = y.len();
 
