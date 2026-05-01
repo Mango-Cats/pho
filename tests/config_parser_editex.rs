@@ -2,12 +2,12 @@
 mod tests {
     use core::panic;
 
-    use pho::{algorithms::editex::config::EditexConfig, config_io::read};
+    use pho::{algorithms::editex::config::EditexConfig, config_io::import};
 
     const TOML_PATH: &str = "tests/config_sample_editex.toml";
 
     fn load() -> EditexConfig {
-        match read(TOML_PATH) {
+        match import(TOML_PATH) {
             Ok(config) => config,
             Err(e) => panic!("Can't open {TOML_PATH}: {e}."),
         }
@@ -55,14 +55,14 @@ mod tests {
 
     #[test]
     fn rejects_non_toml_extension() {
-        let result: Result<EditexConfig, String> = read("notatoml.json");
+        let result: Result<EditexConfig, String> = import("notatoml.json");
         assert!(result.is_err());
         assert_eq!(result.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let result: Result<EditexConfig, String> = read("nonexistent.toml");
+        let result: Result<EditexConfig, String> = import("nonexistent.toml");
         assert!(result.is_err());
     }
 }

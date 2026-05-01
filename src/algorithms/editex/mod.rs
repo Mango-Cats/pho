@@ -15,10 +15,10 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{AlgorithmTrait, EditexAlgorithm}, config_io::read};
+//! use pho::{algorithms::{AlgorithmTrait, EditexAlgorithm}, config_io::import};
 //! use pho::algorithms::editex::config::EditexConfig;
 //!
-//! let config: EditexConfig = read("tests/config_sample_editex.toml").unwrap();
+//! let config: EditexConfig = import("tests/config_sample_editex.toml").unwrap();
 //! let algo = EditexAlgorithm::new(&config);
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
 //! assert!((0.0..=1.0).contains(&similarity));

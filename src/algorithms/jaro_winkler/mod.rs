@@ -25,11 +25,11 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{AlgorithmTrait, JaroWinklerAlgorithm}, config_io::read};
+//! use pho::{algorithms::{AlgorithmTrait, JaroWinklerAlgorithm}, config_io::import};
 //! use pho::algorithms::jaro_winkler::config::JaroWinklerConfig;
 //!
 //! let config: JaroWinklerConfig =
-//!     read("tests/config_sample_jaro_winkler.toml").unwrap();
+//!     import("tests/config_sample_jaro_winkler.toml").unwrap();
 //! let algo = JaroWinklerAlgorithm::new(&config);
 //! let score = algo.similarity("dixon", "dixon").unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);

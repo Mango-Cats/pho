@@ -5,7 +5,7 @@
 //! type.
 
 use serde::{Serialize, de::DeserializeOwned};
-use std::fs;
+use std::fs::{self, read_to_string};
 
 /// Load and deserialize a TOML document into any config type.
 ///
@@ -15,7 +15,7 @@ use std::fs;
 /// The target schema can be:
 ///     - pho::algorithms::aline::config::AlineConfig
 ///     - pho::algorithms::editex::config::EditexConfig
-pub fn read<T>(file_name: &str) -> Result<T, String>
+pub fn import<T>(file_name: &str) -> Result<T, String>
 where
     T: DeserializeOwned,
 {
@@ -23,7 +23,7 @@ where
         return Err("file must be a .toml".to_string());
     }
 
-    let content = fs::read_to_string(file_name).map_err(|e| e.to_string())?;
+    let content = read_to_string(file_name).map_err(|e| e.to_string())?;
     toml::from_str(&content).map_err(|e| format!("TOML parse error: {e}"))
 }
 
