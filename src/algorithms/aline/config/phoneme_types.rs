@@ -1,43 +1,88 @@
 use serde::{Deserialize, Serialize};
 
-use super::feature_types::{Back, Binary, High, Manner, Place};
-use super::phoneme_trait::Phoneme;
+use crate::algorithms::aline::config::{Back, Binary, High, Manner, Phoneme, Place};
 
-/// Features shared by every sound. [`Phoneme`] is implemented here once
-/// to avoid duplicating getters across [`ConsonantFeatures`] and [`VowelFeatures`].
+/// Features shared by every sound.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CommonFeatures {
-    pub place: Place,
-    pub manner: Manner,
-    pub syllabic: Binary,
-    pub voice: Binary,
-    pub nasal: Binary,
-    pub retroflex: Binary,
-    pub lateral: Binary,
+    pub(crate) place: Place,
+    pub(crate) manner: Manner,
+    pub(crate) syllabic: Binary,
+    pub(crate) voice: Binary,
+    pub(crate) nasal: Binary,
+    pub(crate) retroflex: Binary,
+    pub(crate) lateral: Binary,
+}
+
+impl CommonFeatures {
+    /// Infallible constructor for CommonFeatures
+    pub fn new(
+        place: Place,
+        manner: Manner,
+        syllabic: Binary,
+        voice: Binary,
+        nasal: Binary,
+        retroflex: Binary,
+        lateral: Binary,
+    ) -> Self {
+        Self {
+            place,
+            manner,
+            syllabic,
+            voice,
+            nasal,
+            retroflex,
+            lateral,
+        }
+    }
 }
 
 /// Stores the phonetic features of a consonant sound.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ConsonantFeatures {
     #[serde(flatten)]
-    pub common: CommonFeatures,
-    pub aspirated: Binary,
+    pub(crate) common: CommonFeatures,
+    pub(crate) aspirated: Binary,
+}
+
+impl ConsonantFeatures {
+    /// Infallible constructor for ConsonantFeatures
+    pub fn new(common: CommonFeatures, aspirated: Binary) -> Self {
+        Self { common, aspirated }
+    }
 }
 
 /// Stores the phonetic features of a vowel sound.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct VowelFeatures {
     #[serde(flatten)]
-    pub common: CommonFeatures,
-    pub back: Back,
-    pub high: High,
-    pub long: Binary,
-    pub round: Binary,
+    pub(crate) common: CommonFeatures,
+    pub(crate) back: Back,
+    pub(crate) high: High,
+    pub(crate) long: Binary,
+    pub(crate) round: Binary,
 }
 
-/// An enum consonant and vowel features. Pattern match on
-/// this when you need sound-specific features; use `.common()` when you
-/// only need the common interface.
+impl VowelFeatures {
+    /// Infallible constructor for VowelFeatures
+    pub fn new(
+        common: CommonFeatures,
+        back: Back,
+        high: High,
+        long: Binary,
+        round: Binary,
+    ) -> Self {
+        Self {
+            common,
+            back,
+            high,
+            long,
+            round,
+        }
+    }
+}
+
+/// An enum consonant and vowel features.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum PhoneticFeatures {

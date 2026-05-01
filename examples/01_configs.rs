@@ -16,14 +16,7 @@ fn main() {
     // ## Manually Constructing Configs
     // Most configs do not have a constructor (i.e., `::new()`). So, we
     // create them directly.
-    let config = Levenshtein {
-        costs: Costs {
-            insert: 1.0,
-            delete: 2.0,
-            substitute: 3.0,
-        },
-        case_insensitive: true,
-    };
+    let config = Levenshtein::new(Costs::new(1., 2., 3.), true);
 
     println!("Constructed config: {:?}", config);
 

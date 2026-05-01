@@ -7,9 +7,19 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Costs {
     /// Cost for inserting a character.
-    pub insert: f32,
+    pub(crate) insert: f32,
     /// Cost for deleting a character.
-    pub delete: f32,
+    pub(crate) delete: f32,
     /// Cost for substituting one character with another.
-    pub substitute: f32,
+    pub(crate) substitute: f32,
+}
+
+impl Costs {
+    pub fn new(insert: f32, delete: f32, substitute: f32) -> Self {
+        Self {
+            insert,
+            delete,
+            substitute,
+        }
+    }
 }

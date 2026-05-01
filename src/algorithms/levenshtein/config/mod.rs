@@ -11,7 +11,16 @@ pub use costs::Costs;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Levenshtein {
     /// Edit operation costs.
-    pub costs: Costs,
+    pub(crate) costs: Costs,
     /// Whether to perform case-insensitive comparison.
-    pub case_insensitive: bool,
+    pub(crate) case_insensitive: bool,
+}
+
+impl Levenshtein {
+    pub fn new(costs: Costs, case_insensitive: bool) -> Self {
+        Self {
+            costs,
+            case_insensitive,
+        }
+    }
 }

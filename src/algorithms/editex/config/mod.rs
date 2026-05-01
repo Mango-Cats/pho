@@ -8,6 +8,12 @@ pub use costs::Costs;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Editex {
-    pub costs: Costs,
-    pub group: HashMap<char, Vec<usize>>,
+    pub(crate) costs: Costs,
+    pub(crate) group: HashMap<char, Vec<usize>>,
+}
+
+impl Editex {
+    pub fn new(costs: Costs, group: HashMap<char, Vec<usize>>) -> Self {
+        Self { costs, group }
+    }
 }

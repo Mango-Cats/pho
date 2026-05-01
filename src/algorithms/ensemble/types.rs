@@ -25,12 +25,10 @@ pub struct EnsembleAlgorithm {
 }
 
 impl EnsembleAlgorithm {
-    /// Validate non-empty, finite, and normalized weights.
     pub fn validate(&self) -> Result<(), String> {
         if self.algorithms.is_empty() {
             return Err("ensemble algorithms must be non-empty".to_string());
         }
-
         let mut total = 0.0f32;
         for weighted in &self.algorithms {
             if !weighted.weight.is_finite() {
@@ -41,11 +39,15 @@ impl EnsembleAlgorithm {
             }
             total += weighted.weight;
         }
-
         if (total - 1.0).abs() >= 0.0001 {
-            return Err("ensemble weights must sum to 1.0".to_string());
+            return Err(format!("ensemble weights must sum to 1.0, got {}", total));
         }
-
         Ok(())
+    }
+
+    pub fn try_new(algorithms: Vec<WeightedAlgorithm>) -> Result<Self, String> {
+        let ensemble = Self { algorithms };
+        ensemble.validate()?;
+        Ok(ensemble)
     }
 }

@@ -29,8 +29,32 @@ pub struct Aline {
 }
 
 impl Aline {
-    /// Validate documented invariants for this config.
     pub fn validate(&self) -> Result<(), String> {
-        self.values.validate()
+        // Cascade validation down to the child struct
+        self.values.validate()?;
+
+        if self.epsilon < 0.0 {
+            return Err("Epsilon must be non-negative".to_string());
+        }
+
+        Ok(())
+    }
+
+    pub fn try_new(
+        costs: Costs,
+        salience: Salience,
+        values: FeatureValues,
+        sounds: HashMap<String, PhoneticFeatures>,
+        epsilon: f32,
+    ) -> Result<Self, String> {
+        let config = Self {
+            costs,
+            salience,
+            values,
+            sounds,
+            epsilon,
+        };
+        config.validate()?;
+        Ok(config)
     }
 }

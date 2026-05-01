@@ -11,25 +11,41 @@ pub struct JaroWinkler {
     /// Standard value is 0.1. Higher values give more weight to matching
     /// prefixes. Must be in range [0.0, 0.25] to ensure the similarity
     /// score remains in [0, 1].
-    pub prefix_scale: f32,
+    pub(crate) prefix_scale: f32,
 
     /// Maximum length of common prefix to consider.
     ///
     /// Standard value is 4. Only the first `max_prefix_length` characters
     /// are considered when computing the prefix bonus.
-    pub max_prefix_length: usize,
+    pub(crate) max_prefix_length: usize,
 
     /// Whether to perform case-insensitive comparison.
-    pub case_insensitive: bool,
+    pub(crate) case_insensitive: bool,
 }
 
 impl JaroWinkler {
-    /// Validate documented invariants for this config.
     pub fn validate(&self) -> Result<(), String> {
         if !(0.0..=0.25).contains(&self.prefix_scale) {
-            return Err("prefix_scale must be in [0.0, 0.25]".to_string());
+            return Err(format!(
+                "prefix_scale must be in [0.0, 0.25], got {}",
+                self.prefix_scale
+            ));
         }
-
         Ok(())
+    }
+
+    pub fn try_new(
+        prefix_scale: f32,
+        max_prefix_length: usize,
+        case_insensitive: bool,
+    ) -> Result<Self, String> {
+        let config = Self {
+            prefix_scale,
+            max_prefix_length,
+            case_insensitive,
+        };
+
+        config.validate()?;
+        Ok(config)
     }
 }

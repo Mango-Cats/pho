@@ -30,8 +30,19 @@ use serde::{Deserialize, Serialize};
 /// - <https://dl.acm.org/doi/book/10.5555/936774>
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Costs {
-    pub skip: i32,
-    pub substitute: i32,
-    pub expand_compress: i32,
-    pub vowel_consonant: i32,
+    pub(crate) skip: i32,
+    pub(crate) substitute: i32,
+    pub(crate) expand_compress: i32,
+    pub(crate) vowel_consonant: i32,
+}
+
+impl Costs {
+    pub fn new(skip: i32, substitute: i32, expand_compress: i32, vowel_consonant: i32) -> Self {
+        Self {
+            skip,
+            substitute,
+            expand_compress,
+            vowel_consonant,
+        }
+    }
 }
