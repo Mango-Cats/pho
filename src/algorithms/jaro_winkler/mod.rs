@@ -25,12 +25,13 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::jaro_winkler, config_io::read};
+//! use pho::{algorithms::{AlgorithmTrait, JaroWinklerAlgorithm}, config_io::read};
 //! use pho::algorithms::jaro_winkler::config::JaroWinklerConfig;
 //!
 //! let config: JaroWinklerConfig =
 //!     read("tests/config_sample_jaro_winkler.toml").unwrap();
-//! let score = jaro_winkler::similarity("dixon", "dixon", &config).unwrap();
+//! let algo = JaroWinklerAlgorithm::new(&config);
+//! let score = algo.similarity("dixon", "dixon").unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);
 //! ```
 //!
@@ -44,4 +45,4 @@ pub mod config;
 mod jaro;
 mod winkler;
 
-pub use winkler::similarity;
+pub(crate) use winkler::similarity;

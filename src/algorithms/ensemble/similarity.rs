@@ -1,5 +1,3 @@
-use crate::algorithms::Algorithm;
-
 use super::types::{EnsembleAlgorithm, WeightedAlgorithm};
 
 fn weighted_score(
@@ -17,7 +15,7 @@ fn weighted_score(
         return Ok(None);
     }
 
-    let score = Algorithm::similarity(entry.algorithm, x, y, Some(&entry.config))?;
+    let score = entry.algorithm.similarity(x, y)?;
     Ok(Some((score, entry.weight)))
 }
 

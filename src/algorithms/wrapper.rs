@@ -1,4 +1,9 @@
-use crate::algorithms::{aline, editex, jaro_winkler, levenshtein};
+use crate::algorithms::{
+    aline::{self, config::AlineConfig},
+    editex::{self, config::EditexConfig},
+    jaro_winkler::{self, config::JaroWinklerConfig},
+    levenshtein::{self, config::LevenshteinConfig},
+};
 
 use super::AlgorithmTrait;
 
@@ -15,8 +20,10 @@ macro_rules! define_algorithm {
 
         impl $name {
             /// Build a new algorithm wrapper from a config value.
-            pub fn new(config: $config) -> Self {
-                Self { config }
+            pub fn new(config: &$config) -> Self {
+                Self {
+                    config: config.clone(),
+                }
             }
         }
 
@@ -28,15 +35,7 @@ macro_rules! define_algorithm {
     };
 }
 
-define_algorithm!(AlineAlgorithm, aline::config::AlineConfig, aline);
-define_algorithm!(EditexAlgorithm, editex::config::EditexConfig, editex);
-define_algorithm!(
-    JaroWinklerAlgorithm,
-    jaro_winkler::config::JaroWinklerConfig,
-    jaro_winkler
-);
-define_algorithm!(
-    LevenshteinAlgorithm,
-    levenshtein::config::LevenshteinConfig,
-    levenshtein
-);
+define_algorithm!(AlineAlgorithm, AlineConfig, aline);
+define_algorithm!(EditexAlgorithm, EditexConfig, editex);
+define_algorithm!(JaroWinklerAlgorithm, JaroWinklerConfig, jaro_winkler);
+define_algorithm!(LevenshteinAlgorithm, LevenshteinConfig, levenshtein);

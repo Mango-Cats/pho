@@ -13,7 +13,7 @@
 ///
 /// fn main() -> Result<(), String> {
 ///     let config = read("tests/config_sample_aline.toml")?;
-///     let algo = AlineAlgorithm::new(config);
+///     let algo = AlineAlgorithm::new(&config);
 ///     let _score = algo.similarity("s", "s")?;
 ///     Ok(())
 /// }

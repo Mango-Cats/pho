@@ -8,7 +8,11 @@ use super::jaro::jaro_similarity;
 /// Returns a score in $[0, 1]$ where 1.0 means identical strings and 0.0
 /// means no similarity. The Jaro-Winkler metric applies a prefix bonus to
 /// the base Jaro similarity.
-pub fn similarity(x: &str, y: &str, config: &JaroWinklerConfig) -> Result<f32, UnknownTokenError> {
+pub(crate) fn similarity(
+    x: &str,
+    y: &str,
+    config: &JaroWinklerConfig,
+) -> Result<f32, UnknownTokenError> {
     let x_processed = if config.case_insensitive {
         x.to_lowercase()
     } else {

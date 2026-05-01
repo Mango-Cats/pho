@@ -19,7 +19,7 @@ pub use phoneme_trait::Phoneme;
 pub use phoneme_types::{CommonFeatures, ConsonantFeatures, PhoneticFeatures, VowelFeatures};
 pub use salience::Salience;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AlineConfig {
     pub costs: Costs,
     pub salience: Salience,

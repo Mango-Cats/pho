@@ -1,18 +1,18 @@
-use crate::algorithms::{Algorithm, AlgorithmConfig};
+use crate::algorithms::AlgorithmTrait;
 
 /// Bundle an algorithm with its config and ensemble weight.
-#[derive(Debug)]
 pub struct WeightedAlgorithm {
-    pub algorithm: Algorithm,
-    pub config: AlgorithmConfig,
+    pub algorithm: Box<dyn AlgorithmTrait>,
     pub weight: f32,
 }
 
 impl WeightedAlgorithm {
-    pub fn new(algorithm: Algorithm, config: AlgorithmConfig, weight: f32) -> Self {
+    pub fn new<A>(algorithm: A, weight: f32) -> Self
+    where
+        A: AlgorithmTrait + 'static,
+    {
         Self {
-            algorithm,
-            config,
+            algorithm: Box::new(algorithm),
             weight,
         }
     }

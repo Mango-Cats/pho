@@ -15,13 +15,12 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::editex, config_io::read};
+//! use pho::{algorithms::{AlgorithmTrait, EditexAlgorithm}, config_io::read};
 //! use pho::algorithms::editex::config::EditexConfig;
 //!
 //! let config: EditexConfig = read("tests/config_sample_editex.toml").unwrap();
-//! let distance = editex::distance("Smith", "Smyth", &config).unwrap();
-//! let similarity = editex::similarity("Smith", "Smyth", &config).unwrap();
-//! assert!(distance >= 0.0);
+//! let algo = EditexAlgorithm::new(&config);
+//! let similarity = algo.similarity("Smith", "Smyth").unwrap();
 //! assert!((0.0..=1.0).contains(&similarity));
 //! ```
 
@@ -33,4 +32,4 @@ mod distance;
 mod similarity;
 mod tokenize;
 
-pub use similarity::{distance, similarity};
+pub(crate) use similarity::similarity;

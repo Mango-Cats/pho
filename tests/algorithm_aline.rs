@@ -1,8 +1,5 @@
 use pho::{
-    algorithms::{
-        AlgorithmTrait, AlineAlgorithm,
-        aline::{self, config::AlineConfig},
-    },
+    algorithms::{AlgorithmTrait, AlineAlgorithm, aline::config::AlineConfig},
     config_io::read,
 };
 
@@ -26,14 +23,15 @@ fn assert_approx(actual: f32, expected: f32, tol: f32, word1: &str, word2: &str)
 #[test]
 fn self_similarity_is_one() {
     let config = load();
-    let score = aline::similarity("s", "s", &config).unwrap();
+    let algo = AlineAlgorithm::new(&config);
+    let score = algo.similarity("s", "s").unwrap();
     assert_approx(score, 1.0, 1e-6, "s", "s");
 }
 
 #[test]
 fn wrapper_self_similarity_is_one() {
     let config = load();
-    let algo = AlineAlgorithm::new(config);
+    let algo = AlineAlgorithm::new(&config);
     let score = algo.similarity("s", "s").unwrap();
     assert_approx(score, 1.0, 1e-6, "s", "s");
 }
@@ -43,6 +41,7 @@ fn matches_nltk_reference_similarity_table() {
     // Reference scores are from the NLTK ALINE implementation (Kondrak 2002)
     // using the same costs/salience/feature matrix.
     let config = load();
+    let algo = AlineAlgorithm::new(&config);
 
     let tol = 1e-3;
 
@@ -125,7 +124,7 @@ fn matches_nltk_reference_similarity_table() {
     ];
 
     for &(w1, w2, expected) in CASES {
-        let actual = aline::similarity(w1, w2, &config).unwrap();
+        let actual = algo.similarity(w1, w2).unwrap();
         assert_approx(actual, expected, tol, w1, w2);
     }
 }

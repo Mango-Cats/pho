@@ -24,11 +24,12 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::aline, config_io::read};
+//! use pho::{algorithms::{AlineAlgorithm, AlgorithmTrait}, config_io::read};
 //! use pho::algorithms::aline::config::AlineConfig;
 //!
 //! let config: AlineConfig = read("tests/config_sample_aline.toml").unwrap();
-//! let score = aline::similarity("s", "s", &config).unwrap();
+//! let algo = AlineAlgorithm::new(&config);
+//! let score = algo.similarity("s", "s").unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);
 //! ```
 
@@ -46,7 +47,7 @@ use tokenize::tokenize_and_validate;
 ///
 /// Returns a score in $[0, 1]$ where 1.0 means identical and 0.0 means
 /// maximally dissimilar under the configured costs and feature weights.
-pub fn similarity(x: &str, y: &str, config: &AlineConfig) -> Result<f32, UnknownTokenError> {
+pub(crate) fn similarity(x: &str, y: &str, config: &AlineConfig) -> Result<f32, UnknownTokenError> {
     let x_segments = tokenize_and_validate(x, config, "x")?;
     let y_segments = tokenize_and_validate(y, config, "y")?;
 
