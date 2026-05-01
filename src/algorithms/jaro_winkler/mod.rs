@@ -43,14 +43,42 @@ pub mod config;
 mod jaro;
 mod winkler;
 
-use crate::algorithms::AlgorithmTrait;
+use crate::algorithms::{
+    AlgorithmTrait,
+    errors::AlgorithmError,
+    jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
+};
 
 use config::JaroWinkler;
 
-pub(crate) use winkler::similarity;
-
 impl AlgorithmTrait for JaroWinkler {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
-        similarity(x, y, self).map_err(|e| e.to_string())
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+        let x_processed = if self.case_insensitive {
+            x.to_lowercase()
+        } else {
+            x.to_string()
+        };
+
+        let y_processed = if self.case_insensitive {
+            y.to_lowercase()
+        } else {
+            y.to_string()
+        };
+
+        let x_chars: Vec<char> = x_processed.chars().collect();
+        let y_chars: Vec<char> = y_processed.chars().collect();
+
+        let jaro_score = jaro_similarity(&x_chars, &y_chars);
+
+        if jaro_score == 0.0 {
+            return Ok(0.0);
+        }
+
+        let prefix_length = common_prefix_length(&x_chars, &y_chars, self.max_prefix_length);
+
+        let jaro_winkler_score =
+            jaro_score + (prefix_length as f32 * self.prefix_scale * (1.0 - jaro_score));
+
+        Ok(jaro_winkler_score.clamp(0.0, 1.0))
     }
 }

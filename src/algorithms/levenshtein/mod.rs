@@ -30,18 +30,39 @@
 //!   insertions, and reversals". Soviet Physics Doklady.
 
 pub mod config;
-
 mod distance;
-mod similarity;
 
-use crate::algorithms::AlgorithmTrait;
+use crate::algorithms::{
+    AlgorithmTrait, errors::AlgorithmError, levenshtein::distance::edit_distance,
+};
 
 use config::Levenshtein;
 
-pub(crate) use similarity::similarity;
-
 impl AlgorithmTrait for Levenshtein {
-	fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
-		similarity(x, y, self).map_err(|e| e.to_string())
-	}
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+        let x_processed = if self.case_insensitive {
+            x.to_lowercase()
+        } else {
+            x.to_string()
+        };
+
+        let y_processed = if self.case_insensitive {
+            y.to_lowercase()
+        } else {
+            y.to_string()
+        };
+
+        let x_chars: Vec<char> = x_processed.chars().collect();
+        let y_chars: Vec<char> = y_processed.chars().collect();
+
+        let distance = edit_distance(&x_chars, &y_chars, self);
+        let max_length = x_chars.len().max(y_chars.len()) as f32;
+
+        if max_length == 0.0 {
+            return Ok(1.0);
+        }
+
+        let normalized_similarity = 1.0 - (distance / max_length);
+        Ok(normalized_similarity.clamp(0.0, 1.0))
+    }
 }

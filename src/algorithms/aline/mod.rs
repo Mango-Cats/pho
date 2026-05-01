@@ -36,26 +36,16 @@ pub mod config;
 mod scoring;
 mod tokenize;
 
-use crate::algorithms::{AlgorithmTrait, errors::AlgorithmErrors};
-
+use crate::algorithms::{AlgorithmTrait, errors::AlgorithmError};
 use alignment::alignment_score;
 use config::Aline;
 use tokenize::tokenize_and_validate;
 
 impl AlgorithmTrait for Aline {
-    /// Compute normalized phonetic similarity between two IPA strings.
-    ///
-    /// Returns a score in [0, 1] where 1.0 means identical and 0.0 means
-    /// maximally dissimilar under the configured costs and feature weights.
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmErrors> {
-        // Map the UnknownTokenError into the AlgorithmErrors enum
-        let x_valid =
-            tokenize_and_validate(x, self, "x").map_err(AlgorithmErrors::UnknownTokenError)?;
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+        let x_valid = tokenize_and_validate(x, self, "x")?;
+        let y_valid = tokenize_and_validate(y, self, "y")?;
 
-        let y_valid =
-            tokenize_and_validate(y, self, "y").map_err(AlgorithmErrors::UnknownTokenError)?;
-
-        // If we reach this point, x_valid and y_valid are guaranteed to be Vec<String>
         let score = alignment_score(&x_valid, &y_valid, self);
 
         let x_self = alignment_score(&x_valid, &x_valid, self);

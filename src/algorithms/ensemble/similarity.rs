@@ -1,15 +1,21 @@
+use crate::algorithms::errors::AlgorithmError;
+
 use super::types::{EnsembleAlgorithm, WeightedAlgorithm};
 
 fn weighted_score(
     entry: &WeightedAlgorithm,
     x: &str,
     y: &str,
-) -> Result<Option<(f32, f32)>, String> {
+) -> Result<Option<(f32, f32)>, AlgorithmError> {
     if !entry.weight.is_finite() {
-        return Err("EnsembleAlgorithm weight must be finite".to_string());
+        return Err(AlgorithmError::Special(
+            "EnsembleAlgorithm weight must be finite".to_string(),
+        ));
     }
     if entry.weight < 0.0 {
-        return Err("EnsembleAlgorithm weight must be non-negative".to_string());
+        return Err(AlgorithmError::Special(
+            "EnsembleAlgorithm weight must be non-negative".to_string(),
+        ));
     }
     if entry.weight == 0.0 {
         return Ok(None);
@@ -20,9 +26,11 @@ fn weighted_score(
 }
 
 /// Compute weighted similarity using an ensemble configuration.
-pub fn similarity(x: &str, y: &str, ensemble: &EnsembleAlgorithm) -> Result<f32, String> {
+pub fn similarity(x: &str, y: &str, ensemble: &EnsembleAlgorithm) -> Result<f32, AlgorithmError> {
     if ensemble.algorithms.is_empty() {
-        return Err("EnsembleAlgorithm requires at least one algorithm".to_string());
+        return Err(AlgorithmError::Special(
+            "EnsembleAlgorithm requires at least one algorithm".to_string(),
+        ));
     }
 
     let mut weighted_sum = 0.0;
@@ -36,7 +44,9 @@ pub fn similarity(x: &str, y: &str, ensemble: &EnsembleAlgorithm) -> Result<f32,
     }
 
     if total_weight == 0.0 {
-        return Err("EnsembleAlgorithm requires at least one positive weight".to_string());
+        return Err(AlgorithmError::Special(
+            "EnsembleAlgorithm requires at least one positive weight".to_string(),
+        ));
     }
 
     Ok((weighted_sum / total_weight).clamp(0.0, 1.0))

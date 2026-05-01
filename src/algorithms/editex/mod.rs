@@ -27,17 +27,32 @@ pub mod edit;
 pub mod group;
 
 mod distance;
-mod similarity;
 mod tokenize;
 
-use crate::algorithms::AlgorithmTrait;
+use crate::algorithms::{
+    AlgorithmTrait,
+    editex::{
+        distance::{edit_distance, total_delete_cost},
+        tokenize::tokenize_and_validate,
+    },
+    errors::AlgorithmError,
+};
 
 use config::Editex;
 
-pub(crate) use similarity::similarity;
-
 impl AlgorithmTrait for Editex {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, String> {
-        similarity(x, y, self).map_err(|e| e.to_string())
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+        let x_chars = tokenize_and_validate(x, self, "x")?;
+        let y_chars = tokenize_and_validate(y, self, "y")?;
+
+        let distance = edit_distance(&x_chars, &y_chars, self);
+        let max_distance = total_delete_cost(&x_chars, self) + total_delete_cost(&y_chars, self);
+
+        if max_distance == 0.0 {
+            return Ok(1.0);
+        }
+
+        let similarity = 1.0 - (distance / max_distance);
+        Ok(similarity.clamp(0.0, 1.0))
     }
 }

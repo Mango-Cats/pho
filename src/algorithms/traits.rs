@@ -1,4 +1,4 @@
-use crate::algorithms::errors::AlgorithmErrors;
+use crate::algorithms::errors::AlgorithmError;
 
 /// Common interface for similarity algorithms.
 ///
@@ -13,12 +13,11 @@ use crate::algorithms::errors::AlgorithmErrors;
 ///     config_io::import,
 /// };
 ///
-/// fn main() -> Result<(), String> {
-///     let config: Aline = import("tests/config_sample_aline.toml")?;
-///     let _score = config.similarity("s", "s")?;
-///     Ok(())
+/// fn main() {
+///     let config: Aline = import("tests/config_sample_aline.toml").unwrap();
+///     let _score = config.similarity("s", "s").unwrap();
 /// }
 /// ```
 pub trait AlgorithmTrait {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmErrors>;
+    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError>;
 }

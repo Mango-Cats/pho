@@ -1,4 +1,4 @@
-use crate::algorithms::UnknownTokenError;
+use crate::algorithms::{UnknownTokenError, errors::AlgorithmError};
 
 use super::config::Aline;
 
@@ -8,7 +8,7 @@ pub(crate) fn tokenize_and_validate(
     input: &str,
     config: &Aline,
     input_name: &'static str,
-) -> Result<Vec<String>, UnknownTokenError> {
+) -> Result<Vec<String>, AlgorithmError> {
     use unicode_segmentation::UnicodeSegmentation;
 
     let segments: Vec<String> = UnicodeSegmentation::graphemes(input, true)
@@ -17,12 +17,13 @@ pub(crate) fn tokenize_and_validate(
 
     for (idx, segment) in segments.iter().enumerate() {
         if !config.sounds.contains_key(segment) {
-            return Err(UnknownTokenError {
+            let e = UnknownTokenError {
                 token: segment.clone(),
                 position: idx,
                 input_name,
                 context: "ALINE config sound inventory",
-            });
+            };
+            return Err(AlgorithmError::UnknownTokenError(e));
         }
     }
 

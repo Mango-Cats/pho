@@ -1,6 +1,7 @@
 use std::{error::Error, fmt};
 
-pub enum AlgorithmErrors {
+#[derive(Debug)]
+pub enum AlgorithmError {
     UnknownTokenError(UnknownTokenError),
     Special(String),
 }
