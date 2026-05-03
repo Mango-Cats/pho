@@ -26,6 +26,29 @@ pub struct EnsembleAlgorithm {
 }
 
 impl EnsembleAlgorithm {
+    pub fn new_uniform_probability(algorithms: Vec<Box<dyn Algorithm>>) -> crate::Result<Self> {
+        if algorithms.is_empty() {
+            return Err(crate::Error::EmptyEnsemble);
+        }
+
+        let n = algorithms.len() as f32;
+        let weight = 1.0 / n;
+
+        let algorithms = algorithms
+            .into_iter()
+            .map(|a| WeightedAlgorithm {
+                algorithm: a,
+                weight,
+            })
+            .collect();
+
+        Ok(Self {
+            algorithms,
+            is_probability_distribution: true,
+            allow_negative_weights: false,
+        })
+    }
+
     pub fn validate(&self) -> crate::Result<()> {
         if self.algorithms.is_empty() {
             return Err(crate::Error::EmptyEnsemble);
