@@ -5,7 +5,7 @@ use crate::errors::{AlgorithmError, UnknownTokenError};
 /// Consumes an iterator of tokens, validating each one against a provided closure.
 /// Returns a collected `Vec<T>` of the tokens if all are valid, or an `AlgorithmError`
 /// on the first invalid token.
-pub fn validate_tokens<T, I, F>(
+pub(crate) fn validate_tokens<T, I, F>(
     tokens: I,
     input_name: &'static str,
     context: &'static str,
