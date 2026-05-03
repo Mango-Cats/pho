@@ -12,6 +12,7 @@ mod phoneme_trait;
 mod phoneme_types;
 pub mod salience;
 
+use crate::{Error, Result};
 pub use cost::Costs;
 pub use feature_types::{Back, Binary, High, Manner, Place};
 pub use feature_values::FeatureValues;
@@ -29,14 +30,11 @@ pub struct Aline {
 }
 
 impl Aline {
-    pub fn validate(&self) -> Result<(), String> {
-        // Cascade validation down to the child struct
+    pub fn validate(&self) -> Result<()> {
         self.values.validate()?;
-
         if self.epsilon < 0.0 {
-            return Err("Epsilon must be non-negative".to_string());
+            return Err(Error::NegativeEpsilon(self.epsilon));
         }
-
         Ok(())
     }
 
@@ -46,7 +44,7 @@ impl Aline {
         values: FeatureValues,
         sounds: HashMap<String, PhoneticFeatures>,
         epsilon: f32,
-    ) -> Result<Self, String> {
+    ) -> Result<Self> {
         let config = Self {
             costs,
             salience,

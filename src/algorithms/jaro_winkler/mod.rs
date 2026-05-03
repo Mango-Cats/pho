@@ -48,13 +48,13 @@ use crate::{
         Algorithm,
         jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
     },
-    errors::AlgorithmError,
+    error::Result,
 };
 
 use config::JaroWinkler;
 
 impl Algorithm for JaroWinkler {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let x_processed = if self.case_insensitive {
             x.to_lowercase()
         } else {

@@ -33,14 +33,14 @@ use crate::{
         Algorithm,
         editex::distance::{edit_distance, total_delete_cost},
     },
-    errors::AlgorithmError,
+    error::Result,
     utils::validate::validate_tokens,
 };
 
 use config::Editex;
 
 impl Algorithm for Editex {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = validate_tokens(
             x.chars().map(|c| c.to_ascii_lowercase()),
             "x",
@@ -68,7 +68,7 @@ impl Algorithm for Editex {
 
 #[cfg(test)]
 mod tests {
-    use crate::{algorithms::Editex, utils::io::import};
+    use crate::{algorithms::Editex, error::Result, utils::io::import};
     use core::panic;
 
     const TOML_PATH: &str = "tests/config_sample_editex.toml";
@@ -122,14 +122,13 @@ mod tests {
 
     #[test]
     fn rejects_non_toml_extension() {
-        let result: Result<Editex, String> = import("notatoml.json");
+        let result: Result<Editex> = import("notatoml.json");
         assert!(result.is_err());
-        assert_eq!(result.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let result: Result<Editex, String> = import("nonexistent.toml");
+        let result: Result<Editex> = import("nonexistent.toml");
         assert!(result.is_err());
     }
 }

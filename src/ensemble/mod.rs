@@ -1,5 +1,2 @@
-mod similarity;
-mod types;
-
-pub use similarity::similarity;
-pub use types::{EnsembleAlgorithm, WeightedAlgorithm};
+pub mod similarity;
+pub mod types;

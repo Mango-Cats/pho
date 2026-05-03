@@ -2,6 +2,7 @@
 //!
 //! This file contains the feature value maps for ALINE.
 
+use crate::error::{Error::InvalidFeatureSum, Result};
 use enum_map::EnumMap;
 use serde::{Deserialize, Serialize};
 
@@ -18,12 +19,12 @@ pub struct FeatureValues {
 }
 
 impl FeatureValues {
-    pub fn validate(&self) -> Result<(), String> {
-        let check_sum = |sum: f32, name: &str| -> Result<(), String> {
+    pub fn validate(&self) -> Result<()> {
+        let check_sum = |sum: f32, feature: &'static str| -> Result<()> {
             if (sum - 1.0).abs() < 0.0001 {
                 Ok(())
             } else {
-                Err(format!("{} values must sum to 1.0, but got {}", name, sum))
+                Err(InvalidFeatureSum { feature, sum })
             }
         };
 
@@ -42,7 +43,7 @@ impl FeatureValues {
         high: EnumMap<High, f32>,
         back: EnumMap<Back, f32>,
         binary: EnumMap<Binary, f32>,
-    ) -> Result<Self, String> {
+    ) -> Result<Self> {
         let values = Self {
             place,
             manner,

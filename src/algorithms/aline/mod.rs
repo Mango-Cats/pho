@@ -34,11 +34,12 @@
 mod alignment;
 pub mod config;
 mod scoring;
-use crate::{algorithms::Algorithm, errors::AlgorithmError};
+use crate::algorithms::Algorithm;
+use crate::error::Result;
 use config::Aline;
 
 impl Algorithm for Aline {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         use crate::utils::validate::validate_tokens;
         use alignment::alignment_score;
 
@@ -79,6 +80,7 @@ mod tests {
             Aline,
             aline::config::{Back, Binary, High, Manner, PhoneticFeatures, Place},
         },
+        error::Result,
         utils::io::import,
     };
 
@@ -467,14 +469,13 @@ mod tests {
 
     #[test]
     fn rejects_non_toml_extension() {
-        let result: Result<Aline, String> = import("notatoml.json");
+        let result: Result<Aline> = import("notatoml.json");
         assert!(result.is_err());
-        assert_eq!(result.err().unwrap(), "file must be a .toml");
     }
 
     #[test]
     fn rejects_missing_file() {
-        let result: Result<Aline, String> = import("nonexistent.toml");
+        let result: Result<Aline> = import("nonexistent.toml");
         assert!(result.is_err());
     }
 }

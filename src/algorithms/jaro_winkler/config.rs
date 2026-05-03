@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::{Error, Result};
+
 /// Configuration for the Jaro-Winkler similarity algorithm.
 ///
 /// The Jaro-Winkler metric is a variant of the Jaro distance metric that
@@ -24,12 +26,9 @@ pub struct JaroWinkler {
 }
 
 impl JaroWinkler {
-    pub fn validate(&self) -> Result<(), String> {
+    pub fn validate(&self) -> Result<()> {
         if !(0.0..=0.25).contains(&self.prefix_scale) {
-            return Err(format!(
-                "prefix_scale must be in [0.0, 0.25], got {}",
-                self.prefix_scale
-            ));
+            return Err(Error::InvalidPrefixScale(self.prefix_scale));
         }
         Ok(())
     }
@@ -38,7 +37,7 @@ impl JaroWinkler {
         prefix_scale: f32,
         max_prefix_length: usize,
         case_insensitive: bool,
-    ) -> Result<Self, String> {
+    ) -> Result<Self> {
         let config = Self {
             prefix_scale,
             max_prefix_length,

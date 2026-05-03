@@ -1,6 +1,7 @@
+// src/ensemble/config.rs
+
 use crate::algorithms::Algorithm;
 
-/// Bundle an algorithm with its config and ensemble weight.
 pub struct WeightedAlgorithm {
     pub algorithm: Box<dyn Algorithm>,
     pub weight: f32,
@@ -18,35 +19,60 @@ impl WeightedAlgorithm {
     }
 }
 
-/// An ensemble algorithm is a vector of [`WeightedAlgorithm`]
-/// instances.
 pub struct EnsembleAlgorithm {
     pub algorithms: Vec<WeightedAlgorithm>,
+    pub is_probability_distribution: bool,
+    pub allow_negative_weights: bool,
 }
 
 impl EnsembleAlgorithm {
-    pub fn validate(&self) -> Result<(), String> {
+    pub fn validate(&self) -> crate::Result<()> {
         if self.algorithms.is_empty() {
-            return Err("ensemble algorithms must be non-empty".to_string());
+            return Err(crate::Error::EmptyEnsemble);
         }
+
         let mut total = 0.0f32;
+
         for weighted in &self.algorithms {
             if !weighted.weight.is_finite() {
-                return Err("ensemble weight must be finite".to_string());
+                return Err(crate::Error::NonFiniteWeight(weighted.weight));
             }
-            if weighted.weight < 0.0 {
-                return Err("ensemble weight must be non-negative".to_string());
+
+            if self.is_probability_distribution && weighted.weight < 0.0 {
+                return Err(crate::Error::NegativeWeight(weighted.weight));
             }
+
+            if !self.is_probability_distribution
+                && !self.allow_negative_weights
+                && weighted.weight < 0.0
+            {
+                return Err(crate::Error::NegativeWeight(weighted.weight));
+            }
+
             total += weighted.weight;
         }
-        if (total - 1.0).abs() >= 0.0001 {
-            return Err(format!("ensemble weights must sum to 1.0, got {}", total));
+
+        if self.is_probability_distribution {
+            if (total - 1.0).abs() >= 0.0001 {
+                return Err(crate::Error::WeightsDoNotSumToOne(total));
+            }
+        } else if total == 0.0 {
+            return Err(crate::Error::InvalidWeight(0.0));
         }
+
         Ok(())
     }
 
-    pub fn try_new(algorithms: Vec<WeightedAlgorithm>) -> Result<Self, String> {
-        let ensemble = Self { algorithms };
+    pub fn try_new(
+        algorithms: Vec<WeightedAlgorithm>,
+        is_probability_distribution: bool,
+        allow_negative_weights: bool,
+    ) -> crate::Result<Self> {
+        let ensemble = Self {
+            algorithms,
+            is_probability_distribution,
+            allow_negative_weights,
+        };
         ensemble.validate()?;
         Ok(ensemble)
     }

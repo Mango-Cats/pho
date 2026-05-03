@@ -1,53 +1,29 @@
-use crate::errors::AlgorithmError;
+// src/ensemble/similarity.rs
 
-use super::types::{EnsembleAlgorithm, WeightedAlgorithm};
+use super::types::EnsembleAlgorithm;
+use crate::algorithms::Algorithm;
+use crate::error::Result;
 
-fn weighted_score(
-    entry: &WeightedAlgorithm,
-    x: &str,
-    y: &str,
-) -> Result<Option<(f32, f32)>, AlgorithmError> {
-    if !entry.weight.is_finite() {
-        return Err(AlgorithmError::Special(
-            "EnsembleAlgorithm weight must be finite".to_string(),
-        ));
-    }
-    if entry.weight < 0.0 {
-        return Err(AlgorithmError::Special(
-            "EnsembleAlgorithm weight must be non-negative".to_string(),
-        ));
-    }
-    if entry.weight == 0.0 {
-        return Ok(None);
-    }
+impl Algorithm for EnsembleAlgorithm {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+        let mut weighted_sum = 0.0;
+        let mut total_weight = 0.0;
 
-    let score = entry.algorithm.similarity(x, y)?;
-    Ok(Some((score, entry.weight)))
-}
+        for entry in &self.algorithms {
+            if entry.weight == 0.0 {
+                continue;
+            }
 
-/// Compute weighted similarity using an ensemble configuration.
-pub fn similarity(x: &str, y: &str, ensemble: &EnsembleAlgorithm) -> Result<f32, AlgorithmError> {
-    if ensemble.algorithms.is_empty() {
-        return Err(AlgorithmError::Special(
-            "EnsembleAlgorithm requires at least one algorithm".to_string(),
-        ));
-    }
+            let score = entry.algorithm.similarity(x, y)?;
+            weighted_sum += score * entry.weight;
 
-    let mut weighted_sum = 0.0;
-    let mut total_weight = 0.0;
-
-    for entry in &ensemble.algorithms {
-        if let Some((score, weight)) = weighted_score(entry, x, y)? {
-            weighted_sum += score * weight;
-            total_weight += weight;
+            total_weight += entry.weight.abs();
         }
-    }
 
-    if total_weight == 0.0 {
-        return Err(AlgorithmError::Special(
-            "EnsembleAlgorithm requires at least one positive weight".to_string(),
-        ));
-    }
+        if total_weight == 0.0 {
+            return Ok(0.0);
+        }
 
-    Ok((weighted_sum / total_weight).clamp(0.0, 1.0))
+        Ok((weighted_sum / total_weight).clamp(0.0, 1.0))
+    }
 }

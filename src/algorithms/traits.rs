@@ -1,4 +1,4 @@
-use crate::errors::AlgorithmError;
+use crate::error::Result;
 
 /// Common interface for similarity algorithms.
 ///
@@ -19,5 +19,5 @@ use crate::errors::AlgorithmError;
 /// }
 /// ```
 pub trait Algorithm {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError>;
+    fn similarity(&self, x: &str, y: &str) -> Result<f32>;
 }

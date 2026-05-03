@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
-    ensemble::{EnsembleAlgorithm, WeightedAlgorithm, similarity},
+    ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
     utils::io::import,
 };
 
@@ -31,6 +31,8 @@ fn main() {
             WeightedAlgorithm::new(levenshtein.clone(), w1),
             WeightedAlgorithm::new(jaro_winkler.clone(), w2),
         ],
+        allow_negative_weights: false,
+        is_probability_distribution: true,
     };
 
     // Ensure weights are finite and normalized
@@ -40,7 +42,7 @@ fn main() {
     ensemble.validate().unwrap();
 
     // Run the ensemble similarity computation
-    let score = similarity(x, y, &ensemble);
+    let score = ensemble.similarity(x, y);
 
     // Run the individual components
     // ...

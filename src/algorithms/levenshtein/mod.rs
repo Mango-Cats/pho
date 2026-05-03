@@ -34,13 +34,13 @@ mod distance;
 
 use crate::{
     algorithms::{Algorithm, levenshtein::distance::edit_distance},
-    errors::AlgorithmError,
+    error::Result,
 };
 
 use config::Levenshtein;
 
 impl Algorithm for Levenshtein {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let x_processed = if self.case_insensitive {
             x.to_lowercase()
         } else {
