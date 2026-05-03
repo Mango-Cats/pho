@@ -31,7 +31,6 @@
 
 pub mod aline;
 pub mod editex;
-pub mod ensemble;
 pub mod jaro_winkler;
 pub mod levenshtein;
 

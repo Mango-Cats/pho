@@ -1,8 +1,6 @@
 use pho::{
-    algorithms::{
-        Algorithm, JaroWinkler, Levenshtein,
-        ensemble::{EnsembleAlgorithm, WeightedAlgorithm, similarity},
-    },
+    algorithms::{Algorithm, JaroWinkler, Levenshtein},
+    ensemble::{EnsembleAlgorithm, WeightedAlgorithm, similarity},
     utils::io::import,
 };
 
