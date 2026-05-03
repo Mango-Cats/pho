@@ -1,6 +1,6 @@
 # 🍜 / pho
 
-**Pho**netic similarity algorithms.
+(**Pho**netic) similarity algorithms.
 
 > The 🍜 is still *cooking*. Everything is subject to change (even
 > the visibility of the repository).
@@ -9,7 +9,7 @@ The name: pho is inspired by my love of Vietnamese *food*.
 
 ## How To
 
-pho is written in Rust so be sure to have Rust installed.
+pho is written in [Rust](https://rust-lang.org/tools/install/).
 
 This isn't available in Cargo. So, to use this on your own project
 simply add this in the `[dependencies]` of your project's `Cargo.toml`:
@@ -23,6 +23,13 @@ Then run
 ```bash
 cargo build
 ```
+
+**Examples**: To get a feel of what this project does, you can look
+at the [examples/](examples/) folder.
+
+**Jupyter**: Experimenting with pho is better in a notebook
+environment! Look at [evcxr](https://github.com/evcxr/evcxr/blob/main/evcxr_jupyter/README.md)
+to get a Rust Jupyter Kernel.
 
 ## Moving Around
 
