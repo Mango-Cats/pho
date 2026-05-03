@@ -32,12 +32,15 @@
 pub mod aline;
 pub mod editex;
 pub mod jaro_winkler;
+pub mod lcs;
+pub mod lcsuf;
 pub mod levenshtein;
-
 mod traits;
 
 pub use aline::config::Aline;
 pub use editex::config::Editex;
 pub use jaro_winkler::config::JaroWinkler;
+pub use lcs::LCS;
+pub use lcsuf::LCSuf;
 pub use levenshtein::config::Levenshtein;
 pub use traits::Algorithm;

@@ -4,7 +4,7 @@ use pho::{
     learning::{
         dataset::TrainingData,
         genetic::{GeneticConfig, optimize},
-        loss::{bce::BinaryCrossEntropy, mae::MeanAbsoluteError, mse::MeanSquaredError},
+        loss::MeanSquaredError,
     },
     utils::io::import,
 };
@@ -91,7 +91,7 @@ fn main() {
     //
     //  This example uses `MeanSquaredError` but you can change the
     //  loss function.
-    let evaluator = MeanAbsoluteError::new(&training_data);
+    let evaluator = MeanSquaredError::new(&training_data);
     optimize(&mut ensemble, &config, &evaluator).unwrap();
 
     println!(
