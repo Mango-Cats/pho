@@ -9,7 +9,7 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 5: Genetic algorithm sanity check (Synthetic Dominance)");
+    println!("🍜\t| # Example 4.2: Genetic algorithm sanity check (Synthetic Dominance)");
     // Genetic Algorithm (Extreme Case)
     // ...
     //  This example shows the Genetic Algorithm at work in optimizing

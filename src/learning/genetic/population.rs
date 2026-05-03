@@ -5,6 +5,7 @@ use rand::{Rng, rngs::StdRng};
 /// Normalizes weights in-place so they are non-negative and sum to 1.0.
 /// Any non-finite values are zeroed out before normalization.
 /// If the sum is zero (all weights are zero), a uniform distribution is used instead.
+// FIXME: possibly a duplicate
 pub fn normalize(weights: &mut [f32]) {
     for w in weights.iter_mut() {
         if !w.is_finite() {
