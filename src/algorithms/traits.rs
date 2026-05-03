@@ -21,4 +21,3 @@ use crate::errors::AlgorithmError;
 pub trait Algorithm {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError>;
 }
-/
