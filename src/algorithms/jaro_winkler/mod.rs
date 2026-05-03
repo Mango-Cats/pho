@@ -25,7 +25,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{JaroWinkler, AlgorithmTrait}, io::import};
+//! use pho::{algorithms::{JaroWinkler, AlgorithmTrait}, utils::io::import};
 //!
 //! let algo: JaroWinkler =
 //!     import("tests/config_sample_jaro_winkler.toml").unwrap();
@@ -43,10 +43,12 @@ pub mod config;
 mod jaro;
 mod winkler;
 
-use crate::algorithms::{
-    AlgorithmTrait,
+use crate::{
+    algorithms::{
+        AlgorithmTrait,
+        jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
+    },
     errors::AlgorithmError,
-    jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
 };
 
 use config::JaroWinkler;

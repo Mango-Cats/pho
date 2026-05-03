@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{AlgorithmTrait, Editex},
-    io::import,
+    utils::io::import,
 };
 
 const TOML_PATH: &str = "tests/config_sample_editex.toml";

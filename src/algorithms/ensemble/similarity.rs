@@ -1,4 +1,4 @@
-use crate::algorithms::errors::AlgorithmError;
+use crate::errors::AlgorithmError;
 
 use super::types::{EnsembleAlgorithm, WeightedAlgorithm};
 

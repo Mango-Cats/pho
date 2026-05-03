@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{AlgorithmTrait, Aline},
-    io::import,
+    utils::io::import,
 };
 
 const TOML_PATH: &str = "tests/config_sample_aline.toml";

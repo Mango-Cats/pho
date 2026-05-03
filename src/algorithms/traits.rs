@@ -1,4 +1,4 @@
-use crate::algorithms::errors::AlgorithmError;
+use crate::errors::AlgorithmError;
 
 /// Common interface for similarity algorithms.
 ///
@@ -10,7 +10,7 @@ use crate::algorithms::errors::AlgorithmError;
 /// ```no_run
 /// use pho::{
 ///     algorithms::{Aline, AlgorithmTrait},
-///     io::import,
+///     utils::io::import,
 /// };
 ///
 /// fn main() {

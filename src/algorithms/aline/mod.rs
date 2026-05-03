@@ -24,7 +24,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Aline, AlgorithmTrait}, io::import};
+//! use pho::{algorithms::{Aline, AlgorithmTrait}, utils::io::import};
 //!
 //! let algo: Aline = import("tests/config_sample_aline.toml").unwrap();
 //! let score = algo.similarity("s", "s").unwrap();
@@ -34,17 +34,29 @@
 mod alignment;
 pub mod config;
 mod scoring;
-mod tokenize;
-
-use crate::algorithms::{AlgorithmTrait, errors::AlgorithmError};
-use alignment::alignment_score;
+use crate::{algorithms::AlgorithmTrait, errors::AlgorithmError};
 use config::Aline;
-use tokenize::tokenize_and_validate;
 
 impl AlgorithmTrait for Aline {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
-        let x_valid = tokenize_and_validate(x, self, "x")?;
-        let y_valid = tokenize_and_validate(y, self, "y")?;
+        use crate::utils::validate::validate_tokens;
+        use alignment::alignment_score;
+
+        use unicode_segmentation::UnicodeSegmentation;
+
+        let x_valid = validate_tokens(
+            UnicodeSegmentation::graphemes(x, true).map(str::to_string),
+            "x",
+            "ALINE config sound inventory",
+            |segment| self.sounds.contains_key(segment),
+        )?;
+
+        let y_valid = validate_tokens(
+            UnicodeSegmentation::graphemes(y, true).map(str::to_string),
+            "y",
+            "ALINE config sound inventory",
+            |segment| self.sounds.contains_key(segment),
+        )?;
 
         let score = alignment_score(&x_valid, &y_valid, self);
 
@@ -67,7 +79,7 @@ mod tests {
             Aline,
             aline::config::{Back, Binary, High, Manner, PhoneticFeatures, Place},
         },
-        io::import,
+        utils::io::import,
     };
 
     const TOML_PATH: &str = "tests/config_sample_aline.toml";

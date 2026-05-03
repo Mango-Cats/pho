@@ -35,12 +35,10 @@ pub mod ensemble;
 pub mod jaro_winkler;
 pub mod levenshtein;
 
-mod errors;
 mod traits;
 
 pub use aline::config::Aline;
 pub use editex::config::Editex;
-pub use errors::UnknownTokenError;
 pub use jaro_winkler::config::JaroWinkler;
 pub use levenshtein::config::Levenshtein;
 pub use traits::AlgorithmTrait;

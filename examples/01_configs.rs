@@ -5,7 +5,7 @@ use pho::{
         jaro_winkler::config::JaroWinkler,
         levenshtein::config::{Costs, Levenshtein},
     },
-    io::{export, import},
+    utils::io::{export, import},
 };
 
 fn main() {

@@ -15,7 +15,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Editex, AlgorithmTrait}, io::import};
+//! use pho::{algorithms::{Editex, AlgorithmTrait}, utils::io::import};
 //!
 //! let algo: Editex = import("tests/config_sample_editex.toml").unwrap();
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
@@ -27,24 +27,33 @@ pub mod edit;
 pub mod group;
 
 mod distance;
-mod tokenize;
 
-use crate::algorithms::{
-    AlgorithmTrait,
-    editex::{
-        distance::{edit_distance, total_delete_cost},
-        tokenize::tokenize_and_validate,
+use crate::{
+    algorithms::{
+        AlgorithmTrait,
+        editex::distance::{edit_distance, total_delete_cost},
     },
     errors::AlgorithmError,
+    utils::validate::validate_tokens,
 };
 
 use config::Editex;
 
 impl AlgorithmTrait for Editex {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
-        let x_chars = tokenize_and_validate(x, self, "x")?;
-        let y_chars = tokenize_and_validate(y, self, "y")?;
+        let x_chars = validate_tokens(
+            x.chars().map(|c| c.to_ascii_lowercase()),
+            "x",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
 
+        let y_chars = validate_tokens(
+            y.chars().map(|c| c.to_ascii_lowercase()),
+            "y",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
         let distance = edit_distance(&x_chars, &y_chars, self);
         let max_distance = total_delete_cost(&x_chars, self) + total_delete_cost(&y_chars, self);
 
@@ -59,7 +68,7 @@ impl AlgorithmTrait for Editex {
 
 #[cfg(test)]
 mod tests {
-    use crate::{algorithms::Editex, io::import};
+    use crate::{algorithms::Editex, utils::io::import};
     use core::panic;
 
     const TOML_PATH: &str = "tests/config_sample_editex.toml";
