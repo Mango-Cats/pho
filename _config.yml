@@ -1,0 +1,10 @@
+title: 🍜 pho
+description: pho documentation
+remote_theme: alshedivat/al-folio
+enable_math: true
+footer_fixed: true
+
+collections:
+  docs:
+    output: true
+    permalink: /docs/:path/
