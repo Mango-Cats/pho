@@ -15,7 +15,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Editex, AlgorithmTrait}, utils::io::import};
+//! use pho::{algorithms::{Editex, Algorithm}, utils::io::import};
 //!
 //! let algo: Editex = import("tests/config_sample_editex.toml").unwrap();
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
@@ -30,7 +30,7 @@ mod distance;
 
 use crate::{
     algorithms::{
-        AlgorithmTrait,
+        Algorithm,
         editex::distance::{edit_distance, total_delete_cost},
     },
     errors::AlgorithmError,
@@ -39,7 +39,7 @@ use crate::{
 
 use config::Editex;
 
-impl AlgorithmTrait for Editex {
+impl Algorithm for Editex {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
         let x_chars = validate_tokens(
             x.chars().map(|c| c.to_ascii_lowercase()),

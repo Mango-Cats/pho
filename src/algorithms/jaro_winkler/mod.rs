@@ -25,7 +25,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{JaroWinkler, AlgorithmTrait}, utils::io::import};
+//! use pho::{algorithms::{JaroWinkler, Algorithm}, utils::io::import};
 //!
 //! let algo: JaroWinkler =
 //!     import("tests/config_sample_jaro_winkler.toml").unwrap();
@@ -45,7 +45,7 @@ mod winkler;
 
 use crate::{
     algorithms::{
-        AlgorithmTrait,
+        Algorithm,
         jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
     },
     errors::AlgorithmError,
@@ -53,7 +53,7 @@ use crate::{
 
 use config::JaroWinkler;
 
-impl AlgorithmTrait for JaroWinkler {
+impl Algorithm for JaroWinkler {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
         let x_processed = if self.case_insensitive {
             x.to_lowercase()

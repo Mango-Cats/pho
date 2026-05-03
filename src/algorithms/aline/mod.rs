@@ -24,7 +24,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Aline, AlgorithmTrait}, utils::io::import};
+//! use pho::{algorithms::{Aline, Algorithm}, utils::io::import};
 //!
 //! let algo: Aline = import("tests/config_sample_aline.toml").unwrap();
 //! let score = algo.similarity("s", "s").unwrap();
@@ -34,10 +34,10 @@
 mod alignment;
 pub mod config;
 mod scoring;
-use crate::{algorithms::AlgorithmTrait, errors::AlgorithmError};
+use crate::{algorithms::Algorithm, errors::AlgorithmError};
 use config::Aline;
 
-impl AlgorithmTrait for Aline {
+impl Algorithm for Aline {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
         use crate::utils::validate::validate_tokens;
         use alignment::alignment_score;

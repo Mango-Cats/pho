@@ -15,7 +15,7 @@
 //!
 //! ## Polymorphic Algorithms
 //!
-//! The direct algorithm structs implement [`AlgorithmTrait`], so they can
+//! The direct algorithm structs implement [`Algorithm`], so they can
 //! be used uniformly without a separate wrapper layer.
 //!
 //! This also allows multiple algorithms to be combined into a single
@@ -41,4 +41,4 @@ pub use aline::config::Aline;
 pub use editex::config::Editex;
 pub use jaro_winkler::config::JaroWinkler;
 pub use levenshtein::config::Levenshtein;
-pub use traits::AlgorithmTrait;
+pub use traits::Algorithm;

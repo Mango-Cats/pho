@@ -1,5 +1,5 @@
 use pho::{
-    algorithms::{AlgorithmTrait, Editex},
+    algorithms::{Algorithm, Editex},
     utils::io::import,
 };
 

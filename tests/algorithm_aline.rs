@@ -1,5 +1,5 @@
 use pho::{
-    algorithms::{AlgorithmTrait, Aline},
+    algorithms::{Algorithm, Aline},
     utils::io::import,
 };
 

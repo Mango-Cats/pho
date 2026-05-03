@@ -16,7 +16,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Levenshtein, AlgorithmTrait}, utils::io::import};
+//! use pho::{algorithms::{Levenshtein, Algorithm}, utils::io::import};
 //!
 //! let algo: Levenshtein =
 //!     import("tests/config_sample_levenshtein.toml").unwrap();
@@ -33,13 +33,13 @@ pub mod config;
 mod distance;
 
 use crate::{
-    algorithms::{AlgorithmTrait, levenshtein::distance::edit_distance},
+    algorithms::{Algorithm, levenshtein::distance::edit_distance},
     errors::AlgorithmError,
 };
 
 use config::Levenshtein;
 
-impl AlgorithmTrait for Levenshtein {
+impl Algorithm for Levenshtein {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError> {
         let x_processed = if self.case_insensitive {
             x.to_lowercase()

@@ -9,7 +9,7 @@ use crate::errors::AlgorithmError;
 ///
 /// ```no_run
 /// use pho::{
-///     algorithms::{Aline, AlgorithmTrait},
+///     algorithms::{Aline, Algorithm},
 ///     utils::io::import,
 /// };
 ///
@@ -18,6 +18,7 @@ use crate::errors::AlgorithmError;
 ///     let _score = config.similarity("s", "s").unwrap();
 /// }
 /// ```
-pub trait AlgorithmTrait {
+pub trait Algorithm {
     fn similarity(&self, x: &str, y: &str) -> Result<f32, AlgorithmError>;
 }
+/

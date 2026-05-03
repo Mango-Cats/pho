@@ -1,5 +1,5 @@
 use pho::{
-    algorithms::{AlgorithmTrait, JaroWinkler},
+    algorithms::{Algorithm, JaroWinkler},
     utils::io::import,
 };
 
