@@ -1,39 +1,65 @@
 use pho::{
     algorithms::{
-        JaroWinkler, Levenshtein,
+        AlgorithmTrait, JaroWinkler, Levenshtein,
         ensemble::{EnsembleAlgorithm, WeightedAlgorithm, similarity},
     },
     config_io,
 };
 
 fn main() {
-    println!("# Example 3: ensemble algorithm");
+    println!("🍜\t| # Example 3: ensemble algorithm");
 
-    // # Load configs for each algorithm
+    // Load configs for each algorithm
     let levenshtein =
         config_io::import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
     let jaro_winkler =
         config_io::import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
 
-    // # Validate configs that define invariants
+    // Validate configs that define invariants
     jaro_winkler.validate().unwrap();
 
-    // # Build a weighted ensemble configuration
+    // Define the words to compare
+    let x = "dixon";
+    let y = "dickson";
+
+    // Define the weights
+    let w1 = 0.6;
+    let w2 = 0.4;
+
+    // Build a weighted ensemble configuration
+    // ...
+    //  The ensemble algorithm `ensemble` scales the Levenshtein
+    //  by 0.6 and Jaro-Winkler by 0.4 and adds them together.
     let ensemble = EnsembleAlgorithm {
         algorithms: vec![
-            WeightedAlgorithm::new(levenshtein, 0.6),
-            WeightedAlgorithm::new(jaro_winkler, 0.4),
+            WeightedAlgorithm::new(levenshtein.clone(), w1),
+            WeightedAlgorithm::new(jaro_winkler.clone(), w2),
         ],
     };
 
-    // # Ensure weights are finite and normalized
+    // Ensure weights are finite and normalized
+    // ...
+    //  If the weights assigned do not sum to 1, this will return an
+    //  error.
     ensemble.validate().unwrap();
 
-    // # Run the ensemble similarity computation
-    let score = similarity("dixon", "dicksonx", &ensemble);
+    // Run the ensemble similarity computation
+    let score = similarity(x, y, &ensemble);
+
+    // Run the individual components
+    // ...
+    //  Let's also run the individual components to get an idea on how
+    //  each algorithm and their associated weights contributed to the
+    //  algorithm.
+    let levenshtein_score = levenshtein.similarity(x, y).unwrap();
+    let jaro_winkler = jaro_winkler.similarity(x, y).unwrap();
+
     if let Ok(got) = score {
-        println!("Similarity: {got}");
+        println!("\t| Ensemble Similarity: {got}");
+        println!("\t|");
+        println!("\t| Levenshtein: {levenshtein_score} (* {w1})");
+        println!("\t| Jaro-Winkler: {jaro_winkler} (* {w2})");
     } else {
-        println!("Uh oh!")
+        println!("\t| Something went horribly wrong, please raise an issue!")
     }
 }

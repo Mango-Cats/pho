@@ -4,20 +4,22 @@ use pho::{
 };
 
 fn main() {
-    println!("# Example 2: running an algorithm");
+    println!("🍜\t| # Example 2: running an algorithm");
 
-    // Boilerplate
+    // Load the config for the Jaro-Winkler algorithm
     let config: JaroWinkler = config_io::import("tests/config_sample_jaro_winkler.toml").unwrap();
     config.validate().unwrap();
 
-    // # Running Algorithms
+    // Running Algorithms
+    // ...
+    //  Each algorithm is defined as a struct that holds configs.
     //
-    // ## Algorithm Structs
-    // Each algorithm is defined as a struct that holds configs
+    //  By this point, the algorithm assumes that the config passed
+    //  through is valid.
     let score = config.similarity("dixon", "dicksonx");
     if let Ok(got) = score {
         println!("Similarity: {got}");
     } else {
-        println!("Uh oh!")
+        println!("\t| Something went horribly wrong, please raise an issue!")
     }
 }
