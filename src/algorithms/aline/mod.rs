@@ -24,7 +24,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Aline, AlgorithmTrait}, config_io::import};
+//! use pho::{algorithms::{Aline, AlgorithmTrait}, io::import};
 //!
 //! let algo: Aline = import("tests/config_sample_aline.toml").unwrap();
 //! let score = algo.similarity("s", "s").unwrap();
@@ -67,7 +67,7 @@ mod tests {
             Aline,
             aline::config::{Back, Binary, High, Manner, PhoneticFeatures, Place},
         },
-        config_io::import,
+        io::import,
     };
 
     const TOML_PATH: &str = "tests/config_sample_aline.toml";

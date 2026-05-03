@@ -15,7 +15,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Editex, AlgorithmTrait}, config_io::import};
+//! use pho::{algorithms::{Editex, AlgorithmTrait}, io::import};
 //!
 //! let algo: Editex = import("tests/config_sample_editex.toml").unwrap();
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
@@ -59,7 +59,7 @@ impl AlgorithmTrait for Editex {
 
 #[cfg(test)]
 mod tests {
-    use crate::{algorithms::Editex, config_io::import};
+    use crate::{algorithms::Editex, io::import};
     use core::panic;
 
     const TOML_PATH: &str = "tests/config_sample_editex.toml";

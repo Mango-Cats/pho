@@ -10,7 +10,7 @@ use crate::algorithms::errors::AlgorithmError;
 /// ```no_run
 /// use pho::{
 ///     algorithms::{Aline, AlgorithmTrait},
-///     config_io::import,
+///     io::import,
 /// };
 ///
 /// fn main() {

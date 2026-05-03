@@ -5,7 +5,7 @@ use pho::{
         jaro_winkler::config::JaroWinkler,
         levenshtein::config::{Costs, Levenshtein},
     },
-    config_io::{export, import},
+    io::{export, import},
 };
 
 fn main() {
@@ -68,7 +68,7 @@ fn main() {
     //  You may want to save configs as a TOML files so that they can
     //  be easily shared.
     //
-    //  Calling `export` from `pho::config_io` allows you to export it
+    //  Calling `export` from `pho::io` allows you to export it
     //  as a TOML file.
     //
     //  For this example we will just re-export the `aline` config

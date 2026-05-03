@@ -16,7 +16,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{Levenshtein, AlgorithmTrait}, config_io::import};
+//! use pho::{algorithms::{Levenshtein, AlgorithmTrait}, io::import};
 //!
 //! let algo: Levenshtein =
 //!     import("tests/config_sample_levenshtein.toml").unwrap();

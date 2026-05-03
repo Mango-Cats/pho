@@ -1,13 +1,13 @@
 use pho::{
     algorithms::{AlgorithmTrait, JaroWinkler},
-    config_io,
+    io,
 };
 
 fn main() {
     println!("🍜\t| # Example 2: running an algorithm");
 
     // Load the config for the Jaro-Winkler algorithm
-    let config: JaroWinkler = config_io::import("tests/config_sample_jaro_winkler.toml").unwrap();
+    let config: JaroWinkler = io::import("tests/config_sample_jaro_winkler.toml").unwrap();
     config.validate().unwrap();
 
     // Running Algorithms

@@ -25,7 +25,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use pho::{algorithms::{JaroWinkler, AlgorithmTrait}, config_io::import};
+//! use pho::{algorithms::{JaroWinkler, AlgorithmTrait}, io::import};
 //!
 //! let algo: JaroWinkler =
 //!     import("tests/config_sample_jaro_winkler.toml").unwrap();
