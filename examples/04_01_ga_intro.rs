@@ -10,7 +10,17 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 4: genetic weight optimization");
+    println!("🍜\t| # Example 4.1: genetic algorithm introduction");
+    // Genetic Algorithm
+    // ...
+    //  The ensemble has weights attached to each individual
+    //  algorithm.
+    //
+    //  The next question is: "how do I get the best weights?"
+    //
+    //  This example gives one of the first techniques:
+    //      **Genetic Algorithm**
+    //
 
     // Load and validate configs
     // ...
@@ -107,7 +117,7 @@ fn main() {
     //  a successful result guarantees a valid, normalised ensemble.
     optimize(&mut ensemble, &config, &evaluator).unwrap();
 
-    // Inspect the optimised weights
+    // Inspect the optimized weights
     let w_lev = ensemble.algorithms[0].weight;
     let w_jaro = ensemble.algorithms[1].weight;
 
@@ -116,22 +126,22 @@ fn main() {
     println!("\t|   Levenshtein  : {w_lev:.4}");
     println!("\t|   Jaro-Winkler : {w_jaro:.4}");
 
-    // Compare optimised vs. equal-weight ensemble on every pair
+    // Compare optimized vs. equal-weight ensemble on every pair
     // ...
-    //  A quick sanity-check: run both the optimised ensemble and a
+    //  A quick sanity-check: run both the optimized ensemble and a
     //  naive equal-weight baseline over the ground-truth pairs so you
     //  can see the improvement at a glance.
     println!("\t|");
     println!(
-        "\t| {:─<30} {:─<12} {:─<10} {:─<10} {:─<10}",
+        "\t| {:─<30} {:─<12} {:─<12} {:─<10} {:─<10}",
         "", "", "", "", ""
     );
     println!(
-        "\t| {:<30} {:<12} {:<10} {:<10} {:<10}",
-        "pair", "expected", "equal (0.5)", "optimised", "difference"
+        "\t| {:<30} {:<12} {:<12} {:<10} {:<10}",
+        "pair", "expected", "unoptimized", "optimized", "difference"
     );
     println!(
-        "\t| {:─<30} {:─<12} {:─<10} {:─<10} {:─<10}",
+        "\t| {:─<30} {:─<12} {:─<12} {:─<10} {:─<10}",
         "", "", "", "", ""
     );
 
@@ -151,11 +161,11 @@ fn main() {
         let delta = (opt - expected).abs() - (base - expected).abs();
 
         println!(
-            "\t| {:<30} {:<12.4} {:<10.4} {:<10.4} {:+.4}",
+            "\t| {:<30} {:<12.4} {:<12.4} {:<10.4} {:+.4}",
             label, expected, base, opt, delta
         );
     }
 
     println!("\t|");
-    println!("\t| Negative delta = optimised is closer to ground truth");
+    println!("\t| Negative delta = optimized is closer to ground truth");
 }

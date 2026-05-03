@@ -10,13 +10,15 @@ use pho::{
 
 fn main() {
     println!("🍜\t| # Example 1: configuration files");
-
     // Configs
     // ...
     //  Configuration files are the heart of the algorithms defined in
     //  pho. This allows users to define their own configurations for
     //  the algorithms, allowing the algorithm's implementation to be
     //  language-agnostic.
+    //
+    //  This example shows how to construct, import, and export
+    //  configs.
 
     // (Manually) Constructing Configs
     // ...

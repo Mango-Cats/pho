@@ -6,6 +6,23 @@ use pho::{
 
 fn main() {
     println!("🍜\t| # Example 3: ensemble algorithm");
+    // Ensembles
+    // ...
+    //  Each algorithm has its pros and cons, some have their quirks.
+    //
+    //  So, an intermediate step would be to combine algorithms to
+    //  balance out their cons and maximize the pros we can get from
+    //  them!
+    //
+    //  Ensembling or grouping algorithms together allows us to do
+    //  that.
+    //
+    //  An ensemble of algorithms is basically a list of individual
+    //  algorithms and another list of weights. For some input,
+    //  the ensemble calls each algorithm in the list and passes in
+    //  the input. Then, for each output of the algorithm, the
+    //  ensemble scales it with the corresponding weight. The sum
+    //  of the scaled values is the result of the ensemble!
 
     // Load configs for each algorithm
     let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
@@ -41,9 +58,6 @@ fn main() {
     //  error.
     ensemble.validate().unwrap();
 
-    // Run the ensemble similarity computation
-    let score = ensemble.similarity(x, y);
-
     // Run the individual components
     // ...
     //  Let's also run the individual components to get an idea on how
@@ -52,12 +66,11 @@ fn main() {
     let levenshtein_score = levenshtein.similarity(x, y).unwrap();
     let jaro_winkler = jaro_winkler.similarity(x, y).unwrap();
 
-    if let Ok(got) = score {
-        println!("\t| Ensemble Similarity: {got}");
-        println!("\t|");
-        println!("\t| Levenshtein: {levenshtein_score} (* {w1})");
-        println!("\t| Jaro-Winkler: {jaro_winkler} (* {w2})");
-    } else {
-        println!("\t| Something went horribly wrong, please raise an issue!")
-    }
+    // Run the ensemble similarity computation
+    let score = ensemble.similarity(x, y).unwrap();
+
+    println!("\t| Ensemble Similarity: {score}");
+    println!("\t|");
+    println!("\t| Levenshtein: {levenshtein_score} (* {w1})");
+    println!("\t| Jaro-Winkler: {jaro_winkler} (* {w2})");
 }
