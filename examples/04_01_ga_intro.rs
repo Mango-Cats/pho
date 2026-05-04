@@ -94,6 +94,16 @@ fn main() {
     //  `TrainingData` from it.
     let training_data = TrainingData::from_ensemble(&ensemble, &ground_truth).unwrap();
 
+    // Saving a Dataset
+    // ...
+    //  We can save a dataset as a CSV or Arrow file by simply running
+    //  the `.export()` on the `TrainingData` variable.
+    //
+    //  The file type of the dataset (i.e., how to write it) is
+    //  inferred from the extension. Hence, the example below will
+    //  make a CSV file.
+    training_data.export("sample_dataset.csv").unwrap();
+
     // Define the evaluator
     // ...
     //  Since these are **loss** functions, the genetic algorithm's

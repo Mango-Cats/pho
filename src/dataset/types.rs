@@ -50,11 +50,7 @@ impl Dataset {
     }
 
     fn algorithm_label(algo: &dyn Algorithm) -> String {
-        std::any::type_name_of_val(algo)
-            .rsplit("::")
-            .next()
-            .unwrap_or("unknown")
-            .to_string()
+        algo.name().to_string()
     }
 
     fn build<S1, S2>(algorithms: &[&dyn Algorithm], labeled_data: &[(S1, S2, f32)]) -> Result<Self>
@@ -167,7 +163,7 @@ impl Dataset {
             self.algorithm_names
                 .iter()
                 .enumerate()
-                .map(|(i, name)| format!("score_{}_{}", i, name)),
+                .map(|(i, name)| format!("{}", name)),
         );
         writer.write_record(header)?;
 
@@ -221,7 +217,7 @@ impl Dataset {
         ];
 
         for (i, name) in self.algorithm_names.iter().enumerate() {
-            let col_name = format!("score_{}_{}", i, name);
+            let col_name = format!("{}", name);
             fields.push(Field::new(&col_name, DataType::Float32, false));
             let score_col = Float32Array::from(
                 self.base_scores
