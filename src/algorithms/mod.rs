@@ -5,8 +5,9 @@
 //! ## Algorithms
 //!
 //! - [aline]
-//! - [editex].
+//! - [editex]
 //! - [jaro_winkler]
+//! - [bisim]
 //! - [levenshtein]
 //! - [ngram]
 //!
@@ -27,6 +28,7 @@
 //!
 
 pub mod aline;
+pub mod bisim;
 pub mod editex;
 pub mod jaro_winkler;
 pub mod lcs;
@@ -36,6 +38,7 @@ pub mod ngram;
 mod traits;
 
 pub use aline::config::Aline;
+pub use bisim::config::BiSim;
 pub use editex::config::Editex;
 pub use jaro_winkler::config::JaroWinkler;
 pub use lcs::LCS;
