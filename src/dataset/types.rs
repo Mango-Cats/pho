@@ -18,9 +18,6 @@ pub struct Dataset {
     pub base_scores: Vec<Vec<f32>>,
 }
 
-/// Backward-compatible alias for existing learning APIs.
-pub type TrainingData = Dataset;
-
 impl Dataset {
     fn validate_shape(&self) -> Result<()> {
         if self.inputs.len() != self.targets.len() {
@@ -88,14 +85,18 @@ impl Dataset {
     }
 
     pub fn from_slice<S1, S2>(
-        algorithms: &[&dyn Algorithm],
+        algorithms: Vec<Box<dyn Algorithm>>,
         labeled_data: &[(S1, S2, f32)],
     ) -> Result<Self>
     where
         S1: AsRef<str>,
         S2: AsRef<str>,
     {
-        Self::build(algorithms, labeled_data)
+        let algorithms = algorithms
+            .iter()
+            .map(|algo| algo.as_ref())
+            .collect::<Vec<_>>();
+        Self::build(&algorithms, labeled_data)
     }
 
     pub fn from_ensemble<S1, S2>(

@@ -1,4 +1,4 @@
-use crate::dataset::TrainingData;
+use crate::dataset::Dataset;
 use crate::learning::loss::{types::FitnessEvaluator, util::predict};
 
 /// Binary Cross-Entropy (BCE) Evaluator.
@@ -9,7 +9,7 @@ pub struct BinaryCrossEntropy {
 }
 
 impl BinaryCrossEntropy {
-    pub fn new(data: &TrainingData) -> Self {
+    pub fn new(data: &Dataset) -> Self {
         Self {
             precomputed_scores: data.base_scores.clone(),
             targets: data.targets.clone(),

@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
-    dataset::TrainingData,
+    dataset::Dataset,
     ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
     learning::{
         genetic::{GeneticConfig, optimize},
@@ -80,13 +80,13 @@ fn main() {
     // Precompute dataset
     // ...
     //  To make things fast, we can precompute all values and construct
-    //  `TrainingData` from it.
-    let training_data = TrainingData::from_ensemble(&ensemble, &labeled_data).unwrap();
+    //  `Dataset` from it.
+    let training_data = Dataset::from_ensemble(&ensemble, &labeled_data).unwrap();
 
     // Saving a Dataset
     // ...
     //  We can save a dataset as a CSV or Arrow file by simply running
-    //  the `.export()` on the `TrainingData` variable.
+    //  the `.export()` on the `Dataset` variable.
     //
     //  The file type of the dataset (i.e., how to write it) is
     //  inferred from the extension. Hence, the example below will

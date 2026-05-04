@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, LCS, LCSuf},
-    dataset::TrainingData,
+    dataset::Dataset,
     ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
     learning::{
         genetic::{GeneticConfig, optimize},
@@ -90,8 +90,8 @@ fn main() {
     // Precompute dataset
     // ...
     //  To make things fast, we can precompute all values and construct
-    //  `TrainingData` from it. Notice we only pass the `train_set` here!
-    let training_data = TrainingData::from_ensemble(&ensemble, &train_set).unwrap();
+    //  `Dataset` from it. Notice we only pass the `train_set` here!
+    let training_data = Dataset::from_ensemble(&ensemble, &train_set).unwrap();
 
     // Define the evaluator
     // ...
