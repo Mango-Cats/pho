@@ -27,22 +27,14 @@ fn main() {
     let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
     jaro_winkler.validate().unwrap();
 
-    // Build a labelled dataset
-    // ...
-    //  The genetic algorithm needs a way to judge how good a set of
-    //  weights is. We do that by defining a small ground-truth dataset
-    //  of (word_a, word_b, expected_similarity) triples.
-    //
-    //  The evaluator will score a candidate weight vector by computing
-    //  the ensemble similarity for each pair and measuring how close
-    //  it lands to the expected value.
-    let ground_truth: Vec<(&str, &str, f32)> = vec![
-        ("dixon", "dicksonx", 0.81),
-        ("martha", "marhta", 0.96),
-        ("jellyfish", "smellyfish", 0.73),
-        ("cat", "car", 0.83),
-        ("saturday", "sunday", 0.62),
-        ("bupropion", "buspirone", 0.76),
+    // Build a labelled dataset (either from CSV or inline fallback)
+    let labeled_data: Vec<(String, String, f32)> = vec![
+        ("dixon".into(), "dicksonx".into(), 0.81),
+        ("martha".into(), "marhta".into(), 0.96),
+        ("jellyfish".into(), "smellyfish".into(), 0.73),
+        ("cat".into(), "car".into(), 0.83),
+        ("saturday".into(), "sunday".into(), 0.62),
+        ("bupropion".into(), "buspirone".into(), 0.76),
     ];
 
     // Build the ensemble with equal starting weights
@@ -89,7 +81,7 @@ fn main() {
     // ...
     //  To make things fast, we can precompute all values and construct
     //  `TrainingData` from it.
-    let training_data = TrainingData::from_ensemble(&ensemble, &ground_truth).unwrap();
+    let training_data = TrainingData::from_ensemble(&ensemble, &labeled_data).unwrap();
 
     // Saving a Dataset
     // ...
@@ -161,7 +153,10 @@ fn main() {
         is_probability_distribution: true,
     };
 
-    for (a, b, expected) in &ground_truth {
+    for (a, b, expected) in labeled_data
+        .iter()
+        .map(|(a, b, t)| (a.as_str(), b.as_str(), *t))
+    {
         let label = format!("{a}/{b}");
         let base = baseline.similarity(a, b).unwrap_or(f32::NAN);
         let opt = ensemble.similarity(a, b).unwrap_or(f32::NAN);

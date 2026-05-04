@@ -28,19 +28,18 @@ fn main() {
     //  (to verify the model generalizes to unseen data without overfitting).
 
     // The training set is what the Genetic Algorithm will use to adjust the weights.
-    let train_set: Vec<(&str, &str, f32)> = vec![
-        ("bananamonster", "bananacoolguy", 0.50),
-        ("bananaphone", "bananabread", 0.5),
-        ("bananaboat", "bananasmoothie", 0.4),
-    ];
-
-    // The test set is kept completely hidden from the optimizer. We only use
-    // it at the end to evaluate how well our optimized ensemble performs.
-    let test_set: Vec<(&str, &str, f32)> = vec![
-        ("bananamrsunshine", "bananalucioooo", 0.40),
-        ("bananapancakes", "bananasplit", 0.45),
-        ("bananaleaf", "bananacake", 0.55),
-    ];
+    let (train_set, test_set): (Vec<(String, String, f32)>, Vec<(String, String, f32)>) = (
+        vec![
+            ("bananamonster".into(), "bananacoolguy".into(), 0.50),
+            ("bananaphone".into(), "bananabread".into(), 0.5),
+            ("bananaboat".into(), "bananasmoothie".into(), 0.4),
+        ],
+        vec![
+            ("bananamrsunshine".into(), "bananalucioooo".into(), 0.40),
+            ("bananapancakes".into(), "bananasplit".into(), 0.45),
+            ("bananaleaf".into(), "bananacake".into(), 0.55),
+        ],
+    );
 
     // Build the ensemble with deliberately terrible starting weights
     // ...
@@ -160,7 +159,7 @@ fn main() {
             "", "", "", "", ""
         );
 
-        for (a, b, expected) in dataset {
+        for (a, b, expected) in dataset.iter().map(|(a, b, t)| (a.as_str(), b.as_str(), *t)) {
             let label = format!("{a}/{b}");
             let base = baseline.similarity(a, b).unwrap_or(f32::NAN);
             let opt = ensemble.similarity(a, b).unwrap_or(f32::NAN);
