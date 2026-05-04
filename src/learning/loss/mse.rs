@@ -1,7 +1,5 @@
-use crate::learning::{
-    dataset::TrainingData,
-    loss::{types::FitnessEvaluator, util::predict},
-};
+use crate::dataset::TrainingData;
+use crate::learning::loss::{types::FitnessEvaluator, util::predict};
 
 /// Mean Squared Error (MSE) Evaluator.
 /// Heavily penalizes confident, large errors. Best for general regression.

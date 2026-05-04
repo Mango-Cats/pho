@@ -53,6 +53,9 @@ pub enum Error {
 
     #[error("CSV error: {0}")]
     Csv(#[from] csv::Error),
+
+    #[error("Invalid dataset shape: {0}")]
+    InvalidDatasetShape(String),
 }
 
 /// A convenient alias for Result types within this crate.

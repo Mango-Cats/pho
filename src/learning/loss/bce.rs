@@ -1,7 +1,5 @@
-use crate::learning::{
-    dataset::TrainingData,
-    loss::{types::FitnessEvaluator, util::predict},
-};
+use crate::dataset::TrainingData;
+use crate::learning::loss::{types::FitnessEvaluator, util::predict};
 
 /// Binary Cross-Entropy (BCE) Evaluator.
 /// The gold standard for classification (e.g., exact matches / duplicates).

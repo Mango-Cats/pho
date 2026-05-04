@@ -69,8 +69,8 @@ fn apply_best_weights(ensemble: &mut EnsembleAlgorithm, weights: &[f32]) -> Resu
 mod tests {
     use super::*;
     use crate::algorithms::{LCS, LCSuf};
+    use crate::dataset::TrainingData;
     use crate::ensemble::types::WeightedAlgorithm;
-    use crate::learning::dataset::TrainingData;
     use crate::learning::loss::mse::MeanSquaredError;
 
     #[test]

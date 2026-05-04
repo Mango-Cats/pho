@@ -1,7 +1,5 @@
-use crate::learning::{
-    dataset::TrainingData,
-    loss::{types::FitnessEvaluator, util::predict},
-};
+use crate::dataset::TrainingData;
+use crate::learning::loss::{types::FitnessEvaluator, util::predict};
 
 /// Mean Absolute Error (MAE) Evaluator.
 /// Scales linearly with error size. Best for datasets with noisy labels or outliers.

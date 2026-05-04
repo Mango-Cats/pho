@@ -1,8 +1,8 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
+    dataset::TrainingData,
     ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
     learning::{
-        dataset::TrainingData,
         genetic::{GeneticConfig, optimize},
         loss::MeanSquaredError,
     },
