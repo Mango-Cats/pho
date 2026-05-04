@@ -50,6 +50,9 @@ pub enum Error {
 
     #[error("TOML serialize error: {0}")]
     TomlSerialize(#[from] toml::ser::Error),
+
+    #[error("CSV error: {0}")]
+    Csv(#[from] csv::Error),
 }
 
 /// A convenient alias for Result types within this crate.

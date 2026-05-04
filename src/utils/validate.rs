@@ -1,7 +1,5 @@
 // src/utils/validation.rs
 
-use crate::error::Result;
-
 /// Consumes an iterator of tokens, validating each one against a provided closure.
 /// Returns a collected `Vec<T>` of the tokens if all are valid, or an `AlgorithmError`
 /// on the first invalid token.
@@ -10,7 +8,7 @@ pub(crate) fn validate_tokens<T, I, F>(
     input_name: &'static str,
     context: &'static str,
     is_valid: F,
-) -> Result<Vec<T>>
+) -> crate::Result<Vec<T>>
 where
     T: ToString,
     I: IntoIterator<Item = T>,
