@@ -7,6 +7,8 @@
 use crate::{Error, Result};
 use serde::{Serialize, de::DeserializeOwned};
 use std::fs;
+use std::path::Path;
+use csv;
 /// Load and deserialize a TOML document into any config type.
 ///
 /// The caller owns the target schema through `T`, which keeps this parser
@@ -52,4 +54,21 @@ where
     fs::write(file_name, content)?;
 
     Ok(())
+}
+
+/// Generic CSV reader that deserializes each row into `T` using Serde.
+pub fn read_csv_as<T, P>(file_name: P) -> Result<Vec<T>>
+where
+    T: DeserializeOwned,
+    P: AsRef<Path>,
+{
+    let mut rdr = csv::Reader::from_path(file_name.as_ref())?;
+    let mut out = Vec::new();
+
+    for record in rdr.deserialize() {
+        let row: T = record?;
+        out.push(row);
+    }
+
+    Ok(out)
 }
