@@ -1,0 +1,5 @@
+n = 2
+before_padding = 1
+after_padding = 1
+case_insensitive = true
+metric = "dice"

@@ -24,6 +24,12 @@ pub enum Error {
     #[error("Jaro-Winkler prefix_scale must be in [0.0, 0.25], got {0}")]
     InvalidPrefixScale(f32),
 
+    #[error("N-gram size must be greater than zero, got {0}")]
+    InvalidNGramSize(usize),
+
+    #[error("Tversky parameter {name} must be finite and non-negative, got {value}")]
+    InvalidTverskyParameter { name: &'static str, value: f32 },
+
     #[error("Ensemble must contain at least one algorithm")]
     EmptyEnsemble,
 

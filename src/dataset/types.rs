@@ -163,7 +163,7 @@ impl Dataset {
             self.algorithm_names
                 .iter()
                 .enumerate()
-                .map(|(i, name)| format!("{}", name)),
+                .map(|(_, name)| format!("{}", name)),
         );
         writer.write_record(header)?;
 
