@@ -44,5 +44,5 @@ pub use jaro_winkler::config::JaroWinkler;
 pub use lcs::LCS;
 pub use lcsuf::LCSuf;
 pub use levenshtein::config::Levenshtein;
-pub use ngram::config::{NGram, NGramMetric};
+pub use ngram::{config::NGram, metric::NGramMetric};
 pub use traits::Algorithm;

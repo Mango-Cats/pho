@@ -7,13 +7,14 @@
 //! with Dice, Jaccard, Overlap, Tversky, or cosine similarity.
 
 pub mod config;
+pub mod metric;
 
 use std::collections::{HashMap, HashSet};
 
 use crate::{
     algorithms::{
         Algorithm,
-        ngram::config::{NGram, NGramMetric},
+        ngram::{config::NGram, metric::NGramMetric},
     },
     error::Result,
     utils::{metrics, normalize::normalize_input},
