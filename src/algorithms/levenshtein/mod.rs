@@ -35,26 +35,15 @@ mod distance;
 use crate::{
     algorithms::{Algorithm, levenshtein::distance::edit_distance},
     error::Result,
+    utils::normalize::normalize_input,
 };
 
 use config::Levenshtein;
 
 impl Algorithm for Levenshtein {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
-        let x_processed = if self.case_insensitive {
-            x.to_lowercase()
-        } else {
-            x.to_string()
-        };
-
-        let y_processed = if self.case_insensitive {
-            y.to_lowercase()
-        } else {
-            y.to_string()
-        };
-
-        let x_chars: Vec<char> = x_processed.chars().collect();
-        let y_chars: Vec<char> = y_processed.chars().collect();
+        let x_chars = normalize_input(x, self.case_insensitive);
+        let y_chars = normalize_input(y, self.case_insensitive);
 
         let distance = edit_distance(&x_chars, &y_chars, self);
         let max_length = x_chars.len().max(y_chars.len()) as f32;

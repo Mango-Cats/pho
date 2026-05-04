@@ -1,5 +1,5 @@
 // src/algorithms/lcsuf.rs
-use crate::{algorithms::Algorithm, error::Result};
+use crate::{algorithms::Algorithm, error::Result, utils::normalize::normalize_input};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -16,19 +16,8 @@ impl LCSuf {
 
 impl Algorithm for LCSuf {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
-        let x_processed = if self.case_insensitive {
-            x.to_lowercase()
-        } else {
-            x.to_string()
-        };
-        let y_processed = if self.case_insensitive {
-            y.to_lowercase()
-        } else {
-            y.to_string()
-        };
-
-        let x_chars: Vec<char> = x_processed.chars().collect();
-        let y_chars: Vec<char> = y_processed.chars().collect();
+        let x_chars = normalize_input(x, self.case_insensitive);
+        let y_chars = normalize_input(y, self.case_insensitive);
         let m = x_chars.len();
         let n = y_chars.len();
 

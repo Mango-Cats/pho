@@ -49,26 +49,15 @@ use crate::{
         jaro_winkler::{jaro::jaro_similarity, winkler::common_prefix_length},
     },
     error::Result,
+    utils::normalize::normalize_input,
 };
 
 use config::JaroWinkler;
 
 impl Algorithm for JaroWinkler {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
-        let x_processed = if self.case_insensitive {
-            x.to_lowercase()
-        } else {
-            x.to_string()
-        };
-
-        let y_processed = if self.case_insensitive {
-            y.to_lowercase()
-        } else {
-            y.to_string()
-        };
-
-        let x_chars: Vec<char> = x_processed.chars().collect();
-        let y_chars: Vec<char> = y_processed.chars().collect();
+        let x_chars = normalize_input(x, self.case_insensitive);
+        let y_chars = normalize_input(y, self.case_insensitive);
 
         let jaro_score = jaro_similarity(&x_chars, &y_chars);
 
