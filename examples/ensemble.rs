@@ -5,7 +5,7 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 3: ensemble algorithm");
+    println!("🍜\t| # tutorial: ensemble algorithm");
     // Ensembles
     // ...
     //  Each algorithm has its pros and cons, some have their quirks.

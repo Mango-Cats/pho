@@ -10,7 +10,7 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 4.1: genetic algorithm introduction");
+    println!("🍜\t| # tutorial: genetic algorithm introduction");
     // Genetic Algorithm
     // ...
     //  The ensemble has weights attached to each individual
@@ -23,9 +23,6 @@ fn main() {
     //
 
     // Load and validate configs
-    // ...
-    //  Just like in the ensemble example, we start by importing and
-    //  validating the algorithm configs we want to combine.
     let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
     let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
     jaro_winkler.validate().unwrap();

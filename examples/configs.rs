@@ -9,7 +9,7 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 1: configuration files");
+    println!("🍜\t| # tutorial: configuration files");
     // Configs
     // ...
     //  Configuration files are the heart of the algorithms defined in

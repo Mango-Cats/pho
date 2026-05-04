@@ -4,7 +4,7 @@ use pho::{
 };
 
 fn main() {
-    println!("🍜\t| # Example 2: running an algorithm");
+    println!("🍜\t| # tutorial: running an algorithm");
     // Algorithms
     // ...
     //  This example shows how to run algorithms.
