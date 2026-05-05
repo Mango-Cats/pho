@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::Result;
 use crate::algorithms::Algorithm;
-use crate::ensemble::types::EnsembleAlgorithm;
+use crate::ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm};
 
 /// Dataset row with optional transcriptions for each side.
 ///
@@ -183,6 +183,10 @@ impl Dataset {
         algo.name().to_string()
     }
 
+    fn weighted_algorithm_label(weighted: &WeightedAlgorithm) -> String {
+        format!("{}_{}", weighted.algorithm.name(), weighted.weight)
+    }
+
     fn build_from_rows(algorithms: &[&dyn Algorithm], labeled_data: &[Row]) -> Result<Self> {
         let mut inputs = Vec::with_capacity(labeled_data.len());
         let mut labels = Vec::with_capacity(labeled_data.len());
@@ -239,12 +243,62 @@ impl Dataset {
     ///
     /// Input form and label behavior are the same as [`Self::from_slice`].
     pub fn from_ensemble(ensemble: &EnsembleAlgorithm, labeled_data: &[Row]) -> Result<Self> {
-        let algorithms = ensemble
-            .algorithms
-            .iter()
-            .map(|wa| wa.algorithm.as_ref())
-            .collect::<Vec<_>>();
-        Self::build_from_rows(&algorithms, labeled_data)
+        let mut inputs = Vec::with_capacity(labeled_data.len());
+        let mut labels = Vec::with_capacity(labeled_data.len());
+        let mut base_scores = Vec::with_capacity(labeled_data.len());
+
+        let mut algorithm_names = Vec::with_capacity(1 + ensemble.algorithms.len());
+        algorithm_names.push("ensemble".to_string());
+        algorithm_names.extend(
+            ensemble
+                .algorithms
+                .iter()
+                .map(Self::weighted_algorithm_label),
+        );
+
+        for (row_index, row) in labeled_data.iter().enumerate() {
+            let mut weighted_sum = 0.0f32;
+            let mut total_weight = 0.0f32;
+
+            let component_scores = ensemble
+                .algorithms
+                .iter()
+                .map(|weighted| {
+                    let (left, right) = row.pair_for(weighted.algorithm.as_ref(), row_index)?;
+                    let score = weighted.algorithm.similarity(left, right)?;
+
+                    if weighted.weight != 0.0 {
+                        weighted_sum += score * weighted.weight;
+                        total_weight += weighted.weight.abs();
+                    }
+
+                    Ok(score)
+                })
+                .collect::<Result<Vec<f32>>>()?;
+
+            let ensemble_score = if total_weight == 0.0 {
+                0.0
+            } else {
+                (weighted_sum / total_weight).clamp(0.0, 1.0)
+            };
+
+            let mut scores = Vec::with_capacity(1 + component_scores.len());
+            scores.push(ensemble_score);
+            scores.extend(component_scores);
+
+            inputs.push((row.x_1.clone(), row.x_2.clone()));
+            labels.push(row.label);
+            base_scores.push(scores);
+        }
+
+        let data = Self {
+            inputs,
+            labels,
+            algorithm_names,
+            base_scores,
+        };
+        data.validate_shape()?;
+        Ok(data)
     }
 
     /// Build a dataset from precomputed algorithm scores.
@@ -396,9 +450,25 @@ impl Dataset {
 #[cfg(test)]
 mod tests {
     use super::{Dataset, Row};
+    use crate::ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm};
     use crate::{algorithms::Algorithm, error::Result};
 
     struct RequiresTranscription;
+
+    struct FixedScore {
+        name: &'static str,
+        score: f32,
+    }
+
+    impl Algorithm for FixedScore {
+        fn similarity(&self, _x: &str, _y: &str) -> Result<f32> {
+            Ok(self.score)
+        }
+
+        fn name(&self) -> &'static str {
+            self.name
+        }
+    }
 
     impl Algorithm for RequiresTranscription {
         fn similarity(&self, x: &str, y: &str) -> Result<f32> {
@@ -453,5 +523,52 @@ mod tests {
         assert!(result.is_ok());
         let dataset = result.unwrap();
         assert_eq!(dataset.labels, vec![None]);
+    }
+
+    #[test]
+    fn from_ensemble_includes_ensemble_and_weighted_component_scores() {
+        let ensemble = EnsembleAlgorithm::try_new(
+            vec![
+                WeightedAlgorithm {
+                    algorithm: Box::new(FixedScore {
+                        name: "aline",
+                        score: 0.0,
+                    }),
+                    weight: 0.8,
+                },
+                WeightedAlgorithm {
+                    algorithm: Box::new(FixedScore {
+                        name: "bisim",
+                        score: 0.1,
+                    }),
+                    weight: 0.1,
+                },
+                WeightedAlgorithm {
+                    algorithm: Box::new(FixedScore {
+                        name: "editex",
+                        score: 0.2,
+                    }),
+                    weight: 0.1,
+                },
+            ],
+            true,
+            false,
+        )
+        .expect("valid ensemble");
+
+        let rows = vec![Row::builder("drug_a", "drug_b").label(0.0).build()];
+        let dataset = Dataset::from_ensemble(&ensemble, &rows).expect("dataset from ensemble");
+
+        assert_eq!(
+            dataset.algorithm_names,
+            vec!["ensemble", "aline_0.8", "bisim_0.1", "editex_0.1"]
+        );
+
+        let scores = &dataset.base_scores[0];
+        assert_eq!(scores.len(), 4);
+        assert!((scores[0] - 0.03).abs() < 1e-6);
+        assert!((scores[1] - 0.0).abs() < 1e-6);
+        assert!((scores[2] - 0.1).abs() < 1e-6);
+        assert!((scores[3] - 0.2).abs() < 1e-6);
     }
 }
