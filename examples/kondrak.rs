@@ -46,13 +46,13 @@ fn keep_supported_rows(algorithms: &[Box<dyn Algorithm>], rows: &[Row]) -> Vec<R
                 let left = if algorithm.requires_transcription() {
                     row.x_transcription.as_deref().unwrap_or("")
                 } else {
-                    row.x.as_str()
+                    row.x_1.as_str()
                 };
 
                 let right = if algorithm.requires_transcription() {
                     row.y_transcription.as_deref().unwrap_or("")
                 } else {
-                    row.y.as_str()
+                    row.x_2.as_str()
                 };
 
                 algorithm.similarity(left, right).is_ok()

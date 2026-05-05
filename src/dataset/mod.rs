@@ -10,7 +10,7 @@ use crate::ensemble::types::EnsembleAlgorithm;
 
 /// Dataset row with optional transcriptions for each side.
 ///
-/// `x` and `y` are the raw forms used for storage/export, while
+/// `x_1` and `x_2` are the raw forms used for storage/export, while
 /// `x_transcription` and `y_transcription` are used at scoring time by
 /// algorithms that require phonetic input (for example, ALINE).
 ///
@@ -20,10 +20,10 @@ use crate::ensemble::types::EnsembleAlgorithm;
 ///   when the corresponding CSV column is missing.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Row {
-    #[serde(alias = "x_1")]
-    pub x: String,
-    #[serde(alias = "x_2")]
-    pub y: String,
+    #[serde(alias = "x", alias = "x_1")]
+    pub x_1: String,
+    #[serde(alias = "y", alias = "x_2")]
+    pub x_2: String,
     #[serde(default)]
     pub label: Option<f32>,
     #[serde(default)]
@@ -43,8 +43,8 @@ impl Row {
         S2: Into<String>,
     {
         Self {
-            x: x.into(),
-            y: y.into(),
+            x_1: x.into(),
+            x_2: y.into(),
             label: None,
             x_transcription: None,
             y_transcription: None,
@@ -60,8 +60,8 @@ impl Row {
         S2: Into<String>,
     {
         RowBuilder {
-            x: x.into(),
-            y: y.into(),
+            x_1: x.into(),
+            x_2: y.into(),
             label: None,
             x_transcription: None,
             y_transcription: None,
@@ -71,8 +71,8 @@ impl Row {
 
 /// Fluent builder for `Row` to enable ergonomic chaining of optional fields.
 pub struct RowBuilder {
-    x: String,
-    y: String,
+    x_1: String,
+    x_2: String,
     label: Option<f32>,
     x_transcription: Option<String>,
     y_transcription: Option<String>,
@@ -99,8 +99,8 @@ impl RowBuilder {
     /// Build the final `Row` value.
     pub fn build(self) -> Row {
         Row {
-            x: self.x,
-            y: self.y,
+            x_1: self.x_1,
+            x_2: self.x_2,
             label: self.label,
             x_transcription: self.x_transcription,
             y_transcription: self.y_transcription,
@@ -120,7 +120,7 @@ impl Row {
         row_index: usize,
     ) -> Result<(&'a str, &'a str)> {
         if !algorithm.requires_transcription() {
-            return Ok((self.x.as_str(), self.y.as_str()));
+            return Ok((self.x_1.as_str(), self.x_2.as_str()));
         }
 
         match (
@@ -198,7 +198,7 @@ impl Dataset {
                 })
                 .collect::<Result<Vec<f32>>>()?;
 
-            inputs.push((row.x.clone(), row.y.clone()));
+            inputs.push((row.x_1.clone(), row.x_2.clone()));
             labels.push(row.label);
             base_scores.push(scores);
         }
