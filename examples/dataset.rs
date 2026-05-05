@@ -1,7 +1,7 @@
 use pho::{
     self,
     algorithms::{BiSim, JaroWinkler, Levenshtein, NGram},
-    dataset::Dataset,
+    dataset::{Dataset, Row},
     ensemble::types::EnsembleAlgorithm,
     utils::io::{import, read_csv_as},
 };
@@ -39,14 +39,13 @@ fn main() {
     //  the CSV.
     //
     //  So, in this example, since we're reading this CSV as
-    //  T: (String, String, f32)
-    //  Our resulting `csv_data` will have the data type of
-    //  Vec<(String, String, f32)>
+    //  T: Row
+    //  Our resulting `rows` will have the data type of
+    //  Vec<Row>
     //
-    //  In English, it is a vector of rows such that each row has
-    //  three columns of type String, String, and f32, respectively.
-    let csv_data =
-        read_csv_as::<(String, String, f32), _>("examples/data/dataset.csv", None).unwrap();
+    //  `Row` supports common CSV headers via serde aliases,
+    //  so this stays concise while still being explicit about shape.
+    let rows = read_csv_as::<Row, _>("examples/data/dataset.csv", None).unwrap();
 
     // Building the Dataset
     // ...
@@ -66,12 +65,12 @@ fn main() {
             Box::new(ngram_2_1_1_dice.clone()),
             Box::new(bisim.clone()),
         ],
-        &csv_data,
+        &rows,
     )
     .unwrap();
 
     // Dataset from an ensemble
-    let slice_ensemble = Dataset::from_ensemble(&ensemble, &csv_data).unwrap();
+    let slice_ensemble = Dataset::from_ensemble(&ensemble, &rows).unwrap();
 
     // Save both datasets to compare results
     slice_dataset

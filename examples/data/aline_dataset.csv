@@ -1,0 +1,9 @@
+x,y,x_transcription,y_transcription,label
+pharmacology,farmacology,farmakology,farmakology,0.96
+night,nite,nait,nait,0.94
+centre,center,sentre,senter,0.88
+theatre,theater,tiatre,tiater,0.86
+colour,color,kolor,kolor,0.98
+catalog,katolog,katalog,katalog,0.97
+faze,phase,feiz,feiz,0.92
+bacterium,bacteria,bakterium,bakteria,0.78

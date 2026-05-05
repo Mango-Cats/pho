@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
-    dataset::Dataset,
+    dataset::{Dataset, Row},
     ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
     learning::{
         genetic::{GeneticConfig, optimize},
@@ -81,7 +81,11 @@ fn main() {
     // ...
     //  To make things fast, we can precompute all values and construct
     //  `Dataset` from it.
-    let training_data = Dataset::from_ensemble(&ensemble, &labeled_data).unwrap();
+    let training_rows = labeled_data
+        .iter()
+        .map(|(x, y, target)| Row::with_target(x, y, *target))
+        .collect::<Vec<_>>();
+    let training_data = Dataset::from_ensemble(&ensemble, &training_rows).unwrap();
 
     // Saving a Dataset
     // ...

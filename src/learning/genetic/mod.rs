@@ -69,7 +69,7 @@ fn apply_best_weights(ensemble: &mut EnsembleAlgorithm, weights: &[f32]) -> Resu
 mod tests {
     use super::*;
     use crate::algorithms::{LCS, LCSuf};
-    use crate::dataset::Dataset;
+    use crate::dataset::{Dataset, Row};
     use crate::ensemble::types::WeightedAlgorithm;
     use crate::learning::loss::mse::MeanSquaredError;
 
@@ -101,7 +101,11 @@ mod tests {
             is_probability_distribution: true,
         };
 
-        let training_data = Dataset::from_ensemble(&ensemble, &ground_truth).unwrap();
+        let rows = ground_truth
+            .iter()
+            .map(|(x, y, target)| Row::with_target(*x, *y, *target))
+            .collect::<Vec<_>>();
+        let training_data = Dataset::from_ensemble(&ensemble, &rows).unwrap();
         let evaluator = MeanSquaredError::new(&training_data);
 
         let config = GeneticConfig {
