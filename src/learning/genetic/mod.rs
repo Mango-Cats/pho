@@ -103,7 +103,7 @@ mod tests {
 
         let rows = ground_truth
             .iter()
-            .map(|(x, y, target)| Row::with_target(*x, *y, *target))
+            .map(|(x, y, label)| Row::builder(*x, *y).label(*label).build())
             .collect::<Vec<_>>();
         let training_data = Dataset::from_ensemble(&ensemble, &rows).unwrap();
         let evaluator = MeanSquaredError::new(&training_data);

@@ -93,7 +93,7 @@ fn main() {
     //  `Dataset` from it. Notice we only pass the `train_set` here!
     let training_rows = train_set
         .iter()
-        .map(|(x, y, target)| Row::with_target(x, y, *target))
+        .map(|(x, y, label)| Row::builder(x, y).label(*label).build())
         .collect::<Vec<_>>();
     let training_data = Dataset::from_ensemble(&ensemble, &training_rows).unwrap();
 

@@ -17,6 +17,7 @@ Visit the examples (in the order):
 2. [Running algorithms](/example/algorithm.rs)
 3. [Creating and running ensembles](/example/ensemble.rs)
 4. [Working with datasets](/example/dataset.rs)
-5. Learning weights via Genetic Algorithms:
+5. [ALINE datasets with transcriptions](/example/aline_dataset.rs)
+6. Learning weights via Genetic Algorithms:
    1. [Introduction](/example/ga_intro.rs)
    1. [Case Study](/example/ga_extreme_case.rs)

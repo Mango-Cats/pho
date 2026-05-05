@@ -83,7 +83,7 @@ fn main() {
     //  `Dataset` from it.
     let training_rows = labeled_data
         .iter()
-        .map(|(x, y, target)| Row::with_target(x, y, *target))
+        .map(|(x, y, label)| Row::builder(x, y).label(*label).build())
         .collect::<Vec<_>>();
     let training_data = Dataset::from_ensemble(&ensemble, &training_rows).unwrap();
 

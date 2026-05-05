@@ -13,6 +13,11 @@ use crate::ensemble::types::EnsembleAlgorithm;
 /// `x` and `y` are the raw forms used for storage/export, while
 /// `x_transcription` and `y_transcription` are used at scoring time by
 /// algorithms that require phonetic input (for example, ALINE).
+///
+/// Deserialization behavior:
+/// - `x` and `y` are required.
+/// - `label`, `x_transcription`, and `y_transcription` are optional and default to `None`
+///   when the corresponding CSV column is missing.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Row {
     #[serde(alias = "x_1")]
@@ -28,6 +33,10 @@ pub struct Row {
 }
 
 impl Row {
+    /// Create a `Row` with the required fields `x` and `y`.
+    ///
+    /// Optional fields (`label`, `x_transcription`, `y_transcription`) can be
+    /// added with the fluent builder: `Row::builder(x, y).label(...).build()`.
     pub fn new<S1, S2>(x: S1, y: S2) -> Self
     where
         S1: Into<String>,
@@ -42,41 +51,69 @@ impl Row {
         }
     }
 
-    pub fn with_label<S1, S2>(x: S1, y: S2, label: f32) -> Self
+    /// Start a fluent builder for `Row`.
+    ///
+    /// Example: `Row::builder("a", "b").label(0.5).transcriptions("x", "y").build()`
+    pub fn builder<S1, S2>(x: S1, y: S2) -> RowBuilder
     where
         S1: Into<String>,
         S2: Into<String>,
     {
-        let mut row = Self::new(x, y);
-        row.label = Some(label);
-        row
+        RowBuilder {
+            x: x.into(),
+            y: y.into(),
+            label: None,
+            x_transcription: None,
+            y_transcription: None,
+        }
+    }
+}
+
+/// Fluent builder for `Row` to enable ergonomic chaining of optional fields.
+pub struct RowBuilder {
+    x: String,
+    y: String,
+    label: Option<f32>,
+    x_transcription: Option<String>,
+    y_transcription: Option<String>,
+}
+
+impl RowBuilder {
+    /// Set the optional label (target) for the row.
+    pub fn label(mut self, value: f32) -> Self {
+        self.label = Some(value);
+        self
     }
 
-    pub fn with_transcriptions<S1, S2, T1, T2>(x: S1, y: S2, x_tr: T1, y_tr: T2) -> Self
+    /// Set transcriptions for x and y.
+    pub fn transcriptions<T1, T2>(mut self, x_tr: T1, y_tr: T2) -> Self
     where
-        S1: Into<String>,
-        S2: Into<String>,
         T1: Into<String>,
         T2: Into<String>,
     {
-        let mut row = Self::new(x, y);
-        row.x_transcription = Some(x_tr.into());
-        row.y_transcription = Some(y_tr.into());
-        row
+        self.x_transcription = Some(x_tr.into());
+        self.y_transcription = Some(y_tr.into());
+        self
     }
 
-    pub fn with_all<S1, S2, T1, T2>(x: S1, y: S2, label: f32, x_tr: T1, y_tr: T2) -> Self
-    where
-        S1: Into<String>,
-        S2: Into<String>,
-        T1: Into<String>,
-        T2: Into<String>,
-    {
-        let mut row = Self::with_transcriptions(x, y, x_tr, y_tr);
-        row.label = Some(label);
-        row
+    /// Build the final `Row` value.
+    pub fn build(self) -> Row {
+        Row {
+            x: self.x,
+            y: self.y,
+            label: self.label,
+            x_transcription: self.x_transcription,
+            y_transcription: self.y_transcription,
+        }
     }
+}
 
+impl From<RowBuilder> for Row {
+    fn from(b: RowBuilder) -> Self {
+        b.build()
+    }
+}
+impl Row {
     fn pair_for<'a>(
         &'a self,
         algorithm: &dyn Algorithm,
@@ -101,7 +138,7 @@ impl Row {
 
 /// Unified dataset for learning workflows.
 ///
-/// Stores input pairs, label labels, the algorithm identities used to score
+/// Stores input pairs, optional labels, the algorithm identities used to score
 /// each pair, and the precomputed per-algorithm scores.
 #[derive(Debug, Clone)]
 pub struct Dataset {
@@ -182,7 +219,10 @@ impl Dataset {
     /// - raw `x`/`y` for algorithms that do not require transcriptions
     /// - `x_transcription`/`y_transcription` for algorithms that do
     ///
-    /// labels are optional and are stored as-is in `Dataset.labels`.
+    /// Labels are optional and are stored as-is in `Dataset.labels`.
+    ///
+    /// If an algorithm requires transcriptions, both transcription fields must be present for
+    /// each row; otherwise this returns `Error::MissingTranscription`.
     pub fn from_slice(algorithms: Vec<Box<dyn Algorithm>>, labeled_data: &[Row]) -> Result<Self> {
         let algorithms = algorithms
             .iter()
@@ -373,7 +413,7 @@ mod tests {
     #[test]
     fn from_slice_rejects_transcription_required_algorithm() {
         let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(RequiresTranscription)];
-        let rows = vec![Row::with_label("a", "b", 0.5f32)];
+        let rows = vec![Row::builder("a", "b").label(0.5f32).build()];
 
         let result = Dataset::from_slice(algorithms, &rows);
         assert!(result.is_err());
@@ -382,7 +422,12 @@ mod tests {
     #[test]
     fn from_slice_accepts_transcription_required_algorithm() {
         let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(RequiresTranscription)];
-        let rows = vec![Row::with_all("word", "ward", 0.5, "wɜd", "wɔɹd")];
+        let rows = vec![
+            Row::builder("word", "ward")
+                .label(0.5)
+                .transcriptions("wɜd", "wɔɹd")
+                .build(),
+        ];
 
         let result = Dataset::from_slice(algorithms, &rows);
         assert!(result.is_ok());
@@ -391,7 +436,11 @@ mod tests {
     #[test]
     fn from_slice_allows_missing_label() {
         let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(RequiresTranscription)];
-        let rows = vec![Row::with_transcriptions("word", "ward", "wɜd", "wɔɹd")];
+        let rows = vec![
+            Row::builder("word", "ward")
+                .transcriptions("wɜd", "wɔɹd")
+                .build(),
+        ];
 
         let result = Dataset::from_slice(algorithms, &rows);
         assert!(result.is_ok());
