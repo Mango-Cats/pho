@@ -43,6 +43,11 @@ fn main() {
     //  ...
     //  Now let's construct a dataset and compute the score of each
     //  drug pair on Kondrak's algorithm. Then export it.
+    //
+    //  Looking through the resulting database, the first half must
+    //  be all LASA drugs with the ensemble score being high.
+    //  While the lower half contains unlabeled drugs so most of them
+    //  (if not all) should have a low ensemble score.
     let dataset = Dataset::from_ensemble(&kondrak, &rows).unwrap();
 
     dataset.export("example_dataset_aline.csv").unwrap();
