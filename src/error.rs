@@ -62,6 +62,9 @@ pub enum Error {
 
     #[error("Invalid dataset shape: {0}")]
     InvalidDatasetShape(String),
+
+    #[error("Missing transcription for algorithm '{algorithm}' at dataset row {row_index}")]
+    MissingTranscription { algorithm: String, row_index: usize },
 }
 
 /// A convenient alias for Result types within this crate.
