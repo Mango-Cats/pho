@@ -27,15 +27,30 @@ pub struct Row {
     #[serde(default)]
     pub label: Option<f32>,
     #[serde(default)]
-    pub x_transcription: Option<String>,
+    pub t_1: Option<String>,
     #[serde(default)]
-    pub y_transcription: Option<String>,
+    pub t_2: Option<String>,
+}
+
+/// Fluent builder for `Row` to enable ergonomic chaining of optional fields.
+pub struct RowBuilder {
+    x_1: String,
+    x_2: String,
+    label: Option<f32>,
+    t_1: Option<String>,
+    t_2: Option<String>,
 }
 
 impl Row {
+    pub const COL_X_1: &'static str = "x_1";
+    pub const COL_X_2: &'static str = "x_2";
+    pub const COL_LABEL: &'static str = "label";
+    pub const COL_T_1: &'static str = "t_1";
+    pub const COL_T_2: &'static str = "t_2";
+
     /// Create a `Row` with the required fields `x` and `y`.
     ///
-    /// Optional fields (`label`, `x_transcription`, `y_transcription`) can be
+    /// Optional fields (`label`, `t_1`, `t_2`) can be
     /// added with the fluent builder: `Row::builder(x, y).label(...).build()`.
     pub fn new<S1, S2>(x: S1, y: S2) -> Self
     where
@@ -46,8 +61,8 @@ impl Row {
             x_1: x.into(),
             x_2: y.into(),
             label: None,
-            x_transcription: None,
-            y_transcription: None,
+            t_1: None,
+            t_2: None,
         }
     }
 
@@ -63,19 +78,10 @@ impl Row {
             x_1: x.into(),
             x_2: y.into(),
             label: None,
-            x_transcription: None,
-            y_transcription: None,
+            t_1: None,
+            t_2: None,
         }
     }
-}
-
-/// Fluent builder for `Row` to enable ergonomic chaining of optional fields.
-pub struct RowBuilder {
-    x_1: String,
-    x_2: String,
-    label: Option<f32>,
-    x_transcription: Option<String>,
-    y_transcription: Option<String>,
 }
 
 impl RowBuilder {
@@ -91,8 +97,8 @@ impl RowBuilder {
         T1: Into<String>,
         T2: Into<String>,
     {
-        self.x_transcription = Some(x_tr.into());
-        self.y_transcription = Some(y_tr.into());
+        self.t_1 = Some(x_tr.into());
+        self.t_2 = Some(y_tr.into());
         self
     }
 
@@ -102,8 +108,8 @@ impl RowBuilder {
             x_1: self.x_1,
             x_2: self.x_2,
             label: self.label,
-            x_transcription: self.x_transcription,
-            y_transcription: self.y_transcription,
+            t_1: self.t_1,
+            t_2: self.t_2,
         }
     }
 }
@@ -123,10 +129,7 @@ impl Row {
             return Ok((self.x_1.as_str(), self.x_2.as_str()));
         }
 
-        match (
-            self.x_transcription.as_deref(),
-            self.y_transcription.as_deref(),
-        ) {
+        match (self.t_1.as_deref(), self.t_2.as_deref()) {
             (Some(x_tr), Some(y_tr)) => Ok((x_tr, y_tr)),
             _ => Err(crate::Error::MissingTranscription {
                 algorithm: algorithm.name().to_string(),
@@ -295,7 +298,11 @@ impl Dataset {
         use csv::Writer;
 
         let mut writer = Writer::from_path(file_name)?;
-        let mut header = vec!["x_1".to_string(), "x_2".to_string(), "label".to_string()];
+        let mut header = vec![
+            Row::COL_X_1.to_string(),
+            Row::COL_X_2.to_string(),
+            Row::COL_LABEL.to_string(),
+        ];
         header.extend(
             self.algorithm_names
                 .iter()
@@ -342,9 +349,9 @@ impl Dataset {
         let label_array = Float32Array::from(self.labels.clone());
 
         let mut fields = vec![
-            Field::new("x_1", DataType::Utf8, false),
-            Field::new("x_2", DataType::Utf8, false),
-            Field::new("label", DataType::Float32, true),
+            Field::new(Row::COL_X_1, DataType::Utf8, false),
+            Field::new(Row::COL_X_2, DataType::Utf8, false),
+            Field::new(Row::COL_LABEL, DataType::Float32, true),
         ];
 
         let mut columns: Vec<ArrayRef> = vec![
