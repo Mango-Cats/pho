@@ -50,14 +50,18 @@ impl Algorithm for Aline {
         use unicode_segmentation::UnicodeSegmentation;
 
         let x_valid = validate_tokens(
-            UnicodeSegmentation::graphemes(x, true).map(str::to_string),
+            UnicodeSegmentation::graphemes(x, true)
+                .filter(|segment| !segment.chars().all(char::is_whitespace))
+                .map(str::to_string),
             "x",
             "ALINE config sound inventory",
             |segment| self.sounds.contains_key(segment),
         )?;
 
         let y_valid = validate_tokens(
-            UnicodeSegmentation::graphemes(y, true).map(str::to_string),
+            UnicodeSegmentation::graphemes(y, true)
+                .filter(|segment| !segment.chars().all(char::is_whitespace))
+                .map(str::to_string),
             "y",
             "ALINE config sound inventory",
             |segment| self.sounds.contains_key(segment),
@@ -79,6 +83,7 @@ impl Algorithm for Aline {
 
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::Algorithm;
     use crate::{
         algorithms::{
             Aline,
@@ -481,5 +486,19 @@ mod tests {
     fn rejects_missing_file() {
         let result: Result<Aline> = import("nonexistent.toml");
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn similarity_ignores_spaces() {
+        let algo = load();
+        let compact = algo.similarity("sa", "si").expect("compact input is valid");
+        let spaced = algo
+            .similarity(" s a ", " s i ")
+            .expect("spaced input should be valid");
+
+        assert!(
+            (compact - spaced).abs() < 1e-6,
+            "expected whitespace to be ignored, got compact={compact}, spaced={spaced}"
+        );
     }
 }
