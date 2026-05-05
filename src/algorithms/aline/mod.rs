@@ -39,6 +39,10 @@ use crate::error::Result;
 use config::Aline;
 
 impl Algorithm for Aline {
+    fn requires_transcription(&self) -> bool {
+        true
+    }
+
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         use crate::utils::validate::validate_tokens;
         use alignment::alignment_score;

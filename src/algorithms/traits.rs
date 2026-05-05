@@ -21,6 +21,12 @@ use crate::error::Result;
 pub trait Algorithm {
     fn similarity(&self, x: &str, y: &str) -> Result<f32>;
 
+    /// Whether this algorithm requires phonetic transcriptions instead of
+    /// raw orthographic forms when constructing learning datasets.
+    fn requires_transcription(&self) -> bool {
+        false
+    }
+
     fn name(&self) -> &'static str {
         std::any::type_name::<Self>()
             .rsplit("::")
