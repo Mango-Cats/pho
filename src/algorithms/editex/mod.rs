@@ -28,16 +28,10 @@ pub mod group;
 
 mod distance;
 
-use crate::{
-    algorithms::{
-        Algorithm,
-        editex::distance::{edit_distance, total_delete_cost},
-    },
-    error::Result,
-    utils::validate::validate_tokens,
-};
+use crate::{algorithms::Algorithm, error::Result, utils::validate::validate_tokens};
 
 use config::Editex;
+use distance::{distance, total_delete_cost};
 
 impl Algorithm for Editex {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
@@ -54,7 +48,7 @@ impl Algorithm for Editex {
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),
         )?;
-        let distance = edit_distance(&x_chars, &y_chars, self);
+        let distance = distance(&x_chars, &y_chars, self);
         let max_distance = total_delete_cost(&x_chars, self) + total_delete_cost(&y_chars, self);
 
         if max_distance == 0.0 {

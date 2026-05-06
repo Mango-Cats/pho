@@ -4,7 +4,7 @@ use super::config::Levenshtein;
 ///
 /// Uses a dynamic programming table where `distance[i][j]` represents the
 /// minimum cost to transform `x[0..i]` into `y[0..j]`.
-pub(crate) fn edit_distance(x: &[char], y: &[char], config: &Levenshtein) -> f32 {
+pub fn distance(x: &[char], y: &[char], config: &Levenshtein) -> f32 {
     let x_length = x.len();
     let y_length = y.len();
 

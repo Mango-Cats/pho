@@ -30,22 +30,19 @@
 //!   insertions, and reversals". Soviet Physics Doklady.
 
 pub mod config;
-mod distance;
+pub mod distance;
 
-use crate::{
-    algorithms::{Algorithm, levenshtein::distance::edit_distance},
-    error::Result,
-    utils::normalize::normalize_input,
-};
+use crate::{algorithms::Algorithm, error::Result, utils::normalize::normalize_input};
 
 use config::Levenshtein;
+use distance::distance;
 
 impl Algorithm for Levenshtein {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = normalize_input(x, self.case_insensitive);
         let y_chars = normalize_input(y, self.case_insensitive);
 
-        let distance = edit_distance(&x_chars, &y_chars, self);
+        let distance = distance(&x_chars, &y_chars, self);
         let max_length = x_chars.len().max(y_chars.len()) as f32;
 
         if max_length == 0.0 {

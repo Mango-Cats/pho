@@ -2,7 +2,7 @@ use super::config::Editex;
 use super::edit::{delete, replace};
 
 /// Editex distance using substitution/insertion/deletion costs.
-pub(super) fn edit_distance(x: &[char], y: &[char], config: &Editex) -> f32 {
+pub fn distance(x: &[char], y: &[char], config: &Editex) -> f32 {
     let m = x.len();
     let n = y.len();
 
