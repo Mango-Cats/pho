@@ -70,7 +70,7 @@ mod tests {
     use super::*;
     use crate::algorithms::Algorithm;
     use crate::algorithms::{LCS, LCSuf};
-    use crate::dataset::{Dataset, Row};
+    use crate::dataset::{Row, ScoreMatrix};
     use crate::ensemble::config::EnsembleConfig;
     use crate::ensemble::weighted_function::WeightedFunction;
     use crate::learning::loss::mse::MeanSquaredError;
@@ -113,7 +113,7 @@ mod tests {
             .iter()
             .map(|(x, y, label)| Row::builder(*x, *y).label(*label).build())
             .collect::<Vec<_>>();
-        let training_data = Dataset::from_ensemble(&ensemble, &rows, false).unwrap();
+        let training_data = ScoreMatrix::from_ensemble(&ensemble, &rows, false).unwrap();
         let evaluator = MeanSquaredError::new(&training_data);
 
         let config = GeneticConfig {
