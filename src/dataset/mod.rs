@@ -6,7 +6,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::Result;
 use crate::algorithms::Algorithm;
-use crate::ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm};
+use crate::ensemble::types::EnsembleAlgorithm;
+use crate::ensemble::weighted_function::WeightedFunction;
 
 /// Dataset row with optional transcriptions for each side.
 ///
@@ -122,17 +123,18 @@ impl From<RowBuilder> for Row {
 impl Row {
     fn pair_for<'a>(
         &'a self,
-        algorithm: &dyn Algorithm,
+        requires_transcription: bool,
+        algorithm_name: &str,
         row_index: usize,
     ) -> Result<(&'a str, &'a str)> {
-        if !algorithm.requires_transcription() {
+        if !requires_transcription {
             return Ok((self.x_1.as_str(), self.x_2.as_str()));
         }
 
         match (self.t_1.as_deref(), self.t_2.as_deref()) {
             (Some(x_tr), Some(y_tr)) => Ok((x_tr, y_tr)),
             _ => Err(crate::Error::MissingTranscription {
-                algorithm: algorithm.name().to_string(),
+                algorithm: algorithm_name.to_string(),
                 row_index,
             }),
         }
@@ -183,8 +185,8 @@ impl Dataset {
         algo.name().to_string()
     }
 
-    fn weighted_algorithm_label(weighted: &WeightedAlgorithm) -> String {
-        format!("{}_{}", weighted.algorithm.name(), weighted.weight)
+    fn weighted_algorithm_label(weighted: &WeightedFunction) -> String {
+        format!("{}_{}", weighted.name(), weighted.weight)
     }
 
     fn build_from_rows(algorithms: &[&dyn Algorithm], labeled_data: &[Row]) -> Result<Self> {
@@ -200,7 +202,8 @@ impl Dataset {
             let scores = algorithms
                 .iter()
                 .map(|algo| {
-                    let (left, right) = row.pair_for(*algo, row_index)?;
+                    let (left, right) =
+                        row.pair_for(algo.requires_transcription(), algo.name(), row_index)?;
                     algo.similarity(left, right)
                 })
                 .collect::<Result<Vec<f32>>>()?;
@@ -264,8 +267,12 @@ impl Dataset {
                 .algorithms
                 .iter()
                 .map(|weighted| {
-                    let (left, right) = row.pair_for(weighted.algorithm.as_ref(), row_index)?;
-                    let score = weighted.algorithm.similarity(left, right)?;
+                    let (left, right) = row.pair_for(
+                        weighted.requires_transcription(),
+                        weighted.name(),
+                        row_index,
+                    )?;
+                    let score = weighted.score(left, right)?;
 
                     if weighted.weight != 0.0 {
                         weighted_sum += score * weighted.weight;
@@ -450,25 +457,12 @@ impl Dataset {
 #[cfg(test)]
 mod tests {
     use super::{Dataset, Row};
-    use crate::ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm};
+    use crate::ensemble::config::EnsembleConfig;
+    use crate::ensemble::types::EnsembleAlgorithm;
+    use crate::ensemble::weighted_function::WeightedFunction;
     use crate::{algorithms::Algorithm, error::Result};
 
     struct RequiresTranscription;
-
-    struct FixedScore {
-        name: &'static str,
-        score: f32,
-    }
-
-    impl Algorithm for FixedScore {
-        fn similarity(&self, _x: &str, _y: &str) -> Result<f32> {
-            Ok(self.score)
-        }
-
-        fn name(&self) -> &'static str {
-            self.name
-        }
-    }
 
     impl Algorithm for RequiresTranscription {
         fn similarity(&self, x: &str, y: &str) -> Result<f32> {
@@ -529,30 +523,11 @@ mod tests {
     fn from_ensemble_includes_ensemble_and_weighted_component_scores() {
         let ensemble = EnsembleAlgorithm::try_new(
             vec![
-                WeightedAlgorithm {
-                    algorithm: Box::new(FixedScore {
-                        name: "aline",
-                        score: 0.0,
-                    }),
-                    weight: 0.8,
-                },
-                WeightedAlgorithm {
-                    algorithm: Box::new(FixedScore {
-                        name: "bisim",
-                        score: 0.1,
-                    }),
-                    weight: 0.1,
-                },
-                WeightedAlgorithm {
-                    algorithm: Box::new(FixedScore {
-                        name: "editex",
-                        score: 0.2,
-                    }),
-                    weight: 0.1,
-                },
+                WeightedFunction::from_function("aline", 0.8, false, |_x, _y| Ok(0.0)),
+                WeightedFunction::from_function("bisim", 0.1, false, |_x, _y| Ok(0.1)),
+                WeightedFunction::from_function("editex", 0.1, false, |_x, _y| Ok(0.2)),
             ],
-            true,
-            false,
+            EnsembleConfig::Linear,
         )
         .expect("valid ensemble");
 

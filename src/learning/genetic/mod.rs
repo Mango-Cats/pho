@@ -58,7 +58,7 @@ fn apply_best_weights(ensemble: &mut EnsembleAlgorithm, weights: &[f32]) -> Resu
             return Err(Error::NonFiniteWeight(w));
         }
         if w < 0.0 {
-            return Err(Error::NegativeWeight(w));
+            return Err(Error::NegativeWeight);
         }
         entry.weight = w;
     }
@@ -68,9 +68,11 @@ fn apply_best_weights(ensemble: &mut EnsembleAlgorithm, weights: &[f32]) -> Resu
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::algorithms::Algorithm;
     use crate::algorithms::{LCS, LCSuf};
     use crate::dataset::{Dataset, Row};
-    use crate::ensemble::types::WeightedAlgorithm;
+    use crate::ensemble::config::EnsembleConfig;
+    use crate::ensemble::weighted_function::WeightedFunction;
     use crate::learning::loss::mse::MeanSquaredError;
 
     #[test]
@@ -82,23 +84,29 @@ mod tests {
             ("bananapancakes", "bananasplit", 0.45),
         ];
 
+        let lcs = LCS {
+            case_insensitive: true,
+        };
+        let lcsuf = LCSuf {
+            case_insensitive: true,
+        };
+
         let mut ensemble = EnsembleAlgorithm {
             algorithms: vec![
-                WeightedAlgorithm::new(
-                    LCS {
-                        case_insensitive: true,
-                    },
+                WeightedFunction::from_function(
+                    lcs.name(),
                     0.1,
+                    lcs.requires_transcription(),
+                    move |x, y| lcs.similarity(x, y),
                 ),
-                WeightedAlgorithm::new(
-                    LCSuf {
-                        case_insensitive: true,
-                    },
+                WeightedFunction::from_function(
+                    lcsuf.name(),
                     0.9,
+                    lcsuf.requires_transcription(),
+                    move |x, y| lcsuf.similarity(x, y),
                 ),
             ],
-            allow_negative_weights: false,
-            is_probability_distribution: true,
+            mode: EnsembleConfig::Convex,
         };
 
         let rows = ground_truth

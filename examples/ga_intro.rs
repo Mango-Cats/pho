@@ -1,7 +1,9 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
     dataset::{Dataset, Row},
-    ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
+    ensemble::{
+        config::EnsembleConfig, types::EnsembleAlgorithm, weighted_function::WeightedFunction,
+    },
     learning::{
         genetic::{GeneticConfig, optimize},
         loss::MeanSquaredError,
@@ -41,10 +43,34 @@ fn main() {
     // ...
     //  The genetic algorithm will overwrite these weights, so their
     //  initial values don't matter as long as the ensemble is valid.
-    let mut ensemble: EnsembleAlgorithm = EnsembleAlgorithm::new_uniform_probability(vec![
-        Box::new(levenshtein.clone()),
-        Box::new(jaro_winkler.clone()),
-    ])
+    //
+    // Ensemble Configurations
+    // ...
+    //  An ensemble can take one of the four predefined configurations
+    //      1. Linear: No limits on weights (can be negative, no sum
+    //          requirement).
+    //      2. Conical: Weights must be >= 0.0.
+    //      3. Affine: Weights must sum to 1.0, but can be negative.
+    //      4. Convex: Weights must sum to 1.0 and must be >= 0.0
+    //          (Probability Distribution).
+    //
+    // Weighted Functions
+    // ...
+    //  There are multiple ways to add a WeightedAlgorithm to an
+    //  ensemble: `from_function`: this takes in a user defined
+    //  closure. And, `from_similarity`, `from_distance`, and
+    //  `from_normalized_distance` takes in a pho defined algorithm
+    //  and uses its similarity, distance, or normalized distance
+    //  function (whichever one is picked).
+    //
+    //  And all of these function take in a f32 as a weight
+    let mut ensemble: EnsembleAlgorithm = EnsembleAlgorithm::try_new(
+        vec![
+            WeightedFunction::from_similarity(levenshtein.clone(), 1.0),
+            WeightedFunction::from_similarity(jaro_winkler.clone(), 1.0),
+        ],
+        EnsembleConfig::Linear,
+    )
     .unwrap();
 
     // Inspect the unoptimised weights
@@ -148,14 +174,14 @@ fn main() {
         "", "", "", "", ""
     );
 
-    let baseline = EnsembleAlgorithm {
-        algorithms: vec![
-            WeightedAlgorithm::new(levenshtein.clone(), 0.5),
-            WeightedAlgorithm::new(jaro_winkler.clone(), 0.5),
+    let baseline: EnsembleAlgorithm = EnsembleAlgorithm::try_new(
+        vec![
+            WeightedFunction::from_similarity(levenshtein.clone(), 0.5),
+            WeightedFunction::from_similarity(jaro_winkler.clone(), 0.5),
         ],
-        allow_negative_weights: false,
-        is_probability_distribution: true,
-    };
+        EnsembleConfig::Convex,
+    )
+    .unwrap();
 
     for (a, b, expected) in labeled_data
         .iter()

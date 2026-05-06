@@ -1,6 +1,8 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
-    ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
+    ensemble::{
+        config::EnsembleConfig, types::EnsembleAlgorithm, weighted_function::WeightedFunction,
+    },
     utils::io::import,
 };
 
@@ -41,15 +43,14 @@ fn main() {
 
     // Build a weighted ensemble configuration
     // ...
-    //  The ensemble algorithm `ensemble` scales the Levenshtein
-    //  by 0.6 and Jaro-Winkler by 0.4 and adds them together.
+    //  The ensemble algorithm `ensemble` scales a Levenshtein-based
+    //  distance score by 0.6 and a Jaro-Winkler similarity score by 0.4.
     let ensemble = EnsembleAlgorithm {
         algorithms: vec![
-            WeightedAlgorithm::new(levenshtein.clone(), w1),
-            WeightedAlgorithm::new(jaro_winkler.clone(), w2),
+            WeightedFunction::from_normalized_distance(levenshtein.clone(), w1),
+            WeightedFunction::from_similarity(jaro_winkler.clone(), w2),
         ],
-        allow_negative_weights: false,
-        is_probability_distribution: true,
+        mode: EnsembleConfig::Convex,
     };
 
     // Ensure weights are finite and normalized
@@ -64,6 +65,7 @@ fn main() {
     //  each algorithm and their associated weights contributed to the
     //  algorithm.
     let levenshtein_score = levenshtein.similarity(x, y).unwrap();
+    let levenshtein_distance_score = 1.0 - levenshtein.normalized_distance(x, y).unwrap();
     let jaro_winkler = jaro_winkler.similarity(x, y).unwrap();
 
     // Run the ensemble similarity computation
@@ -71,6 +73,7 @@ fn main() {
 
     println!("\t| Ensemble Similarity: {score}");
     println!("\t|");
-    println!("\t| Levenshtein: {levenshtein_score} (* {w1})");
+    println!("\t| Levenshtein similarity: {levenshtein_score} (* {w1})");
+    println!("\t| Levenshtein distance-derived score: {levenshtein_distance_score} (* {w1})");
     println!("\t| Jaro-Winkler: {jaro_winkler} (* {w2})");
 }

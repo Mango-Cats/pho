@@ -1,7 +1,9 @@
 use pho::{
     algorithms::{Algorithm, LCS, LCSuf},
     dataset::{Dataset, Row},
-    ensemble::types::{EnsembleAlgorithm, WeightedAlgorithm},
+    ensemble::{
+        config::EnsembleConfig, types::EnsembleAlgorithm, weighted_function::WeightedFunction,
+    },
     learning::{
         genetic::{GeneticConfig, optimize},
         loss::mse::MeanSquaredError,
@@ -46,23 +48,19 @@ fn main() {
     //  We initialize the ensemble with the exact OPPOSITE of what it should be.
     //  The useless algorithm (LCSuf) gets 90% of the weight, while the highly
     //  predictive algorithm (LCS) gets only 10%.
+    let lcs = LCS {
+        case_insensitive: true,
+    };
+    let lcsuf = LCSuf {
+        case_insensitive: true,
+    };
+
     let mut ensemble = EnsembleAlgorithm {
         algorithms: vec![
-            WeightedAlgorithm::new(
-                LCS {
-                    case_insensitive: true,
-                },
-                0.1,
-            ),
-            WeightedAlgorithm::new(
-                LCSuf {
-                    case_insensitive: true,
-                },
-                0.9,
-            ),
+            WeightedFunction::from_similarity(lcs.clone(), 0.1),
+            WeightedFunction::from_similarity(lcsuf.clone(), 0.9),
         ],
-        allow_negative_weights: false,
-        is_probability_distribution: true,
+        mode: EnsembleConfig::Convex,
     };
 
     // Inspect the unoptimised weights
@@ -124,23 +122,29 @@ fn main() {
     println!("\t|   LCSuf : {final_lcsuf:.4}");
 
     // Define the deliberately bad baseline to compare against
+    let lcs_b = LCS {
+        case_insensitive: true,
+    };
+    let lcsuf_b = LCSuf {
+        case_insensitive: true,
+    };
+
     let baseline = EnsembleAlgorithm {
         algorithms: vec![
-            WeightedAlgorithm::new(
-                LCS {
-                    case_insensitive: true,
-                },
+            WeightedFunction::from_function(
+                lcs_b.name(),
                 0.1,
+                lcs_b.requires_transcription(),
+                move |x, y| lcs_b.similarity(x, y),
             ),
-            WeightedAlgorithm::new(
-                LCSuf {
-                    case_insensitive: true,
-                },
+            WeightedFunction::from_function(
+                lcsuf_b.name(),
                 0.9,
+                lcsuf_b.requires_transcription(),
+                move |x, y| lcsuf_b.similarity(x, y),
             ),
         ],
-        allow_negative_weights: false,
-        is_probability_distribution: true,
+        mode: EnsembleConfig::Convex,
     };
 
     // Group the datasets to iterate over both

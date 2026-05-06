@@ -1,8 +1,9 @@
+use pho::ensemble::weighted_function::WeightedFunction;
 use pho::{
     self,
     algorithms::{BiSim, JaroWinkler, Levenshtein, NGram},
     dataset::{Dataset, Row},
-    ensemble::types::EnsembleAlgorithm,
+    ensemble::{config::EnsembleConfig, types::EnsembleAlgorithm},
     utils::io::{import, read_csv_as},
 };
 
@@ -23,12 +24,15 @@ fn main() {
     ngram_2_1_1_dice.validate().unwrap();
 
     // Make an ensemble
-    let ensemble = EnsembleAlgorithm::new_uniform_probability(vec![
-        Box::new(levenshtein.clone()),
-        Box::new(jaro_winkler.clone()),
-        Box::new(ngram_2_1_1_dice.clone()),
-        Box::new(bisim.clone()),
-    ])
+    let ensemble = EnsembleAlgorithm::try_new(
+        vec![
+            WeightedFunction::from_similarity(levenshtein.clone(), 1.0),
+            WeightedFunction::from_similarity(jaro_winkler.clone(), 1.0),
+            WeightedFunction::from_similarity(ngram_2_1_1_dice.clone(), 1.0),
+            WeightedFunction::from_similarity(bisim.clone(), 1.0),
+        ],
+        EnsembleConfig::Linear,
+    )
     .unwrap();
 
     // Loading CSVs

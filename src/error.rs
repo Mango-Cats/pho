@@ -39,8 +39,8 @@ pub enum Error {
     #[error("Ensemble weight must be finite, got {0}")]
     NonFiniteWeight(f32),
 
-    #[error("Ensemble weight must be non-negative, got {0}")]
-    NegativeWeight(f32),
+    #[error("Ensemble weight must be non-negative.")]
+    NegativeWeight,
 
     #[error("Ensemble weights must sum to 1.0, got {0}")]
     WeightsDoNotSumToOne(f32),

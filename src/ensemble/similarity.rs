@@ -14,7 +14,7 @@ impl Algorithm for EnsembleAlgorithm {
                 continue;
             }
 
-            let score = entry.algorithm.similarity(x, y)?;
+            let score = entry.score(x, y)?;
             weighted_sum += score * entry.weight;
 
             total_weight += entry.weight.abs();

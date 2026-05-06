@@ -1,52 +1,15 @@
-// src/ensemble/config.rs
-
-use crate::algorithms::Algorithm;
-
-pub struct WeightedAlgorithm {
-    pub algorithm: Box<dyn Algorithm>,
-    pub weight: f32,
-}
-
-impl WeightedAlgorithm {
-    pub fn new<A>(algorithm: A, weight: f32) -> Self
-    where
-        A: Algorithm + 'static,
-    {
-        Self {
-            algorithm: Box::new(algorithm),
-            weight,
-        }
-    }
-}
+use crate::ensemble::{config::EnsembleConfig, weighted_function::WeightedFunction};
 
 pub struct EnsembleAlgorithm {
-    pub algorithms: Vec<WeightedAlgorithm>,
-    pub is_probability_distribution: bool,
-    pub allow_negative_weights: bool,
+    pub algorithms: Vec<WeightedFunction>,
+    pub mode: EnsembleConfig,
 }
 
 impl EnsembleAlgorithm {
-    pub fn new_uniform_probability(algorithms: Vec<Box<dyn Algorithm>>) -> crate::Result<Self> {
-        if algorithms.is_empty() {
-            return Err(crate::Error::EmptyEnsemble);
-        }
-
-        let n = algorithms.len() as f32;
-        let weight = 1.0 / n;
-
-        let algorithms = algorithms
-            .into_iter()
-            .map(|a| WeightedAlgorithm {
-                algorithm: a,
-                weight,
-            })
-            .collect();
-
-        Ok(Self {
-            algorithms,
-            is_probability_distribution: true,
-            allow_negative_weights: false,
-        })
+    pub fn try_new(algorithms: Vec<WeightedFunction>, mode: EnsembleConfig) -> crate::Result<Self> {
+        let ensemble = Self { algorithms, mode };
+        ensemble.validate()?;
+        Ok(ensemble)
     }
 
     pub fn validate(&self) -> crate::Result<()> {
@@ -55,48 +18,47 @@ impl EnsembleAlgorithm {
         }
 
         let mut total = 0.0f32;
+        let mut has_negative = false;
 
         for weighted in &self.algorithms {
             if !weighted.weight.is_finite() {
                 return Err(crate::Error::NonFiniteWeight(weighted.weight));
             }
-
-            if self.is_probability_distribution && weighted.weight < 0.0 {
-                return Err(crate::Error::NegativeWeight(weighted.weight));
+            if weighted.weight < 0.0 {
+                has_negative = true;
             }
-
-            if !self.is_probability_distribution
-                && !self.allow_negative_weights
-                && weighted.weight < 0.0
-            {
-                return Err(crate::Error::NegativeWeight(weighted.weight));
-            }
-
             total += weighted.weight;
         }
 
-        if self.is_probability_distribution {
-            if (total - 1.0).abs() >= 0.0001 {
-                return Err(crate::Error::WeightsDoNotSumToOne(total));
+        match self.mode {
+            EnsembleConfig::Linear => {
+                if total == 0.0 {
+                    return Err(crate::Error::InvalidWeight(0.0));
+                }
             }
-        } else if total == 0.0 {
-            return Err(crate::Error::InvalidWeight(0.0));
+            EnsembleConfig::Conical => {
+                if has_negative {
+                    return Err(crate::Error::NegativeWeight);
+                }
+                if total == 0.0 {
+                    return Err(crate::Error::InvalidWeight(0.0));
+                }
+            }
+            EnsembleConfig::Affine => {
+                if (total - 1.0).abs() >= 0.0001 {
+                    return Err(crate::Error::WeightsDoNotSumToOne(total));
+                }
+            }
+            EnsembleConfig::Convex => {
+                if has_negative {
+                    return Err(crate::Error::NegativeWeight);
+                }
+                if (total - 1.0).abs() >= 0.0001 {
+                    return Err(crate::Error::WeightsDoNotSumToOne(total));
+                }
+            }
         }
 
         Ok(())
-    }
-
-    pub fn try_new(
-        algorithms: Vec<WeightedAlgorithm>,
-        is_probability_distribution: bool,
-        allow_negative_weights: bool,
-    ) -> crate::Result<Self> {
-        let ensemble = Self {
-            algorithms,
-            is_probability_distribution,
-            allow_negative_weights,
-        };
-        ensemble.validate()?;
-        Ok(ensemble)
     }
 }

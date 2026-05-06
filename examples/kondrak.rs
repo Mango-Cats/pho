@@ -1,3 +1,5 @@
+use pho::ensemble::config::EnsembleConfig;
+use pho::ensemble::weighted_function::WeightedFunction;
 use pho::{
     algorithms::{Aline, BiSim},
     dataset::{Dataset, Row},
@@ -23,10 +25,13 @@ fn main() {
     // Kondrak's algorithm
     // ...
     //  Kondrak's algorithm is a 50-50 weighted sum of Aline and BiSim
-    let kondrak = EnsembleAlgorithm::new_uniform_probability(vec![
-        Box::new(aline.clone()),
-        Box::new(bisim.clone()),
-    ])
+    let kondrak = EnsembleAlgorithm::try_new(
+        vec![
+            WeightedFunction::from_similarity(aline.clone(), 1.0),
+            WeightedFunction::from_similarity(bisim.clone(), 1.0),
+        ],
+        EnsembleConfig::Convex,
+    )
     .unwrap();
 
     // Reading a CSV
