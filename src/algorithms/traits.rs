@@ -18,7 +18,7 @@ use crate::error::Result;
 ///     let _score = config.similarity("s", "s").unwrap();
 /// }
 /// ```
-pub trait Algorithm {
+pub trait Algorithm: Send + Sync {
     fn similarity(&self, x: &str, y: &str) -> Result<f32>;
 
     /// Returns the raw distance between two inputs when the algorithm

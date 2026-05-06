@@ -2,6 +2,8 @@ use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
 
+use indicatif::{ProgressBar, ProgressStyle};
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::Result;
@@ -189,27 +191,59 @@ impl Dataset {
         format!("{}_{}", weighted.name(), weighted.weight)
     }
 
-    fn build_from_rows(algorithms: &[&dyn Algorithm], labeled_data: &[Row]) -> Result<Self> {
-        let mut inputs = Vec::with_capacity(labeled_data.len());
-        let mut labels = Vec::with_capacity(labeled_data.len());
-        let mut base_scores = Vec::with_capacity(labeled_data.len());
+    fn build_from_rows(
+        algorithms: &[&dyn Algorithm],
+        labeled_data: &[Row],
+        show_progress: bool,
+    ) -> Result<Self> {
         let algorithm_names = algorithms
             .iter()
             .map(|algo| Self::algorithm_label(*algo))
             .collect::<Vec<_>>();
 
-        for (row_index, row) in labeled_data.iter().enumerate() {
-            let scores = algorithms
-                .iter()
-                .map(|algo| {
-                    let (left, right) =
-                        row.pair_for(algo.requires_transcription(), algo.name(), row_index)?;
-                    algo.similarity(left, right)
-                })
-                .collect::<Result<Vec<f32>>>()?;
+        let pb = if show_progress {
+            let pb = ProgressBar::new(labeled_data.len() as u64);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} rows ({eta})")
+                    .expect("valid template"),
+            );
+            Some(pb)
+        } else {
+            None
+        };
 
-            inputs.push((row.x_1.clone(), row.x_2.clone()));
-            labels.push(row.label);
+        // Parallelize row-level computation using rayon
+        let row_results: Result<Vec<_>> = labeled_data
+            .par_iter()
+            .enumerate()
+            .map(|(row_index, row)| {
+                let scores = algorithms
+                    .iter()
+                    .map(|algo| {
+                        let (left, right) =
+                            row.pair_for(algo.requires_transcription(), algo.name(), row_index)?;
+                        algo.similarity(left, right)
+                    })
+                    .collect::<Result<Vec<f32>>>()?;
+
+                Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
+            })
+            .collect();
+
+        let results = row_results?;
+        if let Some(pb) = pb.as_ref() {
+            pb.set_position(labeled_data.len() as u64);
+            pb.finish_with_message("Dataset precomputation complete");
+        }
+
+        let mut inputs = Vec::with_capacity(results.len());
+        let mut labels = Vec::with_capacity(results.len());
+        let mut base_scores = Vec::with_capacity(results.len());
+
+        for (x_1, x_2, label, scores) in results {
+            inputs.push((x_1, x_2));
+            labels.push(label);
             base_scores.push(scores);
         }
 
@@ -233,23 +267,31 @@ impl Dataset {
     ///
     /// If an algorithm requires transcriptions, both transcription fields must be present for
     /// each row; otherwise this returns `Error::MissingTranscription`.
-    pub fn from_slice(algorithms: Vec<Box<dyn Algorithm>>, labeled_data: &[Row]) -> Result<Self> {
+    ///
+    /// If `show_progress` is true, a progress bar will be displayed during precomputation.
+    pub fn from_slice(
+        algorithms: Vec<Box<dyn Algorithm>>,
+        labeled_data: &[Row],
+        show_progress: bool,
+    ) -> Result<Self> {
         let algorithms = algorithms
             .iter()
             .map(|algo| algo.as_ref())
             .collect::<Vec<_>>();
-        Self::build_from_rows(&algorithms, labeled_data)
+        Self::build_from_rows(&algorithms, labeled_data, show_progress)
     }
 
     /// Build a dataset from [`Row`] values using the algorithms contained in
     /// an ensemble.
     ///
     /// Input form and label behavior are the same as [`Self::from_slice`].
-    pub fn from_ensemble(ensemble: &EnsembleAlgorithm, labeled_data: &[Row]) -> Result<Self> {
-        let mut inputs = Vec::with_capacity(labeled_data.len());
-        let mut labels = Vec::with_capacity(labeled_data.len());
-        let mut base_scores = Vec::with_capacity(labeled_data.len());
-
+    ///
+    /// If `show_progress` is true, a progress bar will be displayed during precomputation.
+    pub fn from_ensemble(
+        ensemble: &EnsembleAlgorithm,
+        labeled_data: &[Row],
+        show_progress: bool,
+    ) -> Result<Self> {
         let mut algorithm_names = Vec::with_capacity(1 + ensemble.algorithms.len());
         algorithm_names.push("ensemble".to_string());
         algorithm_names.extend(
@@ -259,42 +301,74 @@ impl Dataset {
                 .map(Self::weighted_algorithm_label),
         );
 
-        for (row_index, row) in labeled_data.iter().enumerate() {
-            let mut weighted_sum = 0.0f32;
-            let mut total_weight = 0.0f32;
+        let pb = if show_progress {
+            let pb = ProgressBar::new(labeled_data.len() as u64);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} rows ({eta})")
+                    .expect("valid template"),
+            );
+            Some(pb)
+        } else {
+            None
+        };
 
-            let component_scores = ensemble
-                .algorithms
-                .iter()
-                .map(|weighted| {
-                    let (left, right) = row.pair_for(
-                        weighted.requires_transcription(),
-                        weighted.name(),
-                        row_index,
-                    )?;
-                    let score = weighted.score(left, right)?;
+        // Parallelize row-level computation using rayon
+        let row_results: Result<Vec<_>> = labeled_data
+            .par_iter()
+            .enumerate()
+            .map(|(row_index, row)| {
+                // Compute scores for all weighted functions
+                let component_scores = ensemble
+                    .algorithms
+                    .iter()
+                    .map(|weighted| {
+                        let (left, right) = row.pair_for(
+                            weighted.requires_transcription(),
+                            weighted.name(),
+                            row_index,
+                        )?;
+                        weighted.score(left, right)
+                    })
+                    .collect::<Result<Vec<f32>>>()?;
 
+                // Compute weighted ensemble score from components
+                let mut weighted_sum = 0.0f32;
+                let mut total_weight = 0.0f32;
+                for (score, weighted) in component_scores.iter().zip(ensemble.algorithms.iter()) {
                     if weighted.weight != 0.0 {
                         weighted_sum += score * weighted.weight;
                         total_weight += weighted.weight.abs();
                     }
+                }
 
-                    Ok(score)
-                })
-                .collect::<Result<Vec<f32>>>()?;
+                let ensemble_score = if total_weight == 0.0 {
+                    0.0
+                } else {
+                    (weighted_sum / total_weight).clamp(0.0, 1.0)
+                };
 
-            let ensemble_score = if total_weight == 0.0 {
-                0.0
-            } else {
-                (weighted_sum / total_weight).clamp(0.0, 1.0)
-            };
+                let mut scores = Vec::with_capacity(1 + component_scores.len());
+                scores.push(ensemble_score);
+                scores.extend(component_scores);
 
-            let mut scores = Vec::with_capacity(1 + component_scores.len());
-            scores.push(ensemble_score);
-            scores.extend(component_scores);
+                Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
+            })
+            .collect();
 
-            inputs.push((row.x_1.clone(), row.x_2.clone()));
-            labels.push(row.label);
+        let results = row_results?;
+        if let Some(pb) = pb.as_ref() {
+            pb.set_position(labeled_data.len() as u64);
+            pb.finish_with_message("Dataset precomputation complete");
+        }
+
+        let mut inputs = Vec::with_capacity(results.len());
+        let mut labels = Vec::with_capacity(results.len());
+        let mut base_scores = Vec::with_capacity(results.len());
+
+        for (x_1, x_2, label, scores) in results {
+            inputs.push((x_1, x_2));
+            labels.push(label);
             base_scores.push(scores);
         }
 
@@ -486,7 +560,7 @@ mod tests {
         let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(RequiresTranscription)];
         let rows = vec![Row::builder("a", "b").label(0.5f32).build()];
 
-        let result = Dataset::from_slice(algorithms, &rows);
+        let result = Dataset::from_slice(algorithms, &rows, false);
         assert!(result.is_err());
     }
 
@@ -500,7 +574,7 @@ mod tests {
                 .build(),
         ];
 
-        let result = Dataset::from_slice(algorithms, &rows);
+        let result = Dataset::from_slice(algorithms, &rows, false);
         assert!(result.is_ok());
     }
 
@@ -513,7 +587,7 @@ mod tests {
                 .build(),
         ];
 
-        let result = Dataset::from_slice(algorithms, &rows);
+        let result = Dataset::from_slice(algorithms, &rows, false);
         assert!(result.is_ok());
         let dataset = result.unwrap();
         assert_eq!(dataset.labels, vec![None]);
@@ -532,7 +606,8 @@ mod tests {
         .expect("valid ensemble");
 
         let rows = vec![Row::builder("drug_a", "drug_b").label(0.0).build()];
-        let dataset = Dataset::from_ensemble(&ensemble, &rows).expect("dataset from ensemble");
+        let dataset =
+            Dataset::from_ensemble(&ensemble, &rows, false).expect("dataset from ensemble");
 
         assert_eq!(
             dataset.algorithm_names,

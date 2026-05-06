@@ -1,6 +1,6 @@
 use crate::algorithms::Algorithm;
 
-type ScoreFn = dyn Fn(&str, &str) -> crate::Result<f32> + 'static;
+type ScoreFn = dyn Fn(&str, &str) -> crate::Result<f32> + Send + Sync + 'static;
 
 pub struct WeightedFunction {
     name: String,
@@ -30,7 +30,7 @@ impl WeightedFunction {
     ) -> Self
     where
         N: Into<String>,
-        F: Fn(&str, &str) -> crate::Result<f32> + 'static,
+        F: Fn(&str, &str) -> crate::Result<f32> + Send + Sync + 'static,
     {
         Self {
             name: name.into(),
@@ -43,7 +43,7 @@ impl WeightedFunction {
     fn from_algorithm_method<A, M>(algorithm: A, weight: f32, method: M) -> Self
     where
         A: Algorithm + 'static,
-        M: Fn(&A, &str, &str) -> crate::Result<f32> + 'static,
+        M: Fn(&A, &str, &str) -> crate::Result<f32> + Send + Sync + 'static,
     {
         let name = algorithm.name().to_string();
         let requires_transcription = algorithm.requires_transcription();

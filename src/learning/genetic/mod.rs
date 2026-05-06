@@ -113,7 +113,7 @@ mod tests {
             .iter()
             .map(|(x, y, label)| Row::builder(*x, *y).label(*label).build())
             .collect::<Vec<_>>();
-        let training_data = Dataset::from_ensemble(&ensemble, &rows).unwrap();
+        let training_data = Dataset::from_ensemble(&ensemble, &rows, false).unwrap();
         let evaluator = MeanSquaredError::new(&training_data);
 
         let config = GeneticConfig {

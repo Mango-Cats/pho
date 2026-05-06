@@ -70,11 +70,12 @@ fn main() {
             Box::new(bisim.clone()),
         ],
         &rows,
+        true,
     )
     .unwrap();
 
     // Dataset from an ensemble
-    let slice_ensemble = Dataset::from_ensemble(&ensemble, &rows).unwrap();
+    let slice_ensemble = Dataset::from_ensemble(&ensemble, &rows, true).unwrap();
 
     // Save both datasets to compare results
     slice_dataset
