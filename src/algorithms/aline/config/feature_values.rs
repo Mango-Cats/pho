@@ -2,7 +2,10 @@
 //!
 //! This file contains the feature value maps for ALINE.
 
-use crate::error::{Error::InvalidFeatureSum, Result};
+use crate::{
+    algorithms::aline::config::feature_types::{Airstream, Phonation, SecondaryArticulation},
+    error::{Error::InvalidFeatureSum, Result},
+};
 use enum_map::EnumMap;
 use serde::{Deserialize, Serialize};
 
@@ -16,6 +19,9 @@ pub struct FeatureValues {
     pub(crate) high: EnumMap<High, f32>,
     pub(crate) back: EnumMap<Back, f32>,
     pub(crate) binary: EnumMap<Binary, f32>,
+    pub(crate) phonation: EnumMap<Phonation, f32>,
+    pub(crate) airstream: EnumMap<Airstream, f32>,
+    pub(crate) secondary: EnumMap<SecondaryArticulation, f32>,
 }
 
 impl FeatureValues {
@@ -33,6 +39,9 @@ impl FeatureValues {
         check_sum(self.high.values().copied().sum(), "High")?;
         check_sum(self.back.values().copied().sum(), "Back")?;
         check_sum(self.binary.values().copied().sum(), "Binary")?;
+        check_sum(self.phonation.values().copied().sum(), "Phonation")?;
+        check_sum(self.airstream.values().copied().sum(), "Airstream")?;
+        check_sum(self.secondary.values().copied().sum(), "Secondary")?;
 
         Ok(())
     }
@@ -43,6 +52,9 @@ impl FeatureValues {
         high: EnumMap<High, f32>,
         back: EnumMap<Back, f32>,
         binary: EnumMap<Binary, f32>,
+        phonation: EnumMap<Phonation, f32>,
+        airstream: EnumMap<Airstream, f32>,
+        secondary: EnumMap<SecondaryArticulation, f32>,
     ) -> Result<Self> {
         let values = Self {
             place,
@@ -50,6 +62,9 @@ impl FeatureValues {
             high,
             back,
             binary,
+            phonation,
+            airstream,
+            secondary,
         };
         values.validate()?;
         Ok(values)

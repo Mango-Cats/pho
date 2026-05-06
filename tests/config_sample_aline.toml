@@ -19,47 +19,82 @@ long       = 0
 high       = 3
 back       = 2
 round      = 2
+phonation  = 10
+airstream  = 10
+secondary  = 10
 
 [values.place]
-bilabial         = 1.0
-labiodental      = 0.95
-dental           = 0.9
-alveolar         = 0.85
-retroflex        = 0.8
-palato_alveolar  = 0.75
-palatal          = 0.7
-velar            = 0.6
-uvular           = 0.5
-pharyngeal       = 0.3
-glottal          = 0.1
-labiovelar       = 1.0
-vowel            = -1.0
+bilabial        = 1.0
+labiodental     = 0.95
+linguolabial    = 0.92
+dental          = 0.9
+alveolar        = 0.85
+retroflex       = 0.8
+palato_alveolar = 0.75
+alveolo_palatal = 0.72
+palatal         = 0.7
+velar           = 0.6
+uvular          = 0.5
+pharyngeal      = 0.3
+epiglottal      = 0.2
+glottal         = 0.1
+labiovelar      = 1.0
+vowel           = -1.0
 
 [values.manner]
-stop         = 1.0
-affricate    = 0.9
-fricative    = 0.85
-trill        = 0.7
-tap          = 0.65
-approximant  = 0.6
-high_vowel   = 0.4
-mid_vowel    = 0.2
-low_vowel    = 0.0
-vowel        = 0.5
+stop              = 1.0
+affricate         = 0.9
+fricative         = 0.85
+lateral_fricative = 0.8
+trill             = 0.7
+tap               = 0.65
+lateral_flap      = 0.6
+approximant       = 0.6
+high_vowel        = 0.4
+mid_vowel         = 0.2
+low_vowel         = 0.0
+vowel             = 0.5
 
 [values.high]
-high = 1.0
-mid  = 0.5
-low  = 0.0
+high      = 1.0
+near_high = 0.85
+high_mid  = 0.65
+mid       = 0.5
+low_mid   = 0.35
+near_low  = 0.15
+low       = 0.0
 
 [values.back]
-front   = 1.0
-central = 0.5
-back    = 0.0
+front      = 1.0
+near_front = 0.75
+central    = 0.5
+near_back  = 0.25
+back       = 0.0
 
 [values.binary]
 plus  = 1.0
 minus = 0.0
+
+[values.phonation]
+modal   = 1.0
+breathy = 0.75
+creaky  = 0.5
+stiff   = 0.25
+slack   = 0.0
+
+[values.airstream]
+pulmonic  = 1.0
+ejective  = 0.66
+implosive = 0.33
+click     = 0.0
+
+[values.secondary]
+none           = 1.0
+labialized     = 0.75
+palatalized    = 0.5
+velarized      = 0.25
+pharyngealized = 0.0
+
 
 [sounds."A"]
 type      = "vowel"
@@ -74,6 +109,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."B"]
 type      = "consonant"
@@ -85,6 +123,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."E"]
 type      = "vowel"
@@ -99,6 +140,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."I"]
 type      = "vowel"
@@ -113,6 +157,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."N"]
 type      = "consonant"
@@ -124,6 +171,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."O"]
 type      = "vowel"
@@ -138,6 +188,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."R"]
 type      = "consonant"
@@ -149,6 +202,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."U"]
 type      = "vowel"
@@ -163,6 +219,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."a"]
 type      = "vowel"
@@ -177,6 +236,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."b"]
 type      = "consonant"
@@ -188,6 +250,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."c"]
 type      = "consonant"
@@ -199,6 +264,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."d"]
 type      = "consonant"
@@ -210,6 +278,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."e"]
 type      = "vowel"
@@ -224,6 +295,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."e̞"]
 type      = "vowel"
@@ -238,6 +312,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."f"]
 type      = "consonant"
@@ -249,6 +326,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."g"]
 type      = "consonant"
@@ -260,6 +340,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."h"]
 type      = "consonant"
@@ -271,6 +354,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."i"]
 type      = "vowel"
@@ -285,6 +371,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."j"]
 type      = "consonant"
@@ -296,6 +385,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."k"]
 type      = "consonant"
@@ -307,6 +399,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."l"]
 type      = "consonant"
@@ -318,6 +413,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "plus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."m"]
 type      = "consonant"
@@ -329,6 +427,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."n"]
 type      = "consonant"
@@ -340,6 +441,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."o"]
 type      = "vowel"
@@ -354,6 +458,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."o̞"]
 type      = "vowel"
@@ -368,6 +475,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."p"]
 type      = "consonant"
@@ -379,6 +489,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."q"]
 type      = "consonant"
@@ -390,6 +503,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."r"]
 type      = "consonant"
@@ -401,6 +517,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."s"]
 type      = "consonant"
@@ -412,6 +531,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."t"]
 type      = "consonant"
@@ -423,6 +545,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."u"]
 type      = "vowel"
@@ -437,6 +562,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."v"]
 type      = "consonant"
@@ -448,6 +576,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."w"]
 type      = "consonant"
@@ -459,6 +590,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."x"]
 type      = "consonant"
@@ -470,6 +604,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."y"]
 type      = "vowel"
@@ -484,6 +621,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."z"]
 type      = "consonant"
@@ -495,6 +635,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ä"]
 type      = "vowel"
@@ -509,6 +652,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."æ"]
 type      = "vowel"
@@ -523,6 +669,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ç"]
 type      = "consonant"
@@ -534,6 +683,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ð"]
 type      = "consonant"
@@ -545,6 +697,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ø"]
 type      = "vowel"
@@ -559,6 +714,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ø̞"]
 type      = "vowel"
@@ -573,6 +731,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ħ"]
 type      = "consonant"
@@ -584,6 +745,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ŋ"]
 type      = "consonant"
@@ -595,6 +759,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."œ"]
 type      = "vowel"
@@ -609,6 +776,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɐ"]
 type      = "vowel"
@@ -623,6 +793,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɑ"]
 type      = "vowel"
@@ -637,6 +810,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɒ"]
 type      = "vowel"
@@ -651,6 +827,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɔ"]
 type      = "vowel"
@@ -665,6 +844,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɖ"]
 type      = "consonant"
@@ -676,6 +858,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɘ"]
 type      = "vowel"
@@ -690,6 +875,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ə"]
 type      = "vowel"
@@ -704,6 +892,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɛ"]
 type      = "vowel"
@@ -718,6 +909,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɜ"]
 type      = "vowel"
@@ -732,6 +926,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɞ"]
 type      = "vowel"
@@ -746,6 +943,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɟ"]
 type      = "consonant"
@@ -757,6 +957,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɢ"]
 type      = "consonant"
@@ -768,6 +971,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɣ"]
 type      = "consonant"
@@ -779,6 +985,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɤ"]
 type      = "vowel"
@@ -793,6 +1002,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɤ̞"]
 type      = "vowel"
@@ -807,6 +1019,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɦ"]
 type      = "consonant"
@@ -818,6 +1033,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɨ"]
 type      = "vowel"
@@ -832,6 +1050,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɬ"]
 type      = "consonant"
@@ -843,6 +1064,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "plus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɮ"]
 type      = "consonant"
@@ -854,6 +1078,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "plus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɯ"]
 type      = "vowel"
@@ -868,6 +1095,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɰ"]
 type      = "consonant"
@@ -879,6 +1109,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɱ"]
 type      = "consonant"
@@ -890,6 +1123,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɲ"]
 type      = "consonant"
@@ -901,6 +1137,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɳ"]
 type      = "consonant"
@@ -912,6 +1151,9 @@ nasal     = "plus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɴ"]
 type      = "consonant"
@@ -923,6 +1165,9 @@ nasal     = "plus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɵ"]
 type      = "vowel"
@@ -937,6 +1182,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɶ"]
 type      = "vowel"
@@ -951,6 +1199,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɸ"]
 type      = "consonant"
@@ -962,6 +1213,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɹ"]
 type      = "consonant"
@@ -973,6 +1227,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɻ"]
 type      = "consonant"
@@ -984,6 +1241,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɽ"]
 type      = "consonant"
@@ -995,6 +1255,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ɾ"]
 type      = "consonant"
@@ -1006,6 +1269,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʀ"]
 type      = "consonant"
@@ -1017,6 +1283,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʁ"]
 type      = "consonant"
@@ -1028,6 +1297,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʂ"]
 type      = "consonant"
@@ -1039,6 +1311,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʃ"]
 type      = "consonant"
@@ -1050,6 +1325,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʈ"]
 type      = "consonant"
@@ -1061,6 +1339,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʉ"]
 type      = "vowel"
@@ -1075,6 +1356,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʊ"]
 type      = "vowel"
@@ -1089,6 +1373,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʋ"]
 type      = "consonant"
@@ -1100,6 +1387,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʌ"]
 type      = "vowel"
@@ -1114,6 +1404,9 @@ retroflex = "minus"
 round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʏ"]
 type      = "vowel"
@@ -1128,6 +1421,9 @@ retroflex = "minus"
 round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʐ"]
 type      = "consonant"
@@ -1139,6 +1435,9 @@ nasal     = "minus"
 retroflex = "plus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʒ"]
 type      = "consonant"
@@ -1150,6 +1449,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʔ"]
 type      = "consonant"
@@ -1161,6 +1463,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʕ"]
 type      = "consonant"
@@ -1172,6 +1477,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʙ"]
 type      = "consonant"
@@ -1183,6 +1491,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."ʝ"]
 type      = "consonant"
@@ -1194,6 +1505,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."β"]
 type      = "consonant"
@@ -1205,6 +1519,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."θ"]
 type      = "consonant"
@@ -1216,6 +1533,9 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
 
 [sounds."χ"]
 type      = "consonant"
@@ -1227,4 +1547,6 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
-
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"

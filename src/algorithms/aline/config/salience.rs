@@ -14,6 +14,9 @@ pub struct Salience {
     pub(crate) high: u32,
     pub(crate) back: u32,
     pub(crate) round: u32,
+    pub(crate) phonation: u32,
+    pub(crate) airstream: u32,
+    pub(crate) secondary: u32,
 }
 
 impl Salience {
@@ -30,6 +33,9 @@ impl Salience {
         high: u32,
         back: u32,
         round: u32,
+        phonation: u32,
+        airstream: u32,
+        secondary: u32,
     ) -> Self {
         Self {
             syllabic,
@@ -44,6 +50,9 @@ impl Salience {
             high,
             back,
             round,
+            phonation,
+            airstream,
+            secondary,
         }
     }
 }

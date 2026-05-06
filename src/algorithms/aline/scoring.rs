@@ -83,8 +83,6 @@ fn consonant_feature_distance(
     let p_common = p.common();
     let q_common = q.common();
 
-    // In NLTK's feature matrix, vowels still have `aspirated = minus` so that
-    // consonant-vowel comparisons can treat aspirated as defined.
     let p_asp = aspirated_or_minus(p);
     let q_asp = aspirated_or_minus(q);
 
@@ -103,6 +101,15 @@ fn consonant_feature_distance(
         + salience.lateral as f32
             * (values.binary[*p_common.lateral()] - values.binary[*q_common.lateral()]).abs()
         + salience.aspirated as f32 * (values.binary[p_asp] - values.binary[q_asp]).abs()
+        + salience.phonation as f32
+            * (values.phonation[*p_common.phonation()] - values.phonation[*q_common.phonation()])
+                .abs()
+        + salience.airstream as f32
+            * (values.airstream[*p_common.airstream()] - values.airstream[*q_common.airstream()])
+                .abs()
+        + salience.secondary as f32
+            * (values.secondary[*p_common.secondary()] - values.secondary[*q_common.secondary()])
+                .abs()
 }
 
 #[inline]
@@ -118,10 +125,10 @@ fn vowel_feature_distance(
     let PhoneticFeatures::Vowel(qv) = q else {
         return 0.0;
     };
+
     let p_common = &pv.common;
     let q_common = &qv.common;
 
-    // Mirrors NLTK's R_v (note: excludes the redundant `high` feature).
     salience.back as f32 * (values.back[pv.back] - values.back[qv.back]).abs()
         + salience.lateral as f32
             * (values.binary[p_common.lateral] - values.binary[q_common.lateral]).abs()
@@ -139,6 +146,10 @@ fn vowel_feature_distance(
             * (values.binary[p_common.syllabic] - values.binary[q_common.syllabic]).abs()
         + salience.voice as f32
             * (values.binary[p_common.voice] - values.binary[q_common.voice]).abs()
+        + salience.phonation as f32
+            * (values.phonation[p_common.phonation] - values.phonation[q_common.phonation]).abs()
+        + salience.secondary as f32
+            * (values.secondary[p_common.secondary] - values.secondary[q_common.secondary]).abs()
 }
 
 #[inline]

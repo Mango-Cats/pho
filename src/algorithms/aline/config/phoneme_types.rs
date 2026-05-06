@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::algorithms::aline::config::{Back, Binary, High, Manner, Phoneme, Place};
+use crate::algorithms::aline::config::{
+    Back, Binary, High, Manner, Phoneme, Place,
+    feature_types::{Airstream, Phonation, SecondaryArticulation},
+};
 
 /// Features shared by every sound.
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -12,10 +15,12 @@ pub struct CommonFeatures {
     pub(crate) nasal: Binary,
     pub(crate) retroflex: Binary,
     pub(crate) lateral: Binary,
+    pub(crate) phonation: Phonation,
+    pub(crate) airstream: Airstream,
+    pub(crate) secondary: SecondaryArticulation,
 }
 
 impl CommonFeatures {
-    /// Infallible constructor for CommonFeatures
     pub fn new(
         place: Place,
         manner: Manner,
@@ -24,6 +29,9 @@ impl CommonFeatures {
         nasal: Binary,
         retroflex: Binary,
         lateral: Binary,
+        phonation: Phonation,
+        airstream: Airstream,
+        secondary: SecondaryArticulation,
     ) -> Self {
         Self {
             place,
@@ -33,6 +41,9 @@ impl CommonFeatures {
             nasal,
             retroflex,
             lateral,
+            phonation,
+            airstream,
+            secondary,
         }
     }
 }
