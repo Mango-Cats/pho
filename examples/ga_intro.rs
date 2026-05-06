@@ -73,7 +73,7 @@ fn main() {
     )
     .unwrap();
 
-    // Inspect the unoptimised weights
+    // Inspect the unoptimized weights
     let w_lev = ensemble.algorithms[0].weight;
     let w_jaro = ensemble.algorithms[1].weight;
     println!("\t|");
@@ -131,12 +131,6 @@ fn main() {
     //  This example uses `MeanSquaredError` but you can change the
     //  loss function.
     let evaluator = MeanSquaredError::new(&training_data);
-    optimize(&mut ensemble, &config, &evaluator).unwrap();
-
-    println!(
-        "\t| Running genetic optimisation ({} generations x {} individuals)",
-        config.generations, config.population_size
-    );
 
     // Run the optimizer
     // ...
@@ -145,6 +139,11 @@ fn main() {
     //  It calls `ensemble.validate()` internally before returning, so
     //  a successful result guarantees a valid, normalised ensemble.
     optimize(&mut ensemble, &config, &evaluator).unwrap();
+
+    println!(
+        "\t| Running genetic optimisation ({} generations x {} individuals)",
+        config.generations, config.population_size
+    );
 
     // Inspect the optimized weights
     let w_lev = ensemble.algorithms[0].weight;
