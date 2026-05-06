@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, JaroWinkler, Levenshtein},
-    dataset::{Dataset, Row},
+    dataset::{Row, ScoreMatrix},
     ensemble::{
         config::EnsembleConfig, types::EnsembleAlgorithm, weighted_function::WeightedFunction,
     },
@@ -106,17 +106,17 @@ fn main() {
     // Precompute dataset
     // ...
     //  To make things fast, we can precompute all values and construct
-    //  `Dataset` from it.
+    //  `ScoreMatrix` from it.
     let training_rows = labeled_data
         .iter()
         .map(|(x, y, label)| Row::builder(x, y).label(*label).build())
         .collect::<Vec<_>>();
-    let training_data = Dataset::from_ensemble(&ensemble, &training_rows, true).unwrap();
+    let training_data = ScoreMatrix::from_ensemble(&ensemble, &training_rows, true).unwrap();
 
-    // Saving a Dataset
+    // Saving a ScoreMatrix
     // ...
     //  We can save a dataset as a CSV or Arrow file by simply running
-    //  the `.export()` on the `Dataset` variable.
+    //  the `.export()` on the `ScoreMatrix` variable.
     //
     //  The file type of the dataset (i.e., how to write it) is
     //  inferred from the extension. Hence, the example below will
@@ -138,7 +138,7 @@ fn main() {
     //  replacing each algorithm's weight with the best value found.
     //  It calls `ensemble.validate()` internally before returning, so
     //  a successful result guarantees a valid, normalised ensemble.
-    optimize(&mut ensemble, &config, &evaluator).unwrap();
+    optimize(&mut ensemble, &config, &evaluator, true).unwrap();
 
     println!(
         "\t| Running genetic optimisation ({} generations x {} individuals)",

@@ -76,6 +76,8 @@ impl ScoreMatrix {
                     .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} rows ({eta})")
                     .expect("valid template"),
             );
+            pb.set_position(0);
+
             Some(pb)
         } else {
             None
@@ -94,6 +96,10 @@ impl ScoreMatrix {
                         algo.similarity(left, right)
                     })
                     .collect::<Result<Vec<f32>>>()?;
+
+                if let Some(pb) = pb.as_ref() {
+                    pb.inc(1);
+                }
 
                 Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
             })
@@ -176,6 +182,7 @@ impl ScoreMatrix {
                     .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} rows ({eta})")
                     .expect("valid template"),
             );
+            pb.set_position(0);
             Some(pb)
         } else {
             None
@@ -266,13 +273,31 @@ impl ScoreMatrix {
         S1: AsRef<str>,
         S2: AsRef<str>,
     {
+        let pb = ProgressBar::new(labeled_data.len() as u64);
+        pb.set_style(
+            ProgressStyle::default_bar()
+                .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} rows ({eta})")
+                .expect("valid template"),
+        );
+        pb.set_position(0);
+
         let inputs = labeled_data
             .iter()
-            .map(|(a, b, _)| (a.as_ref().to_string(), b.as_ref().to_string()))
+            .enumerate()
+            .map(|(_, (a, b, _))| {
+                pb.inc(1);
+                (a.as_ref().to_string(), b.as_ref().to_string())
+            })
             .collect::<Vec<_>>();
+
+        pb.set_position(0);
         let labels = labeled_data
             .iter()
-            .map(|(_, _, label)| *label)
+            .enumerate()
+            .map(|(_, (_, _, label))| {
+                pb.inc(1);
+                *label
+            })
             .collect::<Vec<_>>();
 
         let data = Self {
@@ -281,6 +306,8 @@ impl ScoreMatrix {
             algorithm_names,
             base_scores,
         };
+        pb.set_position(labeled_data.len() as u64);
+        pb.finish_with_message("Precomputed dataset loaded");
         data.validate_shape()?;
         Ok(data)
     }

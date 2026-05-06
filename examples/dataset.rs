@@ -2,7 +2,7 @@ use pho::ensemble::weighted_function::WeightedFunction;
 use pho::{
     self,
     algorithms::{BiSim, JaroWinkler, Levenshtein, NGram},
-    dataset::{Dataset, Row},
+    dataset::{Row, ScoreMatrix},
     ensemble::{config::EnsembleConfig, types::EnsembleAlgorithm},
     utils::io::{import, read_csv_as},
 };
@@ -51,7 +51,7 @@ fn main() {
     //  so this stays concise while still being explicit about shape.
     let rows = read_csv_as::<Row, _>("examples/data/dataset.csv", None).unwrap();
 
-    // Building the Dataset
+    // Building the ScoreMatrix
     // ...
     //  There are two ways to build a dataset:
     //      1. `from_slice`, we build a dataset form a slice of
@@ -61,8 +61,8 @@ fn main() {
     //
     //  For this example, we will build both to see the difference.
 
-    // Dataset from a slice of algorithms
-    let slice_dataset = Dataset::from_slice(
+    // ScoreMatrix from a slice of algorithms
+    let slice_dataset = ScoreMatrix::from_slice(
         vec![
             Box::new(levenshtein.clone()),
             Box::new(jaro_winkler.clone()),
@@ -74,8 +74,8 @@ fn main() {
     )
     .unwrap();
 
-    // Dataset from an ensemble
-    let slice_ensemble = Dataset::from_ensemble(&ensemble, &rows, true).unwrap();
+    // ScoreMatrix from an ensemble
+    let slice_ensemble = ScoreMatrix::from_ensemble(&ensemble, &rows, true).unwrap();
 
     // Save both datasets to compare results
     slice_dataset

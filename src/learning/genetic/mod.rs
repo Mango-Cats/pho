@@ -17,6 +17,8 @@ pub use config::GeneticConfig;
 
 /// Optimizes the weights of an [`EnsembleAlgorithm`] using a genetic algorithm.
 ///
+/// If `show_progress` is true, a progress bar will be displayed during evolution.
+///
 /// # Errors
 /// Returns an error if the ensemble is empty, `population_size` is zero,
 /// or the best weights found are invalid (non-finite or negative).
@@ -24,14 +26,23 @@ pub fn optimize<E: FitnessEvaluator>(
     ensemble: &mut EnsembleAlgorithm,
     config: &GeneticConfig,
     evaluator: &E,
+    show_progress: bool,
 ) -> Result<()> {
     validate_inputs(ensemble, config)?;
 
     let num_weights = ensemble.algorithms.len();
     let mut rng = StdRng::from_entropy();
 
-    let initial = population::initialize(config.population_size, num_weights, &mut rng);
-    let final_ranked = evolution::run(initial, config, evaluator, &mut rng);
+    let initial =
+        population::initialize(config.population_size, num_weights, ensemble.mode, &mut rng);
+    let final_ranked = evolution::run(
+        initial,
+        config,
+        ensemble.mode,
+        evaluator,
+        &mut rng,
+        show_progress,
+    );
 
     apply_best_weights(ensemble, &final_ranked[0].1)?;
     ensemble.validate()?;
@@ -57,9 +68,9 @@ fn apply_best_weights(ensemble: &mut EnsembleAlgorithm, weights: &[f32]) -> Resu
         if !w.is_finite() {
             return Err(Error::NonFiniteWeight(w));
         }
-        if w < 0.0 {
-            return Err(Error::NegativeWeight);
-        }
+        // Note: we skip the negative weight check here because some ensemble modes
+        // (Linear and Affine) allow negative weights. Validation will be performed
+        // by ensemble.validate() after all weights are applied.
         entry.weight = w;
     }
     Ok(())
@@ -125,7 +136,7 @@ mod tests {
             elite_count: 2,
         };
 
-        optimize(&mut ensemble, &config, &evaluator).unwrap();
+        optimize(&mut ensemble, &config, &evaluator, false).unwrap();
 
         let final_lcs_weight = ensemble.algorithms[0].weight;
         let final_lcsuf_weight = ensemble.algorithms[1].weight;

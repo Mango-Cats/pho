@@ -3,7 +3,7 @@ use pho::ensemble::config::EnsembleConfig;
 use pho::ensemble::weighted_function::WeightedFunction;
 use pho::{
     algorithms::{Aline, BiSim},
-    dataset::{Dataset, Row},
+    dataset::{Row, ScoreMatrix},
     ensemble::types::EnsembleAlgorithm,
     utils::io::{import, read_csv_as},
 };
@@ -49,7 +49,7 @@ fn main() {
     // Example row
     println!("\t| {:?}", rows[0]);
 
-    // Dataset Construction
+    // ScoreMatrix Construction
     //  ...
     //  Now let's construct a dataset and compute the score of each
     //  drug pair on Kondrak's algorithm. Then export it.
@@ -58,7 +58,7 @@ fn main() {
     //  be all LASA drugs with the ensemble score being high.
     //  While the lower half contains unlabeled drugs so most of them
     //  (if not all) should have a low ensemble score.
-    let dataset = Dataset::from_ensemble(&kondrak, &rows, true).unwrap();
+    let dataset = ScoreMatrix::from_ensemble(&kondrak, &rows, true).unwrap();
 
     dataset.export("example_dataset_aline.csv").unwrap();
 }

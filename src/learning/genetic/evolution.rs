@@ -3,6 +3,7 @@
 use rand::rngs::StdRng;
 use rayon::prelude::*;
 
+use crate::ensemble::config::EnsembleConfig;
 use crate::learning::loss::types::FitnessEvaluator;
 
 use super::{
@@ -10,7 +11,8 @@ use super::{
 };
 
 /// Scores every individual in `population` in parallel and returns a
-/// `(score, weights)` vector sorted by score descending (best first).
+/// `(score, weights)` vector sorted by score ascending (best first).
+/// Lower scores are considered "better" (assumes loss minimization).
 pub fn score_and_rank<E: FitnessEvaluator + Sync>(
     population: Vec<Vec<f32>>,
     evaluator: &E,
@@ -23,8 +25,8 @@ pub fn score_and_rank<E: FitnessEvaluator + Sync>(
         })
         .collect();
 
+    // Sort ascending: lower scores (losses) are better
     scored.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-
     scored
 }
 
@@ -33,6 +35,7 @@ pub fn score_and_rank<E: FitnessEvaluator + Sync>(
 fn make_child(
     scored_pop: &[(f32, Vec<f32>)],
     config: &GeneticConfig,
+    ensemble_config: EnsembleConfig,
     rng: &mut StdRng,
 ) -> Vec<f32> {
     let parent1 = tournament_select(scored_pop, config.tournament_size, rng);
@@ -40,7 +43,7 @@ fn make_child(
 
     let mut child = crossover::blend(parent1, parent2, rng);
     mutation::mutate(&mut child, config.mutation_rate, config.mutation_step, rng);
-    normalize(&mut child);
+    normalize(&mut child, ensemble_config);
     child
 }
 
@@ -49,6 +52,7 @@ fn make_child(
 pub fn step<E: FitnessEvaluator + Sync>(
     population: Vec<Vec<f32>>,
     config: &GeneticConfig,
+    ensemble_config: EnsembleConfig,
     evaluator: &E,
     rng: &mut StdRng,
 ) -> Vec<Vec<f32>> {
@@ -61,7 +65,7 @@ pub fn step<E: FitnessEvaluator + Sync>(
         .collect();
 
     while next.len() < config.population_size {
-        next.push(make_child(&scored, config, rng));
+        next.push(make_child(&scored, config, ensemble_config, rng));
     }
 
     next
@@ -69,16 +73,41 @@ pub fn step<E: FitnessEvaluator + Sync>(
 
 /// Runs the full evolution loop for `config.generations` generations.
 /// Returns the final population sorted best-first.
+/// If `show_progress` is true, a progress bar will be displayed.
 pub fn run<E: FitnessEvaluator + Sync>(
     initial_population: Vec<Vec<f32>>,
     config: &GeneticConfig,
+    ensemble_config: EnsembleConfig,
     evaluator: &E,
     rng: &mut StdRng,
+    show_progress: bool,
 ) -> Vec<(f32, Vec<f32>)> {
+    use indicatif::{ProgressBar, ProgressStyle};
+
+    let pb = if show_progress {
+        let pb = ProgressBar::new(config.generations as u64);
+        pb.set_style(
+            ProgressStyle::default_bar()
+                .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} generations ({eta})")
+                .expect("valid template"),
+        );
+        pb.set_position(0);
+        Some(pb)
+    } else {
+        None
+    };
+
     let mut population = initial_population;
 
     for _ in 0..config.generations {
-        population = step(population, config, evaluator, rng);
+        population = step(population, config, ensemble_config, evaluator, rng);
+        if let Some(pb) = pb.as_ref() {
+            pb.inc(1);
+        }
+    }
+
+    if let Some(pb) = pb.as_ref() {
+        pb.finish_with_message("Evolution complete");
     }
 
     score_and_rank(population, evaluator)

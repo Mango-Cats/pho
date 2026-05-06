@@ -1,6 +1,6 @@
 use pho::{
     algorithms::{Algorithm, LCS, LCSuf},
-    dataset::{Dataset, Row},
+    dataset::{Row, ScoreMatrix},
     ensemble::{
         config::EnsembleConfig, types::EnsembleAlgorithm, weighted_function::WeightedFunction,
     },
@@ -88,12 +88,12 @@ fn main() {
     // Precompute dataset
     // ...
     //  To make things fast, we can precompute all values and construct
-    //  `Dataset` from it. Notice we only pass the `train_set` here!
+    //  `ScoreMatrix` from it. Notice we only pass the `train_set` here!
     let training_rows = train_set
         .iter()
         .map(|(x, y, label)| Row::builder(x, y).label(*label).build())
         .collect::<Vec<_>>();
-    let training_data = Dataset::from_ensemble(&ensemble, &training_rows, true).unwrap();
+    let training_data = ScoreMatrix::from_ensemble(&ensemble, &training_rows, true).unwrap();
 
     // Define the evaluator
     // ...
@@ -110,7 +110,7 @@ fn main() {
     // ...
     //  If the GA works, it should realize LCSuf is useless and flip the weights
     //  so that LCS becomes the dominant algorithm.
-    optimize(&mut ensemble, &config, &evaluator).unwrap();
+    optimize(&mut ensemble, &config, &evaluator, true).unwrap();
 
     // Inspect the optimized weights
     let final_lcs = ensemble.algorithms[0].weight;
