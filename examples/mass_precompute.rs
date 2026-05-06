@@ -34,7 +34,7 @@ fn main() {
     let gram3_2_2: NGram = NGram::try_new(3, 2, 2, false, NGramMetric::Dice).unwrap();
     let prefix: Prefix = Prefix::new(false);
 
-    let all = ScoreMatrix::from_slice(
+    let all_train = ScoreMatrix::from_slice(
         vec![
             Box::new(aline),
             Box::new(bisim),
@@ -51,5 +51,25 @@ fn main() {
         true,
     )
     .unwrap();
-    all.export("D_train.csv").unwrap();
+
+    let all_test = ScoreMatrix::from_slice(
+        vec![
+            Box::new(aline),
+            Box::new(bisim),
+            Box::new(editex),
+            Box::new(jaro_winkler),
+            Box::new(levenshtein),
+            Box::new(gram2_1_1),
+            Box::new(gram2_2_2),
+            Box::new(gram3_1_1),
+            Box::new(gram3_2_2),
+            Box::new(prefix),
+        ],
+        &train,
+        true,
+    )
+    .unwrap();
+
+    all_train.export("D_train.csv").unwrap();
+    all_test.export("D_test.csv").unwrap();
 }

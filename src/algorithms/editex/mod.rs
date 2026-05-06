@@ -117,7 +117,7 @@ mod tests {
 
     #[test]
     fn group_has_expected_size() {
-        assert_eq!(load().group.len(), 25);
+        assert_eq!(load().group.len(), 26);
     }
 
     #[test]
