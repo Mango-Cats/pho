@@ -8,6 +8,7 @@
 //! - [editex]
 //! - [jaro_winkler]
 //! - [bisim]
+//! - [prefix]
 //! - [levenshtein]
 //! - [ngram]
 //!
@@ -35,6 +36,7 @@ pub mod lcs;
 pub mod lcsuf;
 pub mod levenshtein;
 pub mod ngram;
+pub mod prefix;
 mod traits;
 
 pub use aline::config::Aline;
@@ -45,4 +47,5 @@ pub use lcs::LCS;
 pub use lcsuf::LCSuf;
 pub use levenshtein::config::Levenshtein;
 pub use ngram::{config::NGram, metric::NGramMetric};
+pub use prefix::config::Prefix;
 pub use traits::Algorithm;
