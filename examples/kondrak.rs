@@ -32,7 +32,7 @@ fn main() {
         vec![
             WeightedFunction::from_similarity(aline.clone(), 0.25),
             WeightedFunction::from_similarity(bisim.clone(), 0.25),
-            WeightedFunction::from_normalized_distance(ned.clone(), 0.25),
+            WeightedFunction::from_similarity(ned.clone(), 0.25),
             WeightedFunction::from_similarity(prefix.clone(), 0.25),
         ],
         EnsembleConfig::Convex,
@@ -58,7 +58,7 @@ fn main() {
     //  be all LASA drugs with the ensemble score being high.
     //  While the lower half contains unlabeled drugs so most of them
     //  (if not all) should have a low ensemble score.
-    let dataset = Dataset::from_ensemble(&kondrak, &rows).unwrap();
+    let dataset = Dataset::from_ensemble(&kondrak, &rows, true).unwrap();
 
     dataset.export("example_dataset_aline.csv").unwrap();
 }
