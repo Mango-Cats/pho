@@ -24,6 +24,9 @@ pub enum Error {
     #[error("Jaro-Winkler prefix_scale must be in [0.0, 0.25], got {0}")]
     InvalidPrefixScale(f32),
 
+    #[error("Algorithm '{algorithm}' does not support distance queries")]
+    DistanceNotSupported { algorithm: &'static str },
+
     #[error("N-gram size must be greater than zero, got {0}")]
     InvalidNGramSize(usize),
 

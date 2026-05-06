@@ -54,22 +54,34 @@ use crate::{
 
 use config::JaroWinkler;
 
+fn similarity_score(config: &JaroWinkler, x: &str, y: &str) -> f32 {
+    let x_chars = normalize_input(x, config.case_insensitive);
+    let y_chars = normalize_input(y, config.case_insensitive);
+
+    let jaro_score = jaro_similarity(&x_chars, &y_chars);
+
+    if jaro_score == 0.0 {
+        return 0.0;
+    }
+
+    let prefix_length = common_prefix_length(&x_chars, &y_chars, config.max_prefix_length);
+
+    let jaro_winkler_score =
+        jaro_score + (prefix_length as f32 * config.prefix_scale * (1.0 - jaro_score));
+
+    jaro_winkler_score.clamp(0.0, 1.0)
+}
+
 impl Algorithm for JaroWinkler {
+    fn distance(&self, x: &str, y: &str) -> Result<f32> {
+        Ok((1.0 - similarity_score(self, x, y)).clamp(0.0, 1.0))
+    }
+
+    fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
+        self.distance(x, y)
+    }
+
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
-        let x_chars = normalize_input(x, self.case_insensitive);
-        let y_chars = normalize_input(y, self.case_insensitive);
-
-        let jaro_score = jaro_similarity(&x_chars, &y_chars);
-
-        if jaro_score == 0.0 {
-            return Ok(0.0);
-        }
-
-        let prefix_length = common_prefix_length(&x_chars, &y_chars, self.max_prefix_length);
-
-        let jaro_winkler_score =
-            jaro_score + (prefix_length as f32 * self.prefix_scale * (1.0 - jaro_score));
-
-        Ok(jaro_winkler_score.clamp(0.0, 1.0))
+        Ok(similarity_score(self, x, y))
     }
 }

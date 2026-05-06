@@ -21,6 +21,30 @@ use crate::error::Result;
 pub trait Algorithm {
     fn similarity(&self, x: &str, y: &str) -> Result<f32>;
 
+    /// Returns the raw distance between two inputs when the algorithm
+    /// defines one.
+    ///
+    /// Similarity-only algorithms can keep the default implementation,
+    /// which reports that distance is unsupported.
+    fn distance(&self, x: &str, y: &str) -> Result<f32> {
+        let _ = (x, y);
+        Err(crate::Error::DistanceNotSupported {
+            algorithm: self.name(),
+        })
+    }
+
+    /// Returns the normalized distance between two inputs when the
+    /// algorithm defines one.
+    ///
+    /// This is useful for algorithms with a native distance scale and a
+    /// predictable normalization range.
+    fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
+        let _ = (x, y);
+        Err(crate::Error::DistanceNotSupported {
+            algorithm: self.name(),
+        })
+    }
+
     /// Whether this algorithm requires phonetic transcriptions instead of
     /// raw orthographic forms when constructing learning datasets.
     fn requires_transcription(&self) -> bool {

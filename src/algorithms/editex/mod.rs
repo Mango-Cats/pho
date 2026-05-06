@@ -34,7 +34,7 @@ use config::Editex;
 use distance::{distance, total_delete_cost};
 
 impl Algorithm for Editex {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+    fn distance(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = validate_tokens(
             x.chars().map(|c| c.to_ascii_lowercase()),
             "x",
@@ -48,15 +48,38 @@ impl Algorithm for Editex {
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),
         )?;
+
+        Ok(distance(&x_chars, &y_chars, self))
+    }
+
+    fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
+        let x_chars = validate_tokens(
+            x.chars().map(|c| c.to_ascii_lowercase()),
+            "x",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
+
+        let y_chars = validate_tokens(
+            y.chars().map(|c| c.to_ascii_lowercase()),
+            "y",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
+
         let distance = distance(&x_chars, &y_chars, self);
         let max_distance = total_delete_cost(&x_chars, self) + total_delete_cost(&y_chars, self);
 
         if max_distance == 0.0 {
-            return Ok(1.0);
+            return Ok(0.0);
         }
 
-        let similarity = 1.0 - (distance / max_distance);
-        Ok(similarity.clamp(0.0, 1.0))
+        Ok((distance / max_distance).clamp(0.0, 1.0))
+    }
+
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+        let normalized_distance = self.normalized_distance(x, y)?;
+        Ok((1.0 - normalized_distance).clamp(0.0, 1.0))
     }
 }
 

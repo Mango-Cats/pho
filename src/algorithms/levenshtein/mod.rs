@@ -38,7 +38,14 @@ use config::Levenshtein;
 use distance::distance;
 
 impl Algorithm for Levenshtein {
-    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+    fn distance(&self, x: &str, y: &str) -> Result<f32> {
+        let x_chars = normalize_input(x, self.case_insensitive);
+        let y_chars = normalize_input(y, self.case_insensitive);
+
+        Ok(distance(&x_chars, &y_chars, self))
+    }
+
+    fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = normalize_input(x, self.case_insensitive);
         let y_chars = normalize_input(y, self.case_insensitive);
 
@@ -46,10 +53,14 @@ impl Algorithm for Levenshtein {
         let max_length = x_chars.len().max(y_chars.len()) as f32;
 
         if max_length == 0.0 {
-            return Ok(1.0);
+            return Ok(0.0);
         }
 
-        let normalized_similarity = 1.0 - (distance / max_length);
-        Ok(normalized_similarity.clamp(0.0, 1.0))
+        Ok((distance / max_length).clamp(0.0, 1.0))
+    }
+
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+        let normalized_distance = self.normalized_distance(x, y)?;
+        Ok((1.0 - normalized_distance).clamp(0.0, 1.0))
     }
 }

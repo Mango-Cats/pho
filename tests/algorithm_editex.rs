@@ -32,3 +32,18 @@ fn closer_words_score_higher() {
         "expected close pair score to exceed far pair score"
     );
 }
+
+#[test]
+fn distance_and_normalized_distance_are_available() {
+    let config = load();
+
+    let close_distance = config.distance("Smith", "Smyth").unwrap();
+    let far_distance = config.distance("Smith", "Banana").unwrap();
+    let close_normalized = config.normalized_distance("Smith", "Smyth").unwrap();
+    let far_normalized = config.normalized_distance("Smith", "Banana").unwrap();
+
+    assert!((0.0..=1.0).contains(&close_normalized));
+    assert!((0.0..=1.0).contains(&far_normalized));
+    assert!(close_distance < far_distance);
+    assert!(close_normalized < far_normalized);
+}
