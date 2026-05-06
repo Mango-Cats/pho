@@ -46,12 +46,22 @@ impl Algorithm for Aline {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         use crate::utils::validate::validate_tokens;
         use alignment::alignment_score;
-
         use unicode_segmentation::UnicodeSegmentation;
+
+        let is_ignorable = |segment: &str| -> bool {
+            segment.chars().all(|c| {
+                c.is_whitespace() 
+                || c.is_numeric() 
+                // Standard punctuation
+                || "[]/\\.,;:()|{}<>\"'-+".contains(c)
+                // IPA suprasegmentals (primary stress, secondary stress, length, boundaries)
+                || "ˈˌːˑ‖‿".contains(c) 
+            })
+        };
 
         let x_valid = validate_tokens(
             UnicodeSegmentation::graphemes(x, true)
-                .filter(|segment| !segment.chars().all(char::is_whitespace))
+                .filter(|segment| !is_ignorable(segment))
                 .map(str::to_string),
             "x",
             "ALINE config sound inventory",
@@ -60,7 +70,7 @@ impl Algorithm for Aline {
 
         let y_valid = validate_tokens(
             UnicodeSegmentation::graphemes(y, true)
-                .filter(|segment| !segment.chars().all(char::is_whitespace))
+                .filter(|segment| !is_ignorable(segment))
                 .map(str::to_string),
             "y",
             "ALINE config sound inventory",
@@ -68,11 +78,10 @@ impl Algorithm for Aline {
         )?;
 
         let score = alignment_score(&x_valid, &y_valid, self);
-
         let x_self = alignment_score(&x_valid, &x_valid, self);
         let y_self = alignment_score(&y_valid, &y_valid, self);
-        let denom = x_self.max(y_self);
 
+        let denom = x_self.max(y_self);
         if denom == 0.0 {
             return Ok(0.0);
         }
