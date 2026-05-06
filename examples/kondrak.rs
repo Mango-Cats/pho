@@ -1,3 +1,4 @@
+use pho::algorithms::{Levenshtein, Prefix};
 use pho::ensemble::config::EnsembleConfig;
 use pho::ensemble::weighted_function::WeightedFunction;
 use pho::{
@@ -17,18 +18,22 @@ fn main() {
 
     // Load feature functions configuration
     // ...
-    //  Kondrak's algorithm takes in ALINE and BiSim to compute
+    //  Kondrak's algorithm takes in ALINE, BiSim to compute
     //  confusibility.
     let aline: Aline = import("tests/config_sample_aline.toml").unwrap();
     let bisim: BiSim = import("tests/config_sample_bisim.toml").unwrap();
+    let ned: Levenshtein = import("tests/config_sample_levenshtein.toml").unwrap();
+    let prefix: Prefix = Prefix::new(false);
 
     // Kondrak's algorithm
     // ...
     //  Kondrak's algorithm is a 50-50 weighted sum of Aline and BiSim
     let kondrak = EnsembleAlgorithm::try_new(
         vec![
-            WeightedFunction::from_similarity(aline.clone(), 1.0),
-            WeightedFunction::from_similarity(bisim.clone(), 1.0),
+            WeightedFunction::from_similarity(aline.clone(), 0.25),
+            WeightedFunction::from_similarity(bisim.clone(), 0.25),
+            WeightedFunction::from_normalized_distance(ned.clone(), 0.25),
+            WeightedFunction::from_similarity(prefix.clone(), 0.25),
         ],
         EnsembleConfig::Convex,
     )
