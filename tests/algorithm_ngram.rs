@@ -64,3 +64,9 @@ fn cosine_similarity_is_in_range_and_rewards_closer_strings() {
         "expected close pair score to exceed far pair score"
     );
 }
+
+#[test]
+fn name_includes_ngram_and_padding_config() {
+    let config = NGram::try_new(3, 2, 1, true, NGramMetric::Dice).unwrap();
+    assert_eq!(config.name(), "NGram_3_2_1");
+}

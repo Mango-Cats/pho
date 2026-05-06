@@ -10,6 +10,7 @@ pub mod config;
 pub mod metric;
 
 use std::collections::{HashMap, HashSet};
+use std::sync::{Mutex, OnceLock};
 
 use crate::{
     algorithms::{
@@ -50,8 +51,28 @@ fn counted_ngrams(chars: &[char], n: usize) -> HashMap<Vec<char>, usize> {
     counts
 }
 
+fn ngram_name(n: usize, before_padding: usize, after_padding: usize) -> &'static str {
+    static CACHE: OnceLock<Mutex<HashMap<(usize, usize, usize), &'static str>>> = OnceLock::new();
+
+    let cache = CACHE.get_or_init(|| Mutex::new(HashMap::new()));
+    let mut guard = cache.lock().expect("ngram name cache poisoned");
+
+    if let Some(name) = guard.get(&(n, before_padding, after_padding)).copied() {
+        return name;
+    }
+
+    let name = format!("NGram_{}_{}_{}", n, before_padding, after_padding);
+    let leaked: &'static str = Box::leak(name.into_boxed_str());
+    guard.insert((n, before_padding, after_padding), leaked);
+    leaked
+}
+
 // Metric implementations are shared in `crate::utils::metrics`.
 impl Algorithm for NGram {
+    fn name(&self) -> &'static str {
+        ngram_name(self.n, self.before_padding, self.after_padding)
+    }
+
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = normalize_input(x, self.case_insensitive);
         let y_chars = normalize_input(y, self.case_insensitive);

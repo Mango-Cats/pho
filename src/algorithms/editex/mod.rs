@@ -36,14 +36,18 @@ use distance::{distance, total_delete_cost};
 impl Algorithm for Editex {
     fn distance(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = validate_tokens(
-            x.chars().map(|c| c.to_ascii_lowercase()),
+            x.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
             "x",
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),
         )?;
 
         let y_chars = validate_tokens(
-            y.chars().map(|c| c.to_ascii_lowercase()),
+            y.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
             "y",
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),
@@ -54,14 +58,18 @@ impl Algorithm for Editex {
 
     fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
         let x_chars = validate_tokens(
-            x.chars().map(|c| c.to_ascii_lowercase()),
+            x.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
             "x",
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),
         )?;
 
         let y_chars = validate_tokens(
-            y.chars().map(|c| c.to_ascii_lowercase()),
+            y.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
             "y",
             "Editex config groups",
             |symbol| self.group.contains_key(symbol),

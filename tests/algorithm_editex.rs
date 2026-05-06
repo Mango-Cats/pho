@@ -47,3 +47,13 @@ fn distance_and_normalized_distance_are_available() {
     assert!(close_distance < far_distance);
     assert!(close_normalized < far_normalized);
 }
+
+#[test]
+fn ignores_non_alphabet_characters() {
+    let config = load();
+
+    let plain = config.similarity("Smith", "Smyth").unwrap();
+    let noisy = config.similarity("S!m1i*t_h---", "Sm yth###42").unwrap();
+
+    assert!((plain - noisy).abs() < 1e-6);
+}
