@@ -227,16 +227,13 @@ impl Dataset {
                     })
                     .collect::<Result<Vec<f32>>>()?;
 
-                if let Some(pb) = pb.as_ref() {
-                    pb.inc(1);
-                }
-
                 Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
             })
             .collect();
 
         let results = row_results?;
         if let Some(pb) = pb.as_ref() {
+            pb.set_position(labeled_data.len() as u64);
             pb.finish_with_message("Dataset precomputation complete");
         }
 
@@ -355,16 +352,13 @@ impl Dataset {
                 scores.push(ensemble_score);
                 scores.extend(component_scores);
 
-                if let Some(pb) = pb.as_ref() {
-                    pb.inc(1);
-                }
-
                 Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
             })
             .collect();
 
         let results = row_results?;
         if let Some(pb) = pb.as_ref() {
+            pb.set_position(labeled_data.len() as u64);
             pb.finish_with_message("Dataset precomputation complete");
         }
 
