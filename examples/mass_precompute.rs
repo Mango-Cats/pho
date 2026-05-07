@@ -23,10 +23,14 @@ fn main() {
     let metaphone: Metaphone = import("tests/config_sample_metaphone.toml").unwrap();
     let needleman_wunsch: NeedlemanWunsch =
         import("tests/config_sample_needleman_wunsch.toml").unwrap();
+    let gram2_0_0: NGram = NGram::try_new(2, 0, 0, false, NGramMetric::Dice).unwrap();
+    let gram2_0_1: NGram = NGram::try_new(2, 0, 1, false, NGramMetric::Dice).unwrap();
+    let gram2_1_0: NGram = NGram::try_new(2, 1, 0, false, NGramMetric::Dice).unwrap();
     let gram2_1_1: NGram = NGram::try_new(2, 1, 1, false, NGramMetric::Dice).unwrap();
     let gram2_2_2: NGram = NGram::try_new(2, 2, 2, false, NGramMetric::Dice).unwrap();
     let gram3_1_1: NGram = NGram::try_new(3, 1, 1, false, NGramMetric::Dice).unwrap();
     let gram3_2_2: NGram = NGram::try_new(3, 2, 2, false, NGramMetric::Dice).unwrap();
+    let gram3_2_0: NGram = NGram::try_new(3, 2, 0, false, NGramMetric::Dice).unwrap();
     let prefix: Prefix = Prefix::new(false);
     let smith_waterman: SmithWaterman = import("tests/config_sample_smith_waterman.toml").unwrap();
     let soundex: Soundex = import("tests/config_sample_soundex.toml").unwrap();
@@ -61,10 +65,14 @@ fn main() {
             Box::new(levenshtein.clone()),
             Box::new(metaphone.clone()),
             Box::new(needleman_wunsch.clone()),
+            Box::new(gram2_0_0.clone()),
+            Box::new(gram2_0_1.clone()),
+            Box::new(gram2_1_0.clone()),
             Box::new(gram2_1_1.clone()),
             Box::new(gram2_2_2.clone()),
             Box::new(gram3_1_1.clone()),
             Box::new(gram3_2_2.clone()),
+            Box::new(gram3_2_0.clone()),
             Box::new(prefix.clone()),
             Box::new(smith_waterman.clone()),
             Box::new(soundex.clone()),
@@ -78,4 +86,5 @@ fn main() {
     .unwrap();
 
     all_sm.export("mass_precomputed.parquet").unwrap();
+    all_sm.export("mass_precomputed.csv").unwrap();
 }
