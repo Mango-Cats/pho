@@ -1,0 +1,4 @@
+insert_cost = 1.0
+delete_cost = 1.0
+substitution_scale = 1.0
+case_insensitive = true

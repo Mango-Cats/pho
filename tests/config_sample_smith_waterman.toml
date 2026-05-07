@@ -1,0 +1,4 @@
+match_score = 2.0
+mismatch_penalty = 1.0
+gap_penalty = 2.0
+case_insensitive = true
