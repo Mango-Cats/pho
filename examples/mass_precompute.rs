@@ -11,7 +11,8 @@ fn main() {
     let rows: Vec<Row> = read_csv_as("D_transcribed.csv", None).unwrap();
 
     // Get the test and train split
-    let (train, _test) = split_rows(
+    println!("Splitting the dataset");
+    let (train, test) = split_rows(
         &rows,
         &SplitConfig {
             train_fraction: 0.8,
@@ -34,6 +35,7 @@ fn main() {
     let gram3_2_2: NGram = NGram::try_new(3, 2, 2, false, NGramMetric::Dice).unwrap();
     let prefix: Prefix = Prefix::new(false);
 
+    println!("Precomputing all from the train set");
     let all_train = ScoreMatrix::from_slice(
         vec![
             Box::new(aline.clone()),
@@ -52,6 +54,7 @@ fn main() {
     )
     .unwrap();
 
+    println!("Precomputing all from the test set");
     let all_test = ScoreMatrix::from_slice(
         vec![
             Box::new(aline.clone()),
@@ -65,7 +68,7 @@ fn main() {
             Box::new(gram3_2_2.clone()),
             Box::new(prefix.clone()),
         ],
-        &train,
+        &test,
         true,
     )
     .unwrap();

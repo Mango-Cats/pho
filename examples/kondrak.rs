@@ -44,7 +44,7 @@ fn main() {
     //  Now let's read a CSV file that contains drug name pairs,
     //  their phonetic transcriptions, and their label (0: Unlabeled;
     //  1: Positive/LASA)
-    let rows: Vec<Row> = read_csv_as("examples/data/sample_lasa.csv", None).unwrap();
+    let rows: Vec<Row> = read_csv_as("D_transcribed.csv", None).unwrap();
 
     // Example row
     println!("\t| {:?}", rows[0]);
@@ -60,5 +60,5 @@ fn main() {
     //  (if not all) should have a low ensemble score.
     let dataset = ScoreMatrix::from_ensemble(&kondrak, &rows, true).unwrap();
 
-    dataset.export("example_dataset_aline.csv").unwrap();
+    dataset.export("kondrak.csv").unwrap();
 }
