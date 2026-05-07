@@ -11,24 +11,28 @@ use pho::{
 fn main() {
     println!("🍜\t| # tutorial: Kondrak's algorithm");
 
-    // Kondrak's LASA Algorithm
+    // Kondrak and Dorr's (2004) LASA Algorithm
     // ...
-    //  This tutorial shows Kondrak's implementation of computing
-    //  confusibile drugs.
+    //  This tutorial shows Kondrak and Dorr's (2004) implementation
+    //  of computing confusibile drugs.
 
     // Load feature functions configuration
     // ...
-    //  Kondrak's algorithm takes in ALINE, BiSim to compute
-    //  confusibility.
+    //  Kondrak and Dorr's algorithm takes in ALINE, BiSim, NED, and
+    //  Prefix to compute confusibility.
     let aline: Aline = import("tests/config_sample_aline.toml").unwrap();
     let bisim: BiSim = import("tests/config_sample_bisim.toml").unwrap();
     let ned: Levenshtein = import("tests/config_sample_levenshtein.toml").unwrap();
     let prefix: Prefix = Prefix::new(false);
 
-    // Kondrak's algorithm
+    // Kondrak and Dorr's algorithm
     // ...
-    //  Kondrak's algorithm is a 50-50 weighted sum of Aline and BiSim
-    let kondrak = EnsembleAlgorithm::try_new(
+    //  Kondrak and Dorr's algorithm is a average weighted sum of
+    //  Aline, BiSim, NED, and Prefix.
+    //
+    //  Since this is an average weighted sum, we construct an
+    //  ensemble that is Convex and each weight is 1/4.
+    let kd = EnsembleAlgorithm::try_new(
         vec![
             WeightedFunction::from_similarity(aline.clone(), 0.25),
             WeightedFunction::from_similarity(bisim.clone(), 0.25),
@@ -42,23 +46,22 @@ fn main() {
     // Reading a CSV
     // ...
     //  Now let's read a CSV file that contains drug name pairs,
-    //  their phonetic transcriptions, and their label (0: Unlabeled;
-    //  1: Positive/LASA)
-    let rows: Vec<Row> = read_csv_as("D_transcribed.csv", None).unwrap();
-
-    // Example row
-    println!("\t| {:?}", rows[0]);
+    //  their phonetic transcriptions, and their label (0: Negative;
+    //  1: Positive/LASA).
+    //
+    //  This requires a LARGE dataset of 400 positives, and
+    //  about 160,000 negatives. Replace <yourfile> with your actual
+    //  dataset.
+    //
+    //  Since no training is needed, we do not need to make a train-
+    //  test split.
+    let rows: Vec<Row> = read_csv_as("<yourfile>.csv", None).unwrap();
 
     // ScoreMatrix Construction
     //  ...
-    //  Now let's construct a dataset and compute the score of each
-    //  drug pair on Kondrak's algorithm. Then export it.
-    //
-    //  Looking through the resulting database, the first half must
-    //  be all LASA drugs with the ensemble score being high.
-    //  While the lower half contains unlabeled drugs so most of them
-    //  (if not all) should have a low ensemble score.
-    let dataset = ScoreMatrix::from_ensemble(&kondrak, &rows, true).unwrap();
+    //  Now we can precompute each pair from rows using Kondrak and
+    //  Dorr's algorithm.
+    let dataset = ScoreMatrix::from_ensemble(&kd, &rows, true).unwrap();
 
-    dataset.export("kondrak.csv").unwrap();
+    dataset.export("kondrak_dorr_precomputed.csv").unwrap();
 }
