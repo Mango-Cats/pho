@@ -20,14 +20,21 @@ pub fn double_metaphone(s: &str) -> (String, String) {
     let at = |i: usize| -> char { chars.get(i).copied().unwrap_or('\0') };
     let slice_eq = |start: usize, s: &str| -> bool {
         let bytes: Vec<char> = s.chars().collect();
-        chars.get(start..start + bytes.len()).map_or(false, |sl| sl == bytes.as_slice())
+        chars
+            .get(start..start + bytes.len())
+            .map_or(false, |sl| sl == bytes.as_slice())
     };
     let is_vowel_char = |c: char| matches!(c, 'A' | 'E' | 'I' | 'O' | 'U' | 'Y');
 
     let mut i: usize = 0;
 
     // Skip initial silent letters.
-    if slice_eq(0, "GN") || slice_eq(0, "KN") || slice_eq(0, "PN") || slice_eq(0, "AE") || slice_eq(0, "WR") {
+    if slice_eq(0, "GN")
+        || slice_eq(0, "KN")
+        || slice_eq(0, "PN")
+        || slice_eq(0, "AE")
+        || slice_eq(0, "WR")
+    {
         i = 1;
     }
 
@@ -44,8 +51,12 @@ pub fn double_metaphone(s: &str) -> (String, String) {
     };
 
     macro_rules! push {
-        ($pa:expr) => { add(&mut primary, &mut secondary, $pa, "") };
-        ($pa:expr, $sa:expr) => { add(&mut primary, &mut secondary, $pa, $sa) };
+        ($pa:expr) => {
+            add(&mut primary, &mut secondary, $pa, "")
+        };
+        ($pa:expr, $sa:expr) => {
+            add(&mut primary, &mut secondary, $pa, $sa)
+        };
     }
 
     while i < chars.len() {
@@ -64,11 +75,18 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                 continue;
             }
 
-            '\u{00C7}' => { push!("S"); i += 1; continue; } // Ç
+            '\u{00C7}' => {
+                push!("S");
+                i += 1;
+                continue;
+            } // Ç
 
             'C' => {
-                if i > 1 && !is_vowel_char(at(i - 2)) && slice_eq(i - 1, "ACH")
-                    && at(i + 2) != 'I' && (at(i + 2) != 'E' || slice_eq(i - 2, "BACHER") || slice_eq(i - 2, "MACHER"))
+                if i > 1
+                    && !is_vowel_char(at(i - 2))
+                    && slice_eq(i - 1, "ACH")
+                    && at(i + 2) != 'I'
+                    && (at(i + 2) != 'E' || slice_eq(i - 2, "BACHER") || slice_eq(i - 2, "MACHER"))
                 {
                     push!("K");
                     i += 2;
@@ -112,7 +130,9 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                 }
                 if slice_eq(i, "CC") && !(i == 1 && at(0) == 'M') {
                     if at(i + 2) == 'I' || at(i + 2) == 'E' || at(i + 2) == 'H' {
-                        if (i == 1 && at(0) == 'A') || slice_eq(i - 1, "UCCEE") || slice_eq(i - 1, "UCCES") {
+                        if (i == 1 && at(0) == 'A')
+                            || (i > 0 && (slice_eq(i - 1, "UCCEE") || slice_eq(i - 1, "UCCES")))
+                        {
                             push!("KS");
                         } else {
                             push!("X");
@@ -182,7 +202,11 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                         continue;
                     }
                     if i == 0 {
-                        if at(i + 2) == 'I' { push!("J"); } else { push!("K"); }
+                        if at(i + 2) == 'I' {
+                            push!("J");
+                        } else {
+                            push!("K");
+                        }
                         i += 2;
                         continue;
                     }
@@ -193,8 +217,13 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                         i += 2;
                         continue;
                     }
-                    if i > 2 && at(i - 1) == 'U'
-                        && (at(i - 3) == 'C' || at(i - 3) == 'G' || at(i - 3) == 'L' || at(i - 3) == 'R' || at(i - 3) == 'T')
+                    if i > 2
+                        && at(i - 1) == 'U'
+                        && (at(i - 3) == 'C'
+                            || at(i - 3) == 'G'
+                            || at(i - 3) == 'L'
+                            || at(i - 3) == 'R'
+                            || at(i - 3) == 'T')
                     {
                         push!("F");
                     } else if i > 0 && at(i - 1) != 'I' {
@@ -220,22 +249,43 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     continue;
                 }
                 if i == 0
-                    && (at(i + 1) == 'E' || at(i + 1) == 'I' || at(i + 1) == 'Y' || slice_eq(i + 1, "ES") || slice_eq(i + 1, "EP") || slice_eq(i + 1, "EB") || slice_eq(i + 1, "EL") || slice_eq(i + 1, "EY") || slice_eq(i + 1, "IB") || slice_eq(i + 1, "IL") || slice_eq(i + 1, "IN") || slice_eq(i + 1, "IE") || slice_eq(i + 1, "EI") || slice_eq(i + 1, "ER"))
+                    && (at(i + 1) == 'E'
+                        || at(i + 1) == 'I'
+                        || at(i + 1) == 'Y'
+                        || slice_eq(i + 1, "ES")
+                        || slice_eq(i + 1, "EP")
+                        || slice_eq(i + 1, "EB")
+                        || slice_eq(i + 1, "EL")
+                        || slice_eq(i + 1, "EY")
+                        || slice_eq(i + 1, "IB")
+                        || slice_eq(i + 1, "IL")
+                        || slice_eq(i + 1, "IN")
+                        || slice_eq(i + 1, "IE")
+                        || slice_eq(i + 1, "EI")
+                        || slice_eq(i + 1, "ER"))
                 {
                     push!("K", "J");
                     i += 2;
                     continue;
                 }
                 if (slice_eq(i + 1, "ER") || at(i + 1) == 'Y')
-                    && !slice_eq(0, "DANGER") && !slice_eq(0, "RANGER") && !slice_eq(0, "MANGER")
+                    && !slice_eq(0, "DANGER")
+                    && !slice_eq(0, "RANGER")
+                    && !slice_eq(0, "MANGER")
+                    && i > 0
                     && !matches!(at(i - 1), 'E' | 'I')
-                    && !slice_eq(i - 1, "RGY") && !slice_eq(i - 1, "OGY")
+                    && !slice_eq(i - 1, "RGY")
+                    && !slice_eq(i - 1, "OGY")
                 {
                     push!("K", "J");
                     i += 2;
                     continue;
                 }
-                if at(i + 1) == 'E' || at(i + 1) == 'I' || at(i + 1) == 'Y' || slice_eq(i - 1, "AGGI") || slice_eq(i - 1, "OGGI") {
+                if at(i + 1) == 'E'
+                    || at(i + 1) == 'I'
+                    || at(i + 1) == 'Y'
+                    || (i > 0 && (slice_eq(i - 1, "AGGI") || slice_eq(i - 1, "OGGI")))
+                {
                     push!("J");
                 } else {
                     push!("K");
@@ -259,7 +309,7 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     push!("H", "J");
                 } else if i == 0 {
                     push!("J", "A");
-                } else if !is_vowel_char(at(i - 1)) && !slice_eq(0, "SAN ") {
+                } else if i > 0 && !is_vowel_char(at(i - 1)) && !slice_eq(0, "SAN ") {
                     push!("J");
                 } else {
                     push!("Y", "J");
@@ -276,8 +326,22 @@ pub fn double_metaphone(s: &str) -> (String, String) {
 
             'L' => {
                 if at(i + 1) == 'L' {
-                    if (i == chars.len() - 3 && matches!((at(i - 1), at(i + 2)), ('A', 'A') | ('A', 'O') | ('A', 'E') | ('I', 'O') | ('I', 'E') | ('I', 'A') | ('O', 'E') | ('U', 'E')))
-                        || (at(i - 1) == 'A' && (i + 2 == chars.len() || matches!(at(i + 2), 'A' | 'O' | 'E')))
+                    if (i > 0
+                        && i == chars.len() - 3
+                        && matches!(
+                            (at(i - 1), at(i + 2)),
+                            ('A', 'A')
+                                | ('A', 'O')
+                                | ('A', 'E')
+                                | ('I', 'O')
+                                | ('I', 'E')
+                                | ('I', 'A')
+                                | ('O', 'E')
+                                | ('U', 'E')
+                        ))
+                        || (i > 0
+                            && at(i - 1) == 'A'
+                            && (i + 2 == chars.len() || matches!(at(i + 2), 'A' | 'O' | 'E')))
                     {
                         push!("L", "");
                     } else {
@@ -303,7 +367,11 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                 continue;
             }
 
-            '\u{00D1}' => { push!("N"); i += 1; continue; } // Ñ
+            '\u{00D1}' => {
+                push!("N");
+                i += 1;
+                continue;
+            } // Ñ
 
             'P' => {
                 if at(i + 1) == 'H' {
@@ -334,7 +402,7 @@ pub fn double_metaphone(s: &str) -> (String, String) {
             }
 
             'S' => {
-                if slice_eq(i - 1, "ISL") || slice_eq(i - 1, "YSL") {
+                if i > 0 && (slice_eq(i - 1, "ISL") || slice_eq(i - 1, "YSL")) {
                     i += 1;
                     continue;
                 }
@@ -354,7 +422,10 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     continue;
                 }
                 let initial_s_exception = i == 0
-                    && (slice_eq(i + 1, "M") || slice_eq(i + 1, "N") || slice_eq(i + 1, "L") || slice_eq(i + 1, "W"));
+                    && (slice_eq(i + 1, "M")
+                        || slice_eq(i + 1, "N")
+                        || slice_eq(i + 1, "L")
+                        || slice_eq(i + 1, "W"));
                 if slice_eq(i, "SC") {
                     if at(i + 2) == 'H' {
                         push!("SK");
@@ -366,12 +437,17 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     i += 3;
                     continue;
                 }
-                if i + 1 == chars.len() && (slice_eq(i - 2, "AI") || slice_eq(i - 2, "OI")) {
+                if i + 1 == chars.len() && i > 1 && (slice_eq(i - 2, "AI") || slice_eq(i - 2, "OI"))
+                {
                     push!("S", "");
                 } else {
                     push!("S");
                 }
-                i += if !initial_s_exception && (at(i + 1) == 'S' || at(i + 1) == 'Z') { 2 } else { 1 };
+                i += if !initial_s_exception && (at(i + 1) == 'S' || at(i + 1) == 'Z') {
+                    2
+                } else {
+                    1
+                };
                 continue;
             }
 
@@ -387,7 +463,11 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     continue;
                 }
                 push!("T");
-                i += if at(i + 1) == 'T' || at(i + 1) == 'D' { 2 } else { 1 };
+                i += if at(i + 1) == 'T' || at(i + 1) == 'D' {
+                    2
+                } else {
+                    1
+                };
                 continue;
             }
 
@@ -409,7 +489,9 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     continue;
                 }
                 // Slavic initial W.
-                if (i + 1 == chars.len() || !is_vowel_char(at(i + 1))) && !(i > 0 && is_vowel_char(at(i - 1))) {
+                if (i + 1 == chars.len() || !is_vowel_char(at(i + 1)))
+                    && !(i > 0 && is_vowel_char(at(i - 1)))
+                {
                     push!("", "F");
                 }
                 i += 1;
@@ -417,10 +499,17 @@ pub fn double_metaphone(s: &str) -> (String, String) {
             }
 
             'X' => {
-                if !(i + 1 == chars.len() && (slice_eq(i - 3, "IAU") || slice_eq(i - 3, "EAU") || slice_eq(i - 2, "AU") || slice_eq(i - 2, "OU"))) {
+                if !(i + 1 == chars.len()
+                    && ((i > 2 && (slice_eq(i - 3, "IAU") || slice_eq(i - 3, "EAU")))
+                        || (i > 1 && (slice_eq(i - 2, "AU") || slice_eq(i - 2, "OU")))))
+                {
                     push!("KS");
                 }
-                i += if at(i + 1) == 'C' || at(i + 1) == 'X' { 2 } else { 1 };
+                i += if at(i + 1) == 'C' || at(i + 1) == 'X' {
+                    2
+                } else {
+                    1
+                };
                 continue;
             }
 
@@ -430,7 +519,9 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                     i += 2;
                     continue;
                 }
-                if slice_eq(i + 1, "ZO") || slice_eq(i + 1, "ZI") || slice_eq(i + 1, "ZA")
+                if slice_eq(i + 1, "ZO")
+                    || slice_eq(i + 1, "ZI")
+                    || slice_eq(i + 1, "ZA")
                     || (i > 0 && at(i - 1) == 'T' && i + 1 != chars.len())
                 {
                     push!("S", "TS");
@@ -441,7 +532,10 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                 continue;
             }
 
-            _ => { i += 1; continue; }
+            _ => {
+                i += 1;
+                continue;
+            }
         }
     }
 

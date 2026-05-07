@@ -53,7 +53,7 @@ impl Algorithm for Aline {
                 c.is_whitespace() 
                 || c.is_numeric() 
                 // Standard punctuation
-                || "[]/\\.,;:()|{}<>\"'-+".contains(c)
+                || "[]/\\.,;:()|{}<>\"'-+_&".contains(c)
                 // IPA suprasegmentals (primary stress, secondary stress, length, boundaries)
                 || "ˈˌːˑ‖‿".contains(c) 
             })
