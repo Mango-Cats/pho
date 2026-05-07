@@ -24,6 +24,18 @@ pub struct ScoreMatrix {
 }
 
 impl ScoreMatrix {
+    const PREFIX_ALGORITHM_NAME: &'static str = "Prefix";
+    const COMMON_PREFIX_RATIO_NAME: &'static str = "common_prefix_ratio";
+    const WORD_LEVEL_FEATURES: [&'static str; 7] = [
+        "len_x1",
+        "len_x2",
+        "len_diff",
+        "len_ratio",
+        "common_prefix_len",
+        "common_prefix_ratio",
+        "common_suffix_len",
+    ];
+
     fn validate_shape(&self) -> Result<()> {
         if self.inputs.len() != self.labels.len() {
             return Err(crate::Error::InvalidDatasetShape(
@@ -51,23 +63,104 @@ impl ScoreMatrix {
         Ok(())
     }
 
-    fn algorithm_label(algo: &dyn Algorithm) -> String {
-        algo.name().to_string()
-    }
-
     fn weighted_algorithm_label(weighted: &WeightedFunction) -> String {
         format!("{}_{}", weighted.name(), weighted.weight)
+    }
+
+    fn normalized_algorithm_label(name: &str, include_word_level_features: bool) -> String {
+        if include_word_level_features && name == Self::PREFIX_ALGORITHM_NAME {
+            Self::COMMON_PREFIX_RATIO_NAME.to_string()
+        } else {
+            name.to_string()
+        }
+    }
+
+    fn common_prefix_len(left: &str, right: &str) -> usize {
+        left.chars()
+            .zip(right.chars())
+            .take_while(|(left_char, right_char)| left_char == right_char)
+            .count()
+    }
+
+    fn common_suffix_len(left: &str, right: &str) -> usize {
+        left.chars()
+            .rev()
+            .zip(right.chars().rev())
+            .take_while(|(left_char, right_char)| left_char == right_char)
+            .count()
+    }
+
+    fn word_level_features(existing_names: &[String]) -> Vec<&'static str> {
+        Self::WORD_LEVEL_FEATURES
+            .iter()
+            .copied()
+            .filter(|name| !existing_names.iter().any(|existing| existing == name))
+            .collect()
+    }
+
+    fn length_feature_values(left: &str, right: &str, feature_names: &[&'static str]) -> Vec<f32> {
+        let left_len = left.chars().count();
+        let right_len = right.chars().count();
+        let max_len = left_len.max(right_len) as f32;
+        let min_len = left_len.min(right_len) as f32;
+        let prefix_len = Self::common_prefix_len(left, right) as f32;
+        let suffix_len = Self::common_suffix_len(left, right) as f32;
+        let length_diff = left_len.abs_diff(right_len) as f32;
+
+        feature_names
+            .iter()
+            .map(|name| match *name {
+                "len_x1" => left_len as f32,
+                "len_x2" => right_len as f32,
+                "len_diff" => length_diff,
+                "len_ratio" => {
+                    if max_len == 0.0 {
+                        1.0
+                    } else {
+                        (min_len / max_len).clamp(0.0, 1.0)
+                    }
+                }
+                "common_prefix_len" => prefix_len,
+                "common_prefix_ratio" => {
+                    if max_len == 0.0 {
+                        1.0
+                    } else {
+                        (prefix_len / max_len).clamp(0.0, 1.0)
+                    }
+                }
+                "common_suffix_len" => suffix_len,
+                _ => unreachable!("unknown length feature name"),
+            })
+            .collect()
+    }
+
+    fn append_length_features(
+        scores: &mut Vec<f32>,
+        left: &str,
+        right: &str,
+        feature_names: &[&'static str],
+    ) {
+        scores.extend(Self::length_feature_values(left, right, feature_names));
     }
 
     fn build_from_rows(
         algorithms: &[&dyn Algorithm],
         labeled_data: &[Row],
+        include_word_level_features: bool,
         show_progress: bool,
     ) -> Result<Self> {
-        let algorithm_names = algorithms
+        let mut algorithm_names = algorithms
             .iter()
-            .map(|algo| Self::algorithm_label(*algo))
+            .map(|algo| Self::normalized_algorithm_label(algo.name(), include_word_level_features))
             .collect::<Vec<_>>();
+
+        let word_level_features = if include_word_level_features {
+            Self::word_level_features(&algorithm_names)
+        } else {
+            Vec::new()
+        };
+
+        algorithm_names.extend(word_level_features.iter().map(|name| name.to_string()));
 
         let pb = if show_progress {
             let pb = ProgressBar::new(labeled_data.len() as u64);
@@ -96,6 +189,16 @@ impl ScoreMatrix {
                         algo.similarity(left, right)
                     })
                     .collect::<Result<Vec<f32>>>()?;
+
+                let mut scores = scores;
+                if include_word_level_features {
+                    Self::append_length_features(
+                        &mut scores,
+                        row.x_1.as_str(),
+                        row.x_2.as_str(),
+                        &word_level_features,
+                    );
+                }
 
                 if let Some(pb) = pb.as_ref() {
                     pb.inc(1);
@@ -146,13 +249,19 @@ impl ScoreMatrix {
     pub fn from_slice(
         algorithms: Vec<Box<dyn Algorithm>>,
         labeled_data: &[Row],
+        include_word_level_features: bool,
         show_progress: bool,
     ) -> Result<Self> {
         let algorithms = algorithms
             .iter()
             .map(|algo| algo.as_ref())
             .collect::<Vec<_>>();
-        Self::build_from_rows(&algorithms, labeled_data, show_progress)
+        Self::build_from_rows(
+            &algorithms,
+            labeled_data,
+            include_word_level_features,
+            show_progress,
+        )
     }
 
     /// Build a dataset from [`Row`] values using the algorithms contained in
@@ -164,6 +273,7 @@ impl ScoreMatrix {
     pub fn from_ensemble(
         ensemble: &EnsembleAlgorithm,
         labeled_data: &[Row],
+        include_word_level_features: bool,
         show_progress: bool,
     ) -> Result<Self> {
         let mut algorithm_names = Vec::with_capacity(1 + ensemble.algorithms.len());
@@ -174,6 +284,19 @@ impl ScoreMatrix {
                 .iter()
                 .map(Self::weighted_algorithm_label),
         );
+
+        algorithm_names = algorithm_names
+            .into_iter()
+            .map(|name| Self::normalized_algorithm_label(&name, include_word_level_features))
+            .collect::<Vec<_>>();
+
+        let word_level_features = if include_word_level_features {
+            Self::word_level_features(&algorithm_names)
+        } else {
+            Vec::new()
+        };
+
+        algorithm_names.extend(word_level_features.iter().map(|name| name.to_string()));
 
         let pb = if show_progress {
             let pb = ProgressBar::new(labeled_data.len() as u64);
@@ -227,6 +350,15 @@ impl ScoreMatrix {
                 scores.push(ensemble_score);
                 scores.extend(component_scores);
 
+                if include_word_level_features {
+                    Self::append_length_features(
+                        &mut scores,
+                        row.x_1.as_str(),
+                        row.x_2.as_str(),
+                        &word_level_features,
+                    );
+                }
+
                 Ok((row.x_1.clone(), row.x_2.clone(), row.label, scores))
             })
             .collect();
@@ -268,11 +400,25 @@ impl ScoreMatrix {
         algorithm_names: Vec<String>,
         labeled_data: &[(S1, S2, Option<f32>)],
         base_scores: Vec<Vec<f32>>,
+        include_word_level_features: bool,
     ) -> Result<Self>
     where
         S1: AsRef<str>,
         S2: AsRef<str>,
     {
+        let mut algorithm_names = algorithm_names
+            .into_iter()
+            .map(|name| Self::normalized_algorithm_label(&name, include_word_level_features))
+            .collect::<Vec<_>>();
+
+        let word_level_features = if include_word_level_features {
+            Self::word_level_features(&algorithm_names)
+        } else {
+            Vec::new()
+        };
+
+        algorithm_names.extend(word_level_features.iter().map(|name| name.to_string()));
+
         let pb = ProgressBar::new(labeled_data.len() as u64);
         pb.set_style(
             ProgressStyle::default_bar()
@@ -300,6 +446,18 @@ impl ScoreMatrix {
             })
             .collect::<Vec<_>>();
 
+        let mut base_scores = base_scores;
+        if include_word_level_features {
+            for ((left, right, _), scores) in labeled_data.iter().zip(base_scores.iter_mut()) {
+                Self::append_length_features(
+                    scores,
+                    left.as_ref(),
+                    right.as_ref(),
+                    &word_level_features,
+                );
+            }
+        }
+
         let data = Self {
             inputs,
             labels,
@@ -320,48 +478,19 @@ impl ScoreMatrix {
         match path.extension().and_then(|e| e.to_str()) {
             Some("csv") => self.export_csv(file_name),
             Some("arrow") | Some("ipc") => self.export_arrow(file_name),
+            Some("parquet") => self.export_parquet(file_name),
             _ => Err(crate::Error::InvalidExtension(file_name.to_string())),
         }
     }
 
-    fn export_csv(&self, file_name: &str) -> Result<()> {
-        use csv::Writer;
-
-        let mut writer = Writer::from_path(file_name)?;
-        let mut header = vec![
-            Row::COL_X_1.to_string(),
-            Row::COL_X_2.to_string(),
-            Row::COL_LABEL.to_string(),
-        ];
-        header.extend(
-            self.algorithm_names
-                .iter()
-                .enumerate()
-                .map(|(_, name)| format!("{}", name)),
-        );
-        writer.write_record(header)?;
-
-        for ((x_1, x_2), (label, scores)) in self
-            .inputs
-            .iter()
-            .zip(self.labels.iter().zip(self.base_scores.iter()))
-        {
-            let mut row = Vec::with_capacity(3 + scores.len());
-            row.push(x_1.clone());
-            row.push(x_2.clone());
-            row.push(label.map(|t| t.to_string()).unwrap_or_default());
-            row.extend(scores.iter().map(|score| score.to_string()));
-            writer.write_record(row)?;
-        }
-
-        writer.flush()?;
-        Ok(())
-    }
-
-    fn export_arrow(&self, file_name: &str) -> Result<()> {
+    fn build_record_batch(
+        &self,
+    ) -> Result<(
+        Arc<arrow::datatypes::Schema>,
+        arrow::record_batch::RecordBatch,
+    )> {
         use arrow::array::{ArrayRef, Float32Array, StringArray};
         use arrow::datatypes::{DataType, Field, Schema};
-        use arrow::ipc::writer::FileWriter;
         use arrow::record_batch::RecordBatch;
 
         let x1_array = StringArray::from(
@@ -403,9 +532,49 @@ impl ScoreMatrix {
         }
 
         let schema = Arc::new(Schema::new(fields));
-
         let batch = RecordBatch::try_new(schema.clone(), columns)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+        Ok((schema, batch))
+    }
+
+    fn export_csv(&self, file_name: &str) -> Result<()> {
+        use csv::Writer;
+
+        let mut writer = Writer::from_path(file_name)?;
+        let mut header = vec![
+            Row::COL_X_1.to_string(),
+            Row::COL_X_2.to_string(),
+            Row::COL_LABEL.to_string(),
+        ];
+        header.extend(
+            self.algorithm_names
+                .iter()
+                .enumerate()
+                .map(|(_, name)| format!("{}", name)),
+        );
+        writer.write_record(header)?;
+
+        for ((x_1, x_2), (label, scores)) in self
+            .inputs
+            .iter()
+            .zip(self.labels.iter().zip(self.base_scores.iter()))
+        {
+            let mut row = Vec::with_capacity(3 + scores.len());
+            row.push(x_1.clone());
+            row.push(x_2.clone());
+            row.push(label.map(|t| t.to_string()).unwrap_or_default());
+            row.extend(scores.iter().map(|score| score.to_string()));
+            writer.write_record(row)?;
+        }
+
+        writer.flush()?;
+        Ok(())
+    }
+
+    fn export_arrow(&self, file_name: &str) -> Result<()> {
+        use arrow::ipc::writer::FileWriter;
+        let (schema, batch) = self.build_record_batch()?;
 
         let file = File::create(file_name)?;
         let mut writer = FileWriter::try_new(file, &schema)
@@ -417,6 +586,25 @@ impl ScoreMatrix {
 
         writer
             .finish()
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+        Ok(())
+    }
+
+    fn export_parquet(&self, file_name: &str) -> Result<()> {
+        use parquet::arrow::ArrowWriter;
+
+        let (schema, batch) = self.build_record_batch()?;
+        let file = File::create(file_name)?;
+        let mut writer = ArrowWriter::try_new(file, schema, None)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+        writer
+            .write(&batch)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+        writer
+            .close()
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
         Ok(())

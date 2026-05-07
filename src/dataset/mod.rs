@@ -6,6 +6,7 @@ pub use row::{Row, RowBuilder, SplitConfig};
 pub use score_matrix::ScoreMatrix;
 #[cfg(test)]
 mod tests {
+    use crate::algorithms::Prefix;
     use crate::dataset::{Row, ScoreMatrix};
     use crate::ensemble::config::EnsembleConfig;
     use crate::ensemble::types::EnsembleAlgorithm;
@@ -36,7 +37,7 @@ mod tests {
         let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(RequiresTranscription)];
         let rows = vec![Row::builder("a", "b").label(0.5f32).build()];
 
-        let result = ScoreMatrix::from_slice(algorithms, &rows, false);
+        let result = ScoreMatrix::from_slice(algorithms, &rows, false, false);
         assert!(result.is_err());
     }
 
@@ -50,7 +51,7 @@ mod tests {
                 .build(),
         ];
 
-        let result = ScoreMatrix::from_slice(algorithms, &rows, false);
+        let result = ScoreMatrix::from_slice(algorithms, &rows, false, false);
         assert!(result.is_ok());
     }
 
@@ -63,10 +64,42 @@ mod tests {
                 .build(),
         ];
 
-        let result = ScoreMatrix::from_slice(algorithms, &rows, false);
+        let result = ScoreMatrix::from_slice(algorithms, &rows, false, false);
         assert!(result.is_ok());
         let dataset = result.unwrap();
         assert_eq!(dataset.labels, vec![None]);
+    }
+
+    #[test]
+    fn from_slice_can_add_length_features_and_rename_prefix_column() {
+        let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(Prefix::new(false))];
+        let rows = vec![Row::builder("abc", "ab").label(0.5).build()];
+
+        let dataset = ScoreMatrix::from_slice(algorithms, &rows, true, false)
+            .expect("dataset with length features");
+
+        assert_eq!(
+            dataset.algorithm_names,
+            vec![
+                "common_prefix_ratio",
+                "len_x1",
+                "len_x2",
+                "len_diff",
+                "len_ratio",
+                "common_prefix_len",
+                "common_suffix_len",
+            ]
+        );
+
+        let scores = &dataset.base_scores[0];
+        assert_eq!(scores.len(), 7);
+        assert!((scores[0] - 2.0 / 3.0).abs() < 1e-6);
+        assert_eq!(scores[1], 3.0);
+        assert_eq!(scores[2], 2.0);
+        assert_eq!(scores[3], 1.0);
+        assert!((scores[4] - 2.0 / 3.0).abs() < 1e-6);
+        assert_eq!(scores[5], 2.0);
+        assert_eq!(scores[6], 0.0);
     }
 
     #[test]
@@ -82,8 +115,8 @@ mod tests {
         .expect("valid ensemble");
 
         let rows = vec![Row::builder("drug_a", "drug_b").label(0.0).build()];
-        let dataset =
-            ScoreMatrix::from_ensemble(&ensemble, &rows, false).expect("dataset from ensemble");
+        let dataset = ScoreMatrix::from_ensemble(&ensemble, &rows, false, false)
+            .expect("dataset from ensemble");
 
         assert_eq!(
             dataset.algorithm_names,

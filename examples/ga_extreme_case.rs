@@ -93,7 +93,7 @@ fn main() {
         .iter()
         .map(|(x, y, label)| Row::builder(x, y).label(*label).build())
         .collect::<Vec<_>>();
-    let training_data = ScoreMatrix::from_ensemble(&ensemble, &training_rows, true).unwrap();
+    let training_data = ScoreMatrix::from_ensemble(&ensemble, &training_rows, false, true).unwrap();
 
     // Define the evaluator
     // ...

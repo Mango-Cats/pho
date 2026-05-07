@@ -61,7 +61,7 @@ fn main() {
     //  ...
     //  Now we can precompute each pair from rows using Kondrak and
     //  Dorr's algorithm.
-    let dataset = ScoreMatrix::from_ensemble(&kd, &rows, true).unwrap();
+    let dataset = ScoreMatrix::from_ensemble(&kd, &rows, false, true).unwrap();
 
     dataset.export("kondrak_dorr_precomputed.csv").unwrap();
 }

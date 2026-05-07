@@ -124,7 +124,7 @@ mod tests {
             .iter()
             .map(|(x, y, label)| Row::builder(*x, *y).label(*label).build())
             .collect::<Vec<_>>();
-        let training_data = ScoreMatrix::from_ensemble(&ensemble, &rows, false).unwrap();
+        let training_data = ScoreMatrix::from_ensemble(&ensemble, &rows, false, false).unwrap();
         let evaluator = MeanSquaredError::new(&training_data);
 
         let config = GeneticConfig {

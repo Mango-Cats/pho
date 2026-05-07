@@ -71,11 +71,12 @@ fn main() {
         ],
         &rows,
         true,
+        true,
     )
     .unwrap();
 
     // ScoreMatrix from an ensemble
-    let slice_ensemble = ScoreMatrix::from_ensemble(&ensemble, &rows, true).unwrap();
+    let slice_ensemble = ScoreMatrix::from_ensemble(&ensemble, &rows, false, true).unwrap();
 
     // Save both datasets to compare results
     slice_dataset

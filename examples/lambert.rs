@@ -47,6 +47,7 @@ fn main() {
             Box::new(gram3_2_0.clone()),
         ],
         &all,
+        false,
         true,
     )
     .unwrap();
