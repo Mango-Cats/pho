@@ -26,6 +26,5 @@ target
 # Added by cargo
 
 /target
-D_transcribed.csv
-learned_kondrak.csv
+.vscode/
 main.rs
