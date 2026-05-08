@@ -85,6 +85,6 @@ fn main() {
     )
     .unwrap();
 
-    all_sm.export("mass_precomputed.parquet").unwrap();
-    all_sm.export("mass_precomputed.csv").unwrap();
+    all_sm.export("pho.parquet").unwrap();
+    all_sm.export("pho.csv").unwrap();
 }
