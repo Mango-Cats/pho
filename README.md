@@ -31,6 +31,72 @@ at the [examples/](examples/) folder.
 environment! Look at [evcxr](https://github.com/evcxr/evcxr/blob/main/evcxr_jupyter/README.md)
 to get a Rust Jupyter Kernel.
 
+## CLI with `phoc`
+
+`phoc` generates similarity feature datasets from CSV input.
+
+### Quick start
+
+```bash
+cargo run --bin phoc -- \
+   --input examples/data/dataset.csv \
+   --output output.csv \
+   --progress
+```
+
+### Build only phoc
+
+```bash
+cargo build --bin phoc
+```
+
+### Configs
+
+`phoc` loads algorithm configs from the directory you provide:
+
+```bash
+cargo run --bin phoc -- \
+   --input examples/data/dataset.csv \
+   --output output.csv \
+   --config-dir path/to/configs
+```
+
+Sample configs are in `tests/config_sample_*.toml`. Copy those into a directory
+of your choice and point `--config-dir` at it.
+
+### Input CSV format
+
+Headers are flexible. The following names are recognized:
+
+- `x_1` or `x` for the first string
+- `x_2` or `y` for the second string
+- `label` (optional numeric label)
+- `t_1` and `t_2` (optional phonetic transcriptions)
+
+If a configured algorithm requires phonetic transcriptions (for example ALINE),
+`t_1` and `t_2` must be present for all rows.
+
+### Output CSV
+
+The output CSV includes:
+
+- `x_1`, `x_2`, `label`
+- One column per algorithm (plus optional word-level features)
+
+Example header:
+
+```
+x_1,x_2,label,Levenshtein,JaroWinkler,Prefix
+```
+
+### Options
+
+- `--delimiter <char>`: CSV delimiter byte (default: `,`)
+- `--no-headers`: treat input as headerless
+- `--flexible`: allow variable-length rows
+- `--include-word-features`: add length-based features
+- `--progress`: show a progress bar
+
 ## Moving Around
 
 The project has three main modules:
