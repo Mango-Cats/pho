@@ -1,0 +1,1689 @@
+# changes referenced from:
+# 1. Tagalog Phonology - Llamzon 1966, https://www.jstor.org/stable/30029139
+# 2. Tagalog clitics and prosodic phonology - Kaufman 2007, https://bahasawan.com/wp-content/uploads/2020/01/Tagalog-clitics-and-prosodic-phonology-ms.pdf
+# 3. Tagalog Reference Grammar - Schachter & Otanes 1972, https://theswissbay.ch/pdf/Books/Linguistics/Mega%20linguistics%20pack/Austronesian/Tagalog%20Reference%20Grammar%20%28Schachter%20%26%20Otanes%29.pdf
+
+# ================================ FEATURES ================================
+epsilon = 0.001
+
+[costs]
+skip            = -10
+substitute      = 35
+expand_compress = 45
+vowel_consonant = 5
+
+[salience]
+syllabic   = 5
+place      = 40
+manner     = 50
+voice      = 5
+nasal      = 20
+retroflex  = 10
+lateral    = 10
+aspirated  = 5
+long       = 0
+high       = 3
+back       = 2
+round      = 2
+phonation  = 10
+airstream  = 10
+secondary  = 10
+
+[values.place]
+bilabial        = 1.0
+labiodental     = 0.95
+linguolabial    = 0.92
+dental          = 0.9
+alveolar        = 0.85
+retroflex       = 0.8
+palato_alveolar = 0.75
+alveolo_palatal = 0.72
+palatal         = 0.7
+velar           = 0.6
+uvular          = 0.5
+pharyngeal      = 0.3
+epiglottal      = 0.2
+# maybe edit glottal value?
+glottal         = 0.1
+labiovelar      = 1.0
+vowel           = -1.0
+
+# manner of articulation, the way in which air escapes (Schater & Otanes, 1972)
+[values.manner]
+stop              = 1.0
+affricate         = 0.9
+fricative         = 0.85
+lateral_fricative = 0.8
+trill             = 0.7
+tap               = 0.65
+lateral_flap      = 0.6
+approximant       = 0.6
+high_vowel        = 0.4
+mid_vowel         = 0.2
+low_vowel         = 0.0
+vowel             = 0.5
+
+# tongue height in articulation (Llamzon 1966)
+[values.high]
+high      = 1.0
+near_high = 0.85
+high_mid  = 0.65
+mid       = 0.5
+low_mid   = 0.35
+near_low  = 0.15
+low       = 0.0
+
+# part of the tongue used (Llamzon 1966)
+[values.back]
+front      = 1.0
+near_front = 0.75
+central    = 0.5
+near_back  = 0.25
+back       = 0.0
+
+[values.binary]
+plus  = 1.0
+minus = 0.0
+
+# The Ladefoged & Maddieson Continuum
+[values.phonation]
+modal   = 1.0
+breathy = 0.75
+creaky  = 0.5
+stiff   = 0.25
+slack   = 0.0
+
+[values.airstream]
+pulmonic  = 1.0
+ejective  = 0.66
+implosive = 0.33
+click     = 0.0
+
+[values.secondary]
+none           = 1.0
+labialized     = 0.75
+palatalized    = 0.5
+velarized      = 0.25
+pharyngealized = 0.0
+
+# ========================================================================
+# ================================ VOWELS ================================
+
+# Vowel: A
+
+# changed back = "back" -> back = "central"
+# 
+[sounds."A"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes 'a' as a low, central, tense, unrounded vowel
+# changed back = "front" -> back = "central"
+# changed manner = "vowel" -> manner = "low_vowel"
+[sounds."a"]
+type      = "vowel"
+place     = "vowel"
+manner    = "low_vowel"
+back      = "central"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes 'ɑ' as a low, back, unrounded vowel
+# changed manner = "vowel" -> manner = "low_vowel"
+[sounds."ɑ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "low_vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes 'ə' as central, lower-mid, unrounded
+# changed high = "mid" -> high = "low_mid"
+[sounds."ə"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "low_mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# IPA: phonetic
+[sounds."ɐ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+
+# Vowel: E
+
+[sounds."E"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes /e/ as a mid, front, tense, unrounded vowel
+[sounds."e"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Lower-mid variant of /e/
+# changed high = "mid" -> high = "low_mid"
+[sounds."ɛ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low_mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Vowel: I
+
+[sounds."I"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes /i/ as a high, front, tense, unrounde, vowel
+# changed manner = "vowel" -> manner = "high_vowel"
+[sounds."i"]
+type      = "vowel"
+place     = "vowel"
+manner    = "high_vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Lower-high, front variant
+# changed high = "high" -> high = "high_mid"
+[sounds."ɪ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "near_front"
+high      = "high_mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Vowel: O
+
+# mid, back, rounded
+[sounds."O"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# higher-mid, back, rounded 
+# changed high = "mid" -> high ' "high_mid"
+[sounds."o"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high_mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# back mid (Kaufman 2007)
+[sounds."ɔ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Vowel: U
+
+# lower-high, back, rounded variant
+[sounds."U"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Llamzon (1966) describes /u/ as a high, back, tensed, rounded vowel
+# changed manner = "vowel" -> manner = "high_vowel"
+[sounds."u"]
+type      = "vowel"
+place     = "vowel"
+manner    = "high_vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# phonetic
+[sounds."ʊ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# Vowel-ish: Y & W
+
+[sounds."y"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."w"]
+type      = "consonant"
+place     = "labiovelar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+
+# idek man / not part of filipino phonetics
+
+[sounds."ä"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."æ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."œ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɑ̃"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "plus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʌ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɶ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɒ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "low"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."e̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɘ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɜ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɚ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "plus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."o̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ø"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ø̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɯ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɞ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɤ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɤ̞"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɨ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʏ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɵ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "mid"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʉ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "central"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʋ"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# ========================================================================
+# ============================== CONSONANTS ==============================
+
+# changed manner = "trill" -> stop
+[sounds."B"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."N"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."R"]
+type      = "consonant"
+place     = "uvular"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."b"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."c"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."d"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."f"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."g"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."h"]
+type      = "consonant"
+place     = "glottal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."j"]
+type      = "consonant"
+place     = "palatal"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."k"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."l"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."m"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."n"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."p"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."q"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."r"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."s"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."t"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."v"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."x"]
+type      = "consonant"
+place     = "velar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."z"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ç"]
+type      = "consonant"
+place     = "palatal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ħ"]
+type      = "consonant"
+place     = "pharyngeal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ŋ"]
+type      = "consonant"
+place     = "velar"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɖ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɟ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɢ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɣ"]
+type      = "consonant"
+place     = "velar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɦ"]
+type      = "consonant"
+place     = "glottal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɬ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɮ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "plus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɰ"]
+type      = "consonant"
+place     = "velar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɱ"]
+type      = "consonant"
+place     = "labiodental"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɲ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɳ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɴ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "plus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɸ"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɹ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɻ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "approximant"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɽ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "tap"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ɾ"]
+type      = "consonant"
+place     = "alveolar"
+manner    = "tap"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʀ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʁ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʂ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʃ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʈ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʐ"]
+type      = "consonant"
+place     = "retroflex"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "plus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʒ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʔ"]
+type      = "consonant"
+place     = "glottal"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʕ"]
+type      = "consonant"
+place     = "pharyngeal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʙ"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "trill"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʝ"]
+type      = "consonant"
+place     = "palatal"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."β"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."θ"]
+type      = "consonant"
+place     = "dental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."χ"]
+type      = "consonant"
+place     = "uvular"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʤ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "affricate"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ʧ"]
+type      = "consonant"
+place     = "palato_alveolar"
+manner    = "affricate"
+syllabic  = "minus"
+voice     = "minus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."ð"]
+type      = "consonant"
+place     = "dental"
+manner    = "fricative"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
