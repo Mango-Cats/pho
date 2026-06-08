@@ -207,7 +207,6 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-
 # Vowel: E
 
 [sounds."E"]
@@ -782,11 +781,64 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# UY sound
+# back, high
+
+# For phonetic IPA
+[sounds."ʊɪ"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+# For phonemic IPA
+[sounds."uj"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
 # ========================================================================
 # ============================== CONSONANTS ==============================
 
-# changed manner = "trill" -> stop
+# changed manner = "trill" -> manner = stop
 [sounds."B"]
+type      = "consonant"
+place     = "bilabial"
+manner    = "stop"
+syllabic  = "minus"
+voice     = "plus"
+nasal     = "minus"
+retroflex = "minus"
+lateral   = "minus"
+aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."b"]
 type      = "consonant"
 place     = "bilabial"
 manner    = "stop"
@@ -818,20 +870,6 @@ secondary = "none"
 type      = "consonant"
 place     = "uvular"
 manner    = "trill"
-syllabic  = "minus"
-voice     = "plus"
-nasal     = "minus"
-retroflex = "minus"
-lateral   = "minus"
-aspirated = "minus"
-phonation = "modal"
-airstream = "pulmonic"
-secondary = "none"
-
-[sounds."b"]
-type      = "consonant"
-place     = "bilabial"
-manner    = "stop"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "minus"
@@ -1599,10 +1637,13 @@ airstream = "pulmonic"
 secondary = "none"
 
 # ========================================================================
-# Non-Filipino phonemes
+# ======================= Non-Filipino phonemes ==========================
 
-# 
+# Valid symbols are cross-checked between existing literature, Wikipedia, and 
+# Wiktionary to see if IPA symbols are present in Tagalog phonology, these 
+# symbols don't appear in any of the stated references
 
+# Wikipedia: https://en.wikipedia.org/wiki/Help:IPA/Tagalog
 
 [sounds."ä"]
 type      = "vowel"
