@@ -50,6 +50,7 @@ labiovelar      = 1.0
 vowel           = -1.0
 
 # manner of articulation, the way in which air escapes (Schater & Otanes, 1972)
+# Added nasal = 0.55, Schachter & Otanes (1972) group Tagalog nasals (/m, n, ŋ/) as sonorant consonants
 [values.manner]
 stop              = 1.0
 affricate         = 0.9
@@ -59,6 +60,7 @@ trill             = 0.7
 tap               = 0.65
 lateral_flap      = 0.6
 approximant       = 0.6
+nasal             = 0.55
 high_vowel        = 0.4
 mid_vowel         = 0.2
 low_vowel         = 0.0
@@ -943,7 +945,6 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Described as labial nasal
-# GO BACK HERE, ADD NASAL MAYBE TO MANNER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 [sounds."m"]
 type      = "consonant"
 place     = "bilabial"
