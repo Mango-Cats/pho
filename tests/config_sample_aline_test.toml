@@ -50,7 +50,6 @@ labiovelar      = 1.0
 vowel           = -1.0
 
 # manner of articulation, the way in which air escapes (Schater & Otanes, 1972)
-# Added nasal = 0.55, Schachter & Otanes (1972) group Tagalog nasals (/m, n, ŋ/) as sonorant consonants
 [values.manner]
 stop              = 1.0
 affricate         = 0.9
@@ -60,7 +59,6 @@ trill             = 0.7
 tap               = 0.65
 lateral_flap      = 0.6
 approximant       = 0.6
-nasal             = 0.55
 high_vowel        = 0.4
 mid_vowel         = 0.2
 low_vowel         = 0.0
@@ -231,24 +229,7 @@ secondary = "none"
 
 # Vowel: I
 
-[sounds."I"]
-type      = "vowel"
-place     = "vowel"
-manner    = "vowel"
-back      = "front"
-high      = "high"
-lateral   = "minus"
-long      = "plus"
-nasal     = "minus"
-retroflex = "minus"
-round     = "minus"
-syllabic  = "plus"
-voice     = "plus"
-phonation = "modal"
-airstream = "pulmonic"
-secondary = "none"
-
-# Llamzon (1966) describes /i/ as a high, front, tense, unrounde, vowel
+# Llamzon (1966) describes /i/ as a high, front, tense, unrounded vowel
 # changed manner = "vowel" -> manner = "high_vowel"
 [sounds."i"]
 type      = "vowel"
@@ -345,24 +326,6 @@ secondary = "none"
 
 # Vowel: U
 
-# lower-high, back, rounded variant
-[sounds."U"]
-type      = "vowel"
-place     = "vowel"
-manner    = "vowel"
-back      = "back"
-high      = "high"
-lateral   = "minus"
-long      = "plus"
-nasal     = "minus"
-retroflex = "minus"
-round     = "plus"
-syllabic  = "plus"
-voice     = "plus"
-phonation = "modal"
-airstream = "pulmonic"
-secondary = "none"
-
 # Llamzon (1966) describes /u/ as a high, back, tensed, rounded vowel
 # changed manner = "vowel" -> manner = "high_vowel"
 [sounds."u"]
@@ -403,6 +366,7 @@ secondary = "none"
 # Semi-vowel: Y & W
 # not sure how to edit this atm since its usually paired with a vowel
 
+# Palatal glide (Kaufman)
 [sounds."j"]
 type      = "consonant"
 place     = "palatal"
@@ -417,6 +381,8 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Velar glide (Schater & Otanes)
+# Labial Glide (Kaufman)
 [sounds."w"]
 type      = "consonant"
 place     = "labiovelar"
@@ -492,7 +458,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "minus"
+round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -510,7 +476,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "minus"
+round     = "plus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -533,7 +499,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -554,7 +520,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -572,7 +538,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -589,7 +555,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -610,7 +576,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -627,7 +593,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -645,7 +611,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -662,7 +628,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -722,7 +688,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -740,7 +706,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -761,7 +727,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -779,7 +745,7 @@ lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
 retroflex = "minus"
-round     = "plus"
+round     = "minus"
 syllabic  = "plus"
 voice     = "plus"
 phonation = "modal"
@@ -945,10 +911,11 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Described as labial nasal
+# changed manner = "stop" -> manner = "nasal"
 [sounds."m"]
 type      = "consonant"
 place     = "bilabial"
-manner    = "stop"
+manner    = "nasal"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -960,10 +927,12 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Dental nasal
+# changed place = "alveolar" -> place = "dental"
+# changed manner = "stop" -> manner = "nasal"
 [sounds."n"]
 type      = "consonant"
-place     = "alveolar"
-manner    = "stop"
+place     = "dental"
+manner    = "nasal"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -974,10 +943,12 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Velar nasal
+# changed manner = "stop" -> manner = "nasal"
 [sounds."ŋ"]
 type      = "consonant"
 place     = "velar"
-manner    = "stop"
+manner    = "nasal"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -988,7 +959,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# phonetic only
+# phonetic only, no lit
 [sounds."ɲ"]
 type      = "consonant"
 place     = "palatal"
@@ -1003,6 +974,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Labial voiceless stop
 [sounds."p"]
 type      = "consonant"
 place     = "bilabial"
@@ -1017,6 +989,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Alveolar tap
 [sounds."ɾ"]
 type      = "consonant"
 place     = "alveolar"
@@ -1031,6 +1004,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Alveolar fricative
 [sounds."s"]
 type      = "consonant"
 place     = "alveolar"
@@ -1045,9 +1019,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Palatal fricative (Kaufman 2007)
+# changed place = "palato_alveolar" -> place = "palatal"
 [sounds."ʃ"]
 type      = "consonant"
-place     = "palato_alveolar"
+place     = "palatal"
 manner    = "fricative"
 syllabic  = "minus"
 voice     = "minus"
@@ -1059,9 +1035,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# Dental voiceless stop, llamzon, kaufman, schater otanes
+# change place = "alveolar" -> place = "dental"
 [sounds."t"]
 type      = "consonant"
-place     = "alveolar"
+place     = "dental"
 manner    = "stop"
 syllabic  = "minus"
 voice     = "minus"
@@ -1074,6 +1052,8 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Variants of the /ts/ sound
+# Affricate alveolar (Schater & Otanes)
+# Affricate palatal (Kaufman)
 [sounds."ʧ"]
 type      = "consonant"
 place     = "palato_alveolar"
@@ -1088,7 +1068,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# used by wiktionary
+# Variant used by wiktionary
 [sounds."t͡ʃ"]
 type      = "consonant"
 place     = "palato_alveolar"
@@ -1103,7 +1083,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Regional and marginal consonants 
+# ========== Regional and marginal consonants ==========
+
+# No literature on these phonemes (yet) since they are not natively Filipino,
+# but are found in Wiktionary IPA trasncriptions
+
 [sounds."f"]
 type      = "consonant"
 place     = "labiodental"
@@ -1399,6 +1383,23 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+[sounds."I"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "front"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "minus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
 [sounds."o̞"]
 type      = "vowel"
 place     = "vowel"
@@ -1441,6 +1442,23 @@ back      = "front"
 high      = "mid"
 lateral   = "minus"
 long      = "minus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."U"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "high"
+lateral   = "minus"
+long      = "plus"
 nasal     = "minus"
 retroflex = "minus"
 round     = "plus"
