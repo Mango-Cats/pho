@@ -2,6 +2,7 @@
 # 1. Tagalog Phonology - Llamzon 1966, https://www.jstor.org/stable/30029139
 # 2. Tagalog clitics and prosodic phonology - Kaufman 2007, https://bahasawan.com/wp-content/uploads/2020/01/Tagalog-clitics-and-prosodic-phonology-ms.pdf
 # 3. Tagalog Reference Grammar - Schachter & Otanes 1972, https://theswissbay.ch/pdf/Books/Linguistics/Mega%20linguistics%20pack/Austronesian/Tagalog%20Reference%20Grammar%20%28Schachter%20%26%20Otanes%29.pdf
+# 4. Synchronic analysis of tagalog phonemes - Yap 1967, https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/831/items/1.0105401
 
 # ================================ FEATURES ================================
 epsilon = 0.001
@@ -30,7 +31,6 @@ airstream  = 10
 secondary  = 10
 
 # Point of articulation (Schater & Otanes, 1972)
-# edited glottal value from 0.1 to 0.75
 [values.place]
 bilabial        = 1.0
 labiodental     = 0.95
@@ -45,7 +45,7 @@ velar           = 0.6
 uvular          = 0.5
 pharyngeal      = 0.3
 epiglottal      = 0.2
-glottal         = 0.75
+glottal         = 0.1
 labiovelar      = 1.0
 vowel           = -1.0
 
@@ -112,7 +112,8 @@ pharyngealized = 0.0
 
 # Vowel: A
 
-# Llamzon (1966) describes 'a' as a low, central, tense, unrounded vowel
+# Describes /a/ as a low, central, unrounded vowel
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 # changed back = "front" -> back = "central"
 # changed manner = "vowel" -> manner = "low_vowel"
 [sounds."a"]
@@ -132,7 +133,8 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Llamzon (1966) describes 'ɑ' as a low, back, unrounded vowel
+# Describes /ɑ/ as a low, back, unrounded vowel
+# (Llamzon 1966)
 # changed manner = "vowel" -> manner = "low_vowel"
 [sounds."ɑ"]
 type      = "vowel"
@@ -151,12 +153,14 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Llamzon (1966) describes 'ə' as central, lower-mid, unrounded
+# Describes /ə/ as central, lower-mid, unrounded
+# (Llamzon 1966, Schater & Otanes 1972)
 # changed high = "mid" -> high = "low_mid"
+# changed manner = "vowel" -> manner = "mid_vowel"
 [sounds."ə"]
 type      = "vowel"
 place     = "vowel"
-manner    = "vowel"
+manner    = "mid_vowel"
 back      = "central"
 high      = "low_mid"
 lateral   = "minus"
@@ -170,11 +174,13 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# IPA: phonetic
+# Phoneme does not appear in any of the literature,
+# but appears in the phonetic IPA transcriptions from Wiktionary.
+# more of an /uh/ sound than /ah/ ?
 [sounds."ɐ"]
 type      = "vowel"
 place     = "vowel"
-manner    = "vowel"
+manner    = "low_vowel"
 back      = "central"
 high      = "low"
 lateral   = "minus"
@@ -190,13 +196,15 @@ secondary = "none"
 
 # Vowel: E
 
-# Llamzon (1966) describes /e/ as a mid, front, tense, unrounded vowel
+# Describes /e/ as a upper-mid (Schater & Otanes 1972), front, unrounded vowel
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
+# change high = "mid" -> high = "high_mid"
 [sounds."e"]
 type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "mid"
+high      = "high_mid"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -229,7 +237,8 @@ secondary = "none"
 
 # Vowel: I
 
-# Llamzon (1966) describes /i/ as a high, front, tense, unrounded vowel
+# Describes /i/ as a high, front, unrounded vowel
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 # changed manner = "vowel" -> manner = "high_vowel"
 [sounds."i"]
 type      = "vowel"
@@ -248,7 +257,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Lower-high, front variant
+# Lower-high, front variant of /i/ (Llamzon 1966)
 # changed high = "high" -> high = "high_mid"
 [sounds."ɪ"]
 type      = "vowel"
@@ -269,26 +278,9 @@ secondary = "none"
 
 # Vowel: O
 
-# mid, back, rounded
-[sounds."O"]
-type      = "vowel"
-place     = "vowel"
-manner    = "vowel"
-back      = "back"
-high      = "mid"
-lateral   = "minus"
-long      = "plus"
-nasal     = "minus"
-retroflex = "minus"
-round     = "plus"
-syllabic  = "plus"
-voice     = "plus"
-phonation = "modal"
-airstream = "pulmonic"
-secondary = "none"
-
-# higher-mid, back, rounded 
-# changed high = "mid" -> high ' "high_mid"
+# Describes /o/ as higher-mid, back, rounded 
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
+# changed high = "mid" -> high = "high_mid"
 [sounds."o"]
 type      = "vowel"
 place     = "vowel"
@@ -306,7 +298,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# back mid (Kaufman 2007)
+# Describes /ɔ/ as mid back (Kaufman 2007)
 [sounds."ɔ"]
 type      = "vowel"
 place     = "vowel"
@@ -326,7 +318,8 @@ secondary = "none"
 
 # Vowel: U
 
-# Llamzon (1966) describes /u/ as a high, back, tensed, rounded vowel
+# Describes /u/ as a high, back, rounded vowel
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 # changed manner = "vowel" -> manner = "high_vowel"
 [sounds."u"]
 type      = "vowel"
@@ -345,13 +338,15 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# phonetic
+# Describes /ʊ/ as a lower-high, back vowel
+# (Schater & Otanes 1972)
+# change high = "high" -> high = "near_high"
 [sounds."ʊ"]
 type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "back"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -363,10 +358,10 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Semi-vowel: Y & W
-# not sure how to edit this atm since its usually paired with a vowel
+# Semi-vowel/Glides/Approximants: Y & W
 
-# Palatal glide (Kaufman)
+# Describes /j/ as a palatal glide
+# (Kaufman 2007, Schater & Otanes 1972)
 [sounds."j"]
 type      = "consonant"
 place     = "palatal"
@@ -381,8 +376,8 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Velar glide (Schater & Otanes)
-# Labial Glide (Kaufman)
+# Describes /w/ as a velar glide (Schater & Otanes 1972)
+# Describes /w/ as a labial glide (Kaufman 2007)
 [sounds."w"]
 type      = "consonant"
 place     = "labiovelar"
@@ -400,20 +395,23 @@ secondary = "none"
 # ========================================================================
 # ============================== DIPTHONGS ===============================
 
+# Not sure if adjusting diphthongs is necessary because of the vowels and semi-vowels stated above
+
 # Diphthongs were not intially part of the included symbols in ALINE, but 
 # a lot of literature mentions its relevance with semi-vowels /w/ and /j/,
 # so these are just combination of dipthongs mentioned on Wikipedia, present in
 # Wiktionary data, and literature
 
 # AY Sound 
-# Low and central like vowel A
+# Described as low and central like vowel /a/
+# (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
 [sounds."aɪ"]
 type      = "vowel"
 place     = "vowel"
 manner    = "low_vowel"
-back      = "back"
+back      = "central"
 high      = "low"
 lateral   = "minus"
 long      = "minus"
@@ -431,7 +429,7 @@ secondary = "none"
 type      = "vowel"
 place     = "vowel"
 manner    = "low_vowel"
-back      = "back"
+back      = "central"
 high      = "low"
 lateral   = "minus"
 long      = "minus"
@@ -445,14 +443,15 @@ airstream = "pulmonic"
 secondary = "none"
 
 # AW Sound
-# Low and central like vowel A
+# Described as low and central like vowel /a/
+# (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
 [sounds."aʊ"]
 type      = "vowel"
 place     = "vowel"
 manner    = "low_vowel"
-back      = "back"
+back      = "central"
 high      = "low"
 lateral   = "minus"
 long      = "minus"
@@ -470,7 +469,7 @@ secondary = "none"
 type      = "vowel"
 place     = "vowel"
 manner    = "low_vowel"
-back      = "back"
+back      = "central"
 high      = "low"
 lateral   = "minus"
 long      = "minus"
@@ -507,7 +506,9 @@ airstream = "pulmonic"
 secondary = "none"
 
 # EY Sound
-# Like /e/ it is mid, front
+# Described as mid and front like vowel /e/
+# Schater & Otanes specify it to be upper-mid
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 
 # For phonetic IPA
 [sounds."eɪ"]
@@ -515,7 +516,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "mid"
+high      = "high_mid"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -533,7 +534,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "mid"
+high      = "high_mid"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -550,7 +551,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "mid"
+high      = "high_mid"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -563,7 +564,9 @@ airstream = "pulmonic"
 secondary = "none"
 
 # IW Sound
-# Like /i/ its front, high
+# Described as high and front like /i/
+# Llamzon specifies it is slightly lowered then /i/
+# (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
 [sounds."ɪʊ"]
@@ -571,7 +574,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -588,7 +591,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -606,7 +609,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -623,7 +626,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "front"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -636,7 +639,8 @@ airstream = "pulmonic"
 secondary = "none"
 
 # OW Sound
-# like /o/ its high-mid, back
+# Described as high-mid and back like /o/
+# (Schater & Otanes 1972)
 
 # For phonetic IPA
 [sounds."oʊ"]
@@ -675,7 +679,8 @@ airstream = "pulmonic"
 secondary = "none"
 
 # OY Sound
-# Like /o/ its mid, back
+# Described as mid and back like /o/
+# (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
 [sounds."oɪ"]
@@ -714,7 +719,9 @@ airstream = "pulmonic"
 secondary = "none"
 
 # UY sound
-# back, high
+# Described as back and high like /u/
+# Llamzon specifies allophonic lowering of /u/ before semi-vowels
+# (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 
 # For phonetic IPA
 [sounds."ʊɪ"]
@@ -722,7 +729,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "back"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -740,7 +747,7 @@ type      = "vowel"
 place     = "vowel"
 manner    = "vowel"
 back      = "back"
-high      = "high"
+high      = "near_high"
 lateral   = "minus"
 long      = "minus"
 nasal     = "minus"
@@ -770,7 +777,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Described as a labial, voiced stop
+# Describes /b/ as a labial, voiced stop
 [sounds."b"]
 type      = "consonant"
 place     = "bilabial"
@@ -802,6 +809,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Variants of the /dʒ/ sound
+
 # Described as palatal, voiced affricate (Kaufman 2007)
 # changed place = "palato_alveolar" -> place = "palatal"
 [sounds."ʤ"]
@@ -911,11 +919,10 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Described as labial nasal
-# changed manner = "stop" -> manner = "nasal"
 [sounds."m"]
 type      = "consonant"
 place     = "bilabial"
-manner    = "nasal"
+manner    = "stop"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -928,11 +935,10 @@ secondary = "none"
 
 # Dental nasal
 # changed place = "alveolar" -> place = "dental"
-# changed manner = "stop" -> manner = "nasal"
 [sounds."n"]
 type      = "consonant"
 place     = "dental"
-manner    = "nasal"
+manner    = "stop"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -944,11 +950,10 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Velar nasal
-# changed manner = "stop" -> manner = "nasal"
 [sounds."ŋ"]
 type      = "consonant"
 place     = "velar"
-manner    = "nasal"
+manner    = "stop"
 syllabic  = "minus"
 voice     = "plus"
 nasal     = "plus"
@@ -959,7 +964,8 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# phonetic only, no lit
+# No literature on this phoneme but appears
+# on Wikipedia and Wiktionary
 [sounds."ɲ"]
 type      = "consonant"
 place     = "palatal"
@@ -1035,7 +1041,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
-# Dental voiceless stop, llamzon, kaufman, schater otanes
+# Dental voiceless stop
 # change place = "alveolar" -> place = "dental"
 [sounds."t"]
 type      = "consonant"
@@ -1052,6 +1058,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Variants of the /ts/ sound
+
 # Affricate alveolar (Schater & Otanes)
 # Affricate palatal (Kaufman)
 [sounds."ʧ"]
@@ -1086,7 +1093,7 @@ secondary = "none"
 # ========== Regional and marginal consonants ==========
 
 # No literature on these phonemes (yet) since they are not natively Filipino,
-# but are found in Wiktionary IPA trasncriptions
+# but are found in Wiktionary IPA trasncriptions and Wikipedia's Tagalog Phonemes
 
 [sounds."f"]
 type      = "consonant"
@@ -2128,6 +2135,23 @@ nasal     = "minus"
 retroflex = "minus"
 lateral   = "minus"
 aspirated = "minus"
+phonation = "modal"
+airstream = "pulmonic"
+secondary = "none"
+
+[sounds."O"]
+type      = "vowel"
+place     = "vowel"
+manner    = "vowel"
+back      = "back"
+high      = "mid"
+lateral   = "minus"
+long      = "plus"
+nasal     = "minus"
+retroflex = "minus"
+round     = "plus"
+syllabic  = "plus"
+voice     = "plus"
 phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
