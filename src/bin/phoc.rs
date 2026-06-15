@@ -75,64 +75,46 @@ fn parse_delimiter(delimiter: &str) -> Result<u8> {
     Ok(bytes[0])
 }
 
-fn load_config<T>(dir: &Path, file_name: &str) -> Result<T>
+fn load_config<T>(dir: &Path, file_name: &str) -> Result<Option<T>>
 where
     T: DeserializeOwned,
 {
     let path = dir.join(file_name);
-    import(path.to_string_lossy().as_ref())
+    match import(path.to_string_lossy().as_ref()) {
+        Ok(config) => Ok(Some(config)),
+        Err(Error::Io(e)) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(e),
+    }
+}
+
+macro_rules! push_if_present {
+    ($algorithms:expr, $config_dir:expr, $type:ty, $file:expr) => {
+        if let Some(cfg) = load_config::<$type>($config_dir, $file)? {
+            $algorithms.push(Box::new(cfg) as Box<dyn Algorithm>);
+        }
+    };
 }
 
 fn load_algorithms(config_dir: &Path) -> Result<Vec<Box<dyn Algorithm>>> {
     let mut algorithms: Vec<Box<dyn Algorithm>> = Vec::new();
 
-    algorithms.push(Box::new(load_config::<Aline>(config_dir, "aline.toml")?));
-    algorithms.push(Box::new(load_config::<BiSim>(config_dir, "bisim.toml")?));
-    algorithms.push(Box::new(load_config::<DoubleMetaphone>(
-        config_dir,
-        "double_metaphone.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<Editex>(config_dir, "editex.toml")?));
-    algorithms.push(Box::new(load_config::<JaroWinkler>(
-        config_dir,
-        "jaro_winkler.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<Keyboard>(
-        config_dir,
-        "keyboard.toml",
-    )?));
+    push_if_present!(algorithms, config_dir, Aline, "aline.toml");
+    push_if_present!(algorithms, config_dir, BiSim, "bisim.toml");
+    push_if_present!(algorithms, config_dir, DoubleMetaphone, "double_metaphone.toml");
+    push_if_present!(algorithms, config_dir, Editex, "editex.toml");
+    push_if_present!(algorithms, config_dir, JaroWinkler, "jaro_winkler.toml");
+    push_if_present!(algorithms, config_dir, Keyboard, "keyboard.toml");
     algorithms.push(Box::new(LCS::default()));
     algorithms.push(Box::new(LCSuf::default()));
-    algorithms.push(Box::new(load_config::<Levenshtein>(
-        config_dir,
-        "levenshtein.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<Metaphone>(
-        config_dir,
-        "metaphone.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<NeedlemanWunsch>(
-        config_dir,
-        "needleman_wunsch.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<NGram>(config_dir, "ngram.toml")?));
-    algorithms.push(Box::new(load_config::<Prefix>(config_dir, "prefix.toml")?));
-    algorithms.push(Box::new(load_config::<SmithWaterman>(
-        config_dir,
-        "smith_waterman.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<Soundex>(
-        config_dir,
-        "soundex.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<Syllable>(
-        config_dir,
-        "syllable.toml",
-    )?));
-    algorithms.push(Box::new(load_config::<CharTfIdf>(
-        config_dir,
-        "tfidf.toml",
-    )?));
+    push_if_present!(algorithms, config_dir, Levenshtein, "levenshtein.toml");
+    push_if_present!(algorithms, config_dir, Metaphone, "metaphone.toml");
+    push_if_present!(algorithms, config_dir, NeedlemanWunsch, "needleman_wunsch.toml");
+    push_if_present!(algorithms, config_dir, NGram, "ngram.toml");
+    push_if_present!(algorithms, config_dir, Prefix, "prefix.toml");
+    push_if_present!(algorithms, config_dir, SmithWaterman, "smith_waterman.toml");
+    push_if_present!(algorithms, config_dir, Soundex, "soundex.toml");
+    push_if_present!(algorithms, config_dir, Syllable, "syllable.toml");
+    push_if_present!(algorithms, config_dir, CharTfIdf, "tfidf.toml");
 
     Ok(algorithms)
 }
