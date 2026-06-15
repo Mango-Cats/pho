@@ -1,1 +1,1 @@
-# configuration for Filipino @ 🍜 / pho
+# algorithm configurations @ 🍜 / pho
