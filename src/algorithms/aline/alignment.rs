@@ -3,8 +3,13 @@ use super::scoring::{expansion_score, indel_score, substitution_score};
 
 /// Raw optimal local alignment score.
 ///
+/// Each element of `x` and `y` is `(ipa_segment, stress_level)` where
+/// stress_level is 0.0 (none), 0.5 (secondary), or 1.0 (primary).
+/// In the Kondrak variant all stress levels are 0.0 and `salience.stress`
+/// is 0, so the stress term contributes nothing.
+///
 /// Mirrors NLTK's `_align_score` DP, including expansion/compression edits.
-pub(crate) fn alignment_score(x: &[String], y: &[String], config: &Aline) -> f32 {
+pub(crate) fn alignment_score(x: &[(String, f32)], y: &[(String, f32)], config: &Aline) -> f32 {
     let m = x.len();
     let n = y.len();
 
@@ -16,19 +21,26 @@ pub(crate) fn alignment_score(x: &[String], y: &[String], config: &Aline) -> f32
 
     for i in 1..=m {
         for j in 1..=n {
+            let (xi, sx) = (&x[i - 1].0, x[i - 1].1);
+            let (yj, sy) = (&y[j - 1].0, y[j - 1].1);
+
             let delete_score = s[idx(i - 1, j)] + indel_score(config);
             let insert_score = s[idx(i, j - 1)] + indel_score(config);
             let substitute_score =
-                s[idx(i - 1, j - 1)] + substitution_score(&x[i - 1], &y[j - 1], config);
+                s[idx(i - 1, j - 1)] + substitution_score(xi, sx, yj, sy, config);
 
             let expand_x_score = if i > 1 {
-                s[idx(i - 2, j - 1)] + expansion_score(&y[j - 1], &x[i - 2], &x[i - 1], config)
+                let (xi2, sx2) = (&x[i - 2].0, x[i - 2].1);
+                s[idx(i - 2, j - 1)]
+                    + expansion_score(yj, sy, xi2, sx2, xi, sx, config)
             } else {
                 f32::NEG_INFINITY
             };
 
             let expand_y_score = if j > 1 {
-                s[idx(i - 1, j - 2)] + expansion_score(&x[i - 1], &y[j - 2], &y[j - 1], config)
+                let (yj2, sy2) = (&y[j - 2].0, y[j - 2].1);
+                s[idx(i - 1, j - 2)]
+                    + expansion_score(xi, sx, yj2, sy2, yj, sy, config)
             } else {
                 f32::NEG_INFINITY
             };

@@ -35,8 +35,64 @@ mod alignment;
 pub mod config;
 mod scoring;
 use crate::algorithms::Algorithm;
-use crate::error::Result;
-use config::Aline;
+use crate::error::{Error, Result};
+use config::{Aline, AlineVariant};
+use unicode_segmentation::UnicodeSegmentation;
+
+/// Parse an IPA string into `(segment, stress)` pairs.
+///
+/// In `Kondrak` mode all stress markers (`ˈˌ`) are stripped and every segment
+/// gets stress `0.0`. In `MangoCats` mode `ˈ` sets stress to `1.0` and `ˌ`
+/// sets it to `0.5` for all segments that follow until the next marker.
+fn parse_segments(ipa: &str, variant: &AlineVariant) -> Vec<(String, f32)> {
+    let use_stress = matches!(variant, AlineVariant::MangoCats);
+    let mut segments = Vec::new();
+    let mut current_stress = 0.0f32;
+
+    for g in UnicodeSegmentation::graphemes(ipa, true) {
+        if g == "ˈ" {
+            if use_stress {
+                current_stress = 1.0;
+            }
+            continue;
+        }
+        if g == "ˌ" {
+            if use_stress {
+                current_stress = 0.5;
+            }
+            continue;
+        }
+        let ignorable = g.chars().all(|c| {
+            c.is_whitespace()
+                || c.is_numeric()
+                || "[]/\\.,;:()|{}<>\"'-+_&".contains(c)
+                || "ːˑ‖‿".contains(c)
+        });
+        if ignorable {
+            continue;
+        }
+        segments.push((g.to_string(), current_stress));
+    }
+    segments
+}
+
+fn validate_segments(
+    segments: &[(String, f32)],
+    input_name: &'static str,
+    config: &Aline,
+) -> Result<()> {
+    for (pos, (seg, _)) in segments.iter().enumerate() {
+        if !config.sounds.contains_key(seg.as_str()) {
+            return Err(Error::UnknownToken {
+                token: seg.clone(),
+                position: pos,
+                input_name,
+                context: "ALINE config sound inventory",
+            });
+        }
+    }
+    Ok(())
+}
 
 impl Algorithm for Aline {
     fn requires_transcription(&self) -> bool {
@@ -44,42 +100,17 @@ impl Algorithm for Aline {
     }
 
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
-        use crate::utils::validate::validate_tokens;
         use alignment::alignment_score;
-        use unicode_segmentation::UnicodeSegmentation;
 
-        let is_ignorable = |segment: &str| -> bool {
-            segment.chars().all(|c| {
-                c.is_whitespace() 
-                || c.is_numeric() 
-                // Standard punctuation
-                || "[]/\\.,;:()|{}<>\"'-+_&".contains(c)
-                // IPA suprasegmentals (primary stress, secondary stress, length, boundaries)
-                || "ˈˌːˑ‖‿".contains(c) 
-            })
-        };
+        let x_segs = parse_segments(x, &self.variant);
+        let y_segs = parse_segments(y, &self.variant);
 
-        let x_valid = validate_tokens(
-            UnicodeSegmentation::graphemes(x, true)
-                .filter(|segment| !is_ignorable(segment))
-                .map(str::to_string),
-            "x",
-            "ALINE config sound inventory",
-            |segment| self.sounds.contains_key(segment),
-        )?;
+        validate_segments(&x_segs, "x", self)?;
+        validate_segments(&y_segs, "y", self)?;
 
-        let y_valid = validate_tokens(
-            UnicodeSegmentation::graphemes(y, true)
-                .filter(|segment| !is_ignorable(segment))
-                .map(str::to_string),
-            "y",
-            "ALINE config sound inventory",
-            |segment| self.sounds.contains_key(segment),
-        )?;
-
-        let score = alignment_score(&x_valid, &y_valid, self);
-        let x_self = alignment_score(&x_valid, &x_valid, self);
-        let y_self = alignment_score(&y_valid, &y_valid, self);
+        let score = alignment_score(&x_segs, &y_segs, self);
+        let x_self = alignment_score(&x_segs, &x_segs, self);
+        let y_self = alignment_score(&y_segs, &y_segs, self);
 
         let denom = x_self.max(y_self);
         if denom == 0.0 {

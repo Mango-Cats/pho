@@ -20,6 +20,22 @@ pub use phoneme_trait::Phoneme;
 pub use phoneme_types::{CommonFeatures, ConsonantFeatures, PhoneticFeatures, VowelFeatures};
 pub use salience::Salience;
 
+/// Selects which variant of the ALINE algorithm to use.
+///
+/// - `Kondrak`: the original Kondrak (2002) algorithm. Stress markers in the
+///   IPA input are ignored entirely.
+/// - `MangoCats`: extends Kondrak with a stress-salience term. Primary stress
+///   (`ˈ`) assigns weight 1.0 and secondary stress (`ˌ`) assigns weight 0.5
+///   to the segments that follow them; the difference in stress between aligned
+///   segments is penalised by `salience.stress`.
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AlineVariant {
+    #[default]
+    Kondrak,
+    MangoCats,
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Aline {
     pub costs: Costs,
@@ -27,6 +43,8 @@ pub struct Aline {
     pub values: FeatureValues,
     pub sounds: HashMap<String, PhoneticFeatures>,
     pub epsilon: f32,
+    #[serde(default)]
+    pub variant: AlineVariant,
 }
 
 impl Aline {
@@ -51,6 +69,7 @@ impl Aline {
             values,
             sounds,
             epsilon,
+            variant: AlineVariant::Kondrak,
         };
         config.validate()?;
         Ok(config)

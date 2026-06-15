@@ -17,6 +17,10 @@ pub struct Salience {
     pub(crate) phonation: u32,
     pub(crate) airstream: u32,
     pub(crate) secondary: u32,
+    /// Weight applied to stress-level differences (MangoCats variant only).
+    /// Defaults to 0, which makes the Kondrak variant behave identically.
+    #[serde(default)]
+    pub(crate) stress: u32,
 }
 
 impl Salience {
@@ -36,6 +40,7 @@ impl Salience {
         phonation: u32,
         airstream: u32,
         secondary: u32,
+        stress: u32,
     ) -> Self {
         Self {
             syllabic,
@@ -53,6 +58,7 @@ impl Salience {
             phonation,
             airstream,
             secondary,
+            stress,
         }
     }
 }
