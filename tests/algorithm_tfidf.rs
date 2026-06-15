@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_tfidf.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/tfidf.toml";
 
 fn load() -> CharTfIdf {
     match import(TOML_PATH) {

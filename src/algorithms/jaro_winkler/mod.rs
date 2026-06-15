@@ -28,7 +28,7 @@
 //! use pho::{algorithms::{JaroWinkler, Algorithm}, utils::io::import};
 //!
 //! let algo: JaroWinkler =
-//!     import("tests/config_sample_jaro_winkler.toml").unwrap();
+//!     import("algorithm_configs/eng/jaro_winkler.toml").unwrap();
 //! let score = algo.similarity("dixon", "dixon").unwrap();
 //! assert!((score - 1.0).abs() < 1e-6);
 //! ```

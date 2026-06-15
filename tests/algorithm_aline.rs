@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_aline.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/aline.toml";
 
 fn load() -> Aline {
     match import(TOML_PATH) {

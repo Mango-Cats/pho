@@ -14,7 +14,7 @@ use crate::error::Result;
 /// };
 ///
 /// fn main() {
-///     let config: Aline = import("tests/config_sample_aline.toml").unwrap();
+///     let config: Aline = import("algorithm_configs/eng/aline.toml").unwrap();
 ///     let _score = config.similarity("s", "s").unwrap();
 /// }
 /// ```

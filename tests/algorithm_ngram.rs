@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_ngram.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/ngram.toml";
 
 fn load() -> NGram {
     match import(TOML_PATH) {

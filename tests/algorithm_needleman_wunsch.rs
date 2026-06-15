@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_needleman_wunsch.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/needleman_wunsch.toml";
 
 fn load() -> NeedlemanWunsch {
     match import(TOML_PATH) {

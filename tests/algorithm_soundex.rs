@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_soundex.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/soundex.toml";
 
 fn load() -> Soundex {
     match import(TOML_PATH) {

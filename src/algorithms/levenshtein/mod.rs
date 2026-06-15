@@ -19,7 +19,7 @@
 //! use pho::{algorithms::{Levenshtein, Algorithm}, utils::io::import};
 //!
 //! let algo: Levenshtein =
-//!     import("tests/config_sample_levenshtein.toml").unwrap();
+//!     import("algorithm_configs/eng/levenshtein.toml").unwrap();
 //! let score = algo.similarity("kitten", "sitting").unwrap();
 //! assert!((0.0..=1.0).contains(&score));
 //! ```

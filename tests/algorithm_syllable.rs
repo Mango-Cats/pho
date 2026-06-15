@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_syllable.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/syllable.toml";
 
 fn load() -> Syllable {
     match import(TOML_PATH) {

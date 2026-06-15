@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_prefix.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/prefix.toml";
 
 fn load() -> Prefix {
     match import(TOML_PATH) {

@@ -17,7 +17,7 @@
 //! ```rust
 //! use pho::{algorithms::{Editex, Algorithm}, utils::io::import};
 //!
-//! let algo: Editex = import("tests/config_sample_editex.toml").unwrap();
+//! let algo: Editex = import("algorithm_configs/eng/editex.toml").unwrap();
 //! let similarity = algo.similarity("Smith", "Smyth").unwrap();
 //! assert!((0.0..=1.0).contains(&similarity));
 //! ```
@@ -96,7 +96,7 @@ mod tests {
     use crate::{algorithms::Editex, error::Result, utils::io::import};
     use core::panic;
 
-    const TOML_PATH: &str = "tests/config_sample_editex.toml";
+    const TOML_PATH: &str = "algorithm_configs/eng/editex.toml";
 
     fn load() -> Editex {
         match import(TOML_PATH) {

@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_levenshtein.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/levenshtein.toml";
 
 fn load() -> Levenshtein {
     match import(TOML_PATH) {

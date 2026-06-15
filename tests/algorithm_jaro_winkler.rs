@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_jaro_winkler.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/jaro_winkler.toml";
 
 fn load() -> JaroWinkler {
     match import(TOML_PATH) {

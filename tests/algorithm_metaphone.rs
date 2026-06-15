@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_metaphone.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/metaphone.toml";
 
 fn load() -> Metaphone {
     match import(TOML_PATH) {

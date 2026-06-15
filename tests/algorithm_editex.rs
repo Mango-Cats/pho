@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_editex.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/editex.toml";
 
 fn load() -> Editex {
     match import(TOML_PATH) {

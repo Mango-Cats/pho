@@ -3,7 +3,7 @@ use pho::{
     utils::io::import,
 };
 
-const TOML_PATH: &str = "tests/config_sample_keyboard.toml";
+const TOML_PATH: &str = "algorithm_configs/eng/keyboard.toml";
 
 fn load() -> Keyboard {
     match import(TOML_PATH) {
