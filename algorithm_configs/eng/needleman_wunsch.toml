@@ -1,2 +1,3 @@
+algorithm = "needleman_wunsch"
 gap_penalty = 1.0
 case_insensitive = true

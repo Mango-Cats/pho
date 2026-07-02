@@ -1,3 +1,4 @@
+algorithm = "ngram"
 n = 2
 before_padding = 1
 after_padding = 1

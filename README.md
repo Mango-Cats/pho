@@ -61,8 +61,41 @@ cargo run --bin phoc -- \
    --config-dir path/to/configs
 ```
 
-Sample configs are in `tests/config_sample_*.toml`. Copy those into a directory
-of your choice and point `--config-dir` at it.
+Every `.toml` file in that directory produces **one output feature column**:
+
+- The **column name is the file name** (its stem). `my_sim.toml` produces a
+  `my_sim` column, so you can run the same algorithm twice under different names.
+- The **algorithm is chosen by the file's `algorithm` key**, not the file name.
+  For example, a file containing `algorithm = "levenshtein"` uses Levenshtein
+  regardless of what the file is called.
+- The rest of the file is that algorithm's own config.
+
+```toml
+# configs/my_sim.toml
+algorithm = "levenshtein"
+case_insensitive = false
+
+[costs]
+insert = 1.0
+delete = 1.0
+substitute = 1.0
+```
+
+There is **no implicit set of always-on algorithms**. Config-less algorithms
+(like `lcs` and `lcsuf`) are included the same way — drop in a file whose only
+required content is the `algorithm` key:
+
+```toml
+# configs/lcs.toml
+algorithm = "lcs"
+```
+
+To exclude an algorithm, remove its file; to include one, add its file. Ready-made
+configs live in [`algorithm_configs/eng`](algorithm_configs/eng). Recognized
+`algorithm` values: `aline`, `bisim`, `double_metaphone`, `editex`,
+`jaro_winkler`, `keyboard`, `lcs`, `lcsuf`, `levenshtein`, `metaphone`,
+`needleman_wunsch`, `ngram`, `prefix`, `smith_waterman`, `soundex`, `syllable`,
+`tfidf`.
 
 ### Input CSV format
 
@@ -78,16 +111,21 @@ If a configured algorithm requires phonetic transcriptions (for example ALINE),
 
 ### Output CSV
 
-The output CSV includes:
+The output preserves **every column of the input CSV verbatim** (including
+`t_1`/`t_2` and any extra columns you keep for your own bookkeeping) and appends
+one column per configured algorithm (plus optional word-level features). Only
+`x_1`/`x_2`/`t_1`/`t_2` are used for scoring; all other input columns are ignored
+for computation but carried through untouched.
 
-- `x_1`, `x_2`, `label`
-- One column per algorithm (plus optional word-level features)
-
-Example header:
+Feature columns are named after their config files. Given `levenshtein.toml`,
+`jaro_winkler.toml`, and `prefix.toml`, and an input with an extra `label` and
+`source` column:
 
 ```
-x_1,x_2,label,Levenshtein,JaroWinkler,Prefix
+x_1,x_2,label,source,levenshtein,jaro_winkler,prefix
 ```
+
+Row order matches the input.
 
 ### Options
 

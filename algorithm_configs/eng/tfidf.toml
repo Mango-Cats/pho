@@ -1,3 +1,4 @@
+algorithm = "tfidf"
 n = 2
 sublinear_tf = true
 case_insensitive = true

@@ -1,3 +1,4 @@
+algorithm = "levenshtein"
 case_insensitive = false
 
 [costs]

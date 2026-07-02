@@ -1,2 +1,3 @@
+algorithm = "syllable"
 case_insensitive = true
 metric = "dice"
