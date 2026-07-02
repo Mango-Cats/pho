@@ -6,6 +6,7 @@ algorithm = "aline"
 # 4. Synchronic analysis of tagalog phonemes - Yap 1967, https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/831/items/1.0105401
 
 # ================================ FEATURES ================================
+variant = "kondrak"
 epsilon = 0.001
 
 [costs]

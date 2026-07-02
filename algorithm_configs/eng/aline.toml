@@ -1,4 +1,5 @@
 algorithm = "aline"
+variant = "kondrak"
 epsilon = 0.001
 
 [costs]

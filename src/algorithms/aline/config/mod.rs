@@ -43,7 +43,6 @@ pub struct Aline {
     pub values: FeatureValues,
     pub sounds: HashMap<String, PhoneticFeatures>,
     pub epsilon: f32,
-    #[serde(default)]
     pub variant: AlineVariant,
 }
 
