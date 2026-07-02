@@ -21,6 +21,14 @@ pub struct ScoreMatrix {
     pub labels: Vec<Option<f32>>,
     pub algorithm_names: Vec<String>,
     pub base_scores: Vec<Vec<f32>>,
+    /// Optional pass-through columns preserved from the original input.
+    ///
+    /// When non-empty, CSV export writes these columns verbatim (in this order)
+    /// followed by the computed feature columns, instead of the default
+    /// `x_1,x_2,label` trio. Populate via [`ScoreMatrix::with_passthrough`].
+    pub passthrough_headers: Vec<String>,
+    /// Raw string cells for each row, aligned with `base_scores` by index.
+    pub passthrough_rows: Vec<Vec<String>>,
 }
 
 impl ScoreMatrix {
@@ -60,7 +68,44 @@ impl ScoreMatrix {
             ));
         }
 
+        if !self.passthrough_rows.is_empty() {
+            if self.passthrough_rows.len() != self.inputs.len() {
+                return Err(crate::Error::InvalidDatasetShape(
+                    "passthrough rows must match input count".to_string(),
+                ));
+            }
+
+            let passthrough_width = self.passthrough_headers.len();
+            if self
+                .passthrough_rows
+                .iter()
+                .any(|row| row.len() != passthrough_width)
+            {
+                return Err(crate::Error::InvalidDatasetShape(
+                    "every passthrough row must match passthrough header count".to_string(),
+                ));
+            }
+        }
+
         Ok(())
+    }
+
+    /// Attach pass-through columns preserved from the original input.
+    ///
+    /// `headers` names the columns and `rows` holds one string cell vector per
+    /// dataset row, in the same order as the rows used to build this matrix.
+    /// When present, CSV export emits these columns verbatim followed by the
+    /// computed feature columns. Returns an error if the row count or any row's
+    /// width is inconsistent.
+    pub fn with_passthrough(
+        mut self,
+        headers: Vec<String>,
+        rows: Vec<Vec<String>>,
+    ) -> Result<Self> {
+        self.passthrough_headers = headers;
+        self.passthrough_rows = rows;
+        self.validate_shape()?;
+        Ok(self)
     }
 
     fn weighted_algorithm_label(weighted: &WeightedFunction) -> String {
@@ -145,14 +190,12 @@ impl ScoreMatrix {
 
     fn build_from_rows(
         algorithms: &[&dyn Algorithm],
+        column_names: &[String],
         labeled_data: &[Row],
         include_word_level_features: bool,
         show_progress: bool,
     ) -> Result<Self> {
-        let mut algorithm_names = algorithms
-            .iter()
-            .map(|algo| Self::normalized_algorithm_label(algo.name(), include_word_level_features))
-            .collect::<Vec<_>>();
+        let mut algorithm_names = column_names.to_vec();
 
         let word_level_features = if include_word_level_features {
             Self::word_level_features(&algorithm_names)
@@ -229,6 +272,8 @@ impl ScoreMatrix {
             labels,
             algorithm_names,
             base_scores,
+            passthrough_headers: Vec::new(),
+            passthrough_rows: Vec::new(),
         };
         data.validate_shape()?;
         Ok(data)
@@ -256,8 +301,43 @@ impl ScoreMatrix {
             .iter()
             .map(|algo| algo.as_ref())
             .collect::<Vec<_>>();
+        let column_names = algorithms
+            .iter()
+            .map(|algo| Self::normalized_algorithm_label(algo.name(), include_word_level_features))
+            .collect::<Vec<_>>();
         Self::build_from_rows(
             &algorithms,
+            &column_names,
+            labeled_data,
+            include_word_level_features,
+            show_progress,
+        )
+    }
+
+    /// Build a dataset from explicitly named algorithms.
+    ///
+    /// Identical to [`Self::from_slice`], except each output feature column is
+    /// named by the caller-provided string instead of the algorithm's own
+    /// `name()`. This lets, for example, two configs of the same algorithm live
+    /// in one dataset under distinct column names (e.g. one column per config
+    /// file, named after the file).
+    pub fn from_named(
+        algorithms: Vec<(String, Box<dyn Algorithm>)>,
+        labeled_data: &[Row],
+        include_word_level_features: bool,
+        show_progress: bool,
+    ) -> Result<Self> {
+        let column_names = algorithms
+            .iter()
+            .map(|(name, _)| name.clone())
+            .collect::<Vec<_>>();
+        let algorithms = algorithms
+            .iter()
+            .map(|(_, algo)| algo.as_ref())
+            .collect::<Vec<_>>();
+        Self::build_from_rows(
+            &algorithms,
+            &column_names,
             labeled_data,
             include_word_level_features,
             show_progress,
@@ -384,6 +464,8 @@ impl ScoreMatrix {
             labels,
             algorithm_names,
             base_scores,
+            passthrough_headers: Vec::new(),
+            passthrough_rows: Vec::new(),
         };
         data.validate_shape()?;
         Ok(data)
@@ -463,6 +545,8 @@ impl ScoreMatrix {
             labels,
             algorithm_names,
             base_scores,
+            passthrough_headers: Vec::new(),
+            passthrough_rows: Vec::new(),
         };
         pb.set_position(labeled_data.len() as u64);
         pb.finish_with_message("Precomputed dataset loaded");
@@ -542,6 +626,24 @@ impl ScoreMatrix {
         use csv::Writer;
 
         let mut writer = Writer::from_path(file_name)?;
+
+        // Pass-through mode: re-emit every original input column, then append
+        // the computed feature columns. Rows line up with `base_scores` by index.
+        if !self.passthrough_headers.is_empty() {
+            let mut header = self.passthrough_headers.clone();
+            header.extend(self.algorithm_names.iter().cloned());
+            writer.write_record(header)?;
+
+            for (original, scores) in self.passthrough_rows.iter().zip(self.base_scores.iter()) {
+                let mut row = original.clone();
+                row.extend(scores.iter().map(|score| score.to_string()));
+                writer.write_record(row)?;
+            }
+
+            writer.flush()?;
+            return Ok(());
+        }
+
         let mut header = vec![
             Row::COL_X_1.to_string(),
             Row::COL_X_2.to_string(),

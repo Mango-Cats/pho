@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct LCS {
     /// Whether to perform case-insensitive comparison.
+    #[serde(default)]
     pub case_insensitive: bool,
 }
 

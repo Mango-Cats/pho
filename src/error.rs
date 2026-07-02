@@ -68,6 +68,12 @@ pub enum Error {
 
     #[error("Missing transcription for algorithm '{algorithm}' at dataset row {row_index}")]
     MissingTranscription { algorithm: String, row_index: usize },
+
+    #[error("Config file '{file}' is missing the required `algorithm` key")]
+    MissingAlgorithmKey { file: String },
+
+    #[error("Unknown algorithm '{algorithm}' in config file '{file}'")]
+    UnknownAlgorithm { algorithm: String, file: String },
 }
 
 /// A convenient alias for Result types within this crate.

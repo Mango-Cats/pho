@@ -1,5 +1,5 @@
 use clap::Parser;
-use serde::de::DeserializeOwned;
+use std::fs;
 use std::path::{Path, PathBuf};
 
 use pho::algorithms::{
@@ -7,7 +7,7 @@ use pho::algorithms::{
     Levenshtein, Metaphone, NGram, NeedlemanWunsch, Prefix, SmithWaterman, Soundex, Syllable,
 };
 use pho::dataset::{Row, ScoreMatrix};
-use pho::utils::io::{CSVOptions, import, read_csv_as};
+use pho::utils::io::{CSVOptions, read_csv_records};
 use pho::{Error, Result};
 
 #[derive(Parser, Debug)]
@@ -23,7 +23,9 @@ struct Cli {
     /// Output CSV file to write scored features.
     #[arg(short, long)]
     output: PathBuf,
-    /// Directory containing algorithm config TOML files.
+    /// Directory containing algorithm config TOML files. Each `.toml` file
+    /// produces one feature column named after the file; the file's `algorithm`
+    /// key selects which algorithm computes it.
     #[arg(long)]
     config_dir: PathBuf,
     /// CSV field delimiter (single byte).
@@ -47,7 +49,10 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     let delimiter = parse_delimiter(&cli.delimiter)?;
 
-    let rows = read_csv_as::<Row, _>(
+    // Read the input CSV keeping every original column. Only x_1/x_2/t_1/t_2/label
+    // are used for scoring; all other columns are ignored for computation but
+    // carried through verbatim to the output.
+    let (headers, raw_rows, rows) = read_csv_records::<Row, _>(
         &cli.input,
         Some(CSVOptions {
             delimiter,
@@ -58,7 +63,8 @@ fn main() -> Result<()> {
 
     let algorithms = load_algorithms(&cli.config_dir)?;
     let dataset =
-        ScoreMatrix::from_slice(algorithms, &rows, cli.include_word_features, cli.progress)?;
+        ScoreMatrix::from_named(algorithms, &rows, cli.include_word_features, cli.progress)?
+            .with_passthrough(headers, raw_rows)?;
 
     dataset.export(&cli.output.to_string_lossy())?;
     Ok(())
@@ -75,46 +81,87 @@ fn parse_delimiter(delimiter: &str) -> Result<u8> {
     Ok(bytes[0])
 }
 
-fn load_config<T>(dir: &Path, file_name: &str) -> Result<Option<T>>
-where
-    T: DeserializeOwned,
-{
-    let path = dir.join(file_name);
-    match import(path.to_string_lossy().as_ref()) {
-        Ok(config) => Ok(Some(config)),
-        Err(Error::Io(e)) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
-        Err(e) => Err(e),
+/// Load one algorithm per `.toml` file in `config_dir`.
+///
+/// Each file yields a `(column_name, algorithm)` pair where the column name is
+/// the file stem (so `my_sim.toml` produces a `my_sim` column) and the
+/// algorithm is selected by the file's required `algorithm` key. Files are
+/// processed in sorted order for deterministic output.
+///
+/// This is also how "config-less" algorithms are included: to add `LCS`, drop
+/// an `lcs.toml` containing just `algorithm = "lcs"` into the directory. There
+/// is no implicit set of always-on algorithms — a column exists iff a file
+/// asks for it.
+fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, Box<dyn Algorithm>)>> {
+    let mut paths: Vec<PathBuf> = fs::read_dir(config_dir)?
+        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        .filter(|path| path.extension().and_then(|ext| ext.to_str()) == Some("toml"))
+        .collect();
+    paths.sort();
+
+    let mut algorithms = Vec::with_capacity(paths.len());
+    for path in paths {
+        let column_name = path
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .unwrap_or_default()
+            .to_string();
+        let algorithm = build_algorithm(&path)?;
+        algorithms.push((column_name, algorithm));
     }
-}
-
-macro_rules! push_if_present {
-    ($algorithms:expr, $config_dir:expr, $type:ty, $file:expr) => {
-        if let Some(cfg) = load_config::<$type>($config_dir, $file)? {
-            $algorithms.push(Box::new(cfg) as Box<dyn Algorithm>);
-        }
-    };
-}
-
-fn load_algorithms(config_dir: &Path) -> Result<Vec<Box<dyn Algorithm>>> {
-    let mut algorithms: Vec<Box<dyn Algorithm>> = Vec::new();
-
-    push_if_present!(algorithms, config_dir, Aline, "aline.toml");
-    push_if_present!(algorithms, config_dir, BiSim, "bisim.toml");
-    push_if_present!(algorithms, config_dir, DoubleMetaphone, "double_metaphone.toml");
-    push_if_present!(algorithms, config_dir, Editex, "editex.toml");
-    push_if_present!(algorithms, config_dir, JaroWinkler, "jaro_winkler.toml");
-    push_if_present!(algorithms, config_dir, Keyboard, "keyboard.toml");
-    algorithms.push(Box::new(LCS::default()));
-    algorithms.push(Box::new(LCSuf::default()));
-    push_if_present!(algorithms, config_dir, Levenshtein, "levenshtein.toml");
-    push_if_present!(algorithms, config_dir, Metaphone, "metaphone.toml");
-    push_if_present!(algorithms, config_dir, NeedlemanWunsch, "needleman_wunsch.toml");
-    push_if_present!(algorithms, config_dir, NGram, "ngram.toml");
-    push_if_present!(algorithms, config_dir, Prefix, "prefix.toml");
-    push_if_present!(algorithms, config_dir, SmithWaterman, "smith_waterman.toml");
-    push_if_present!(algorithms, config_dir, Soundex, "soundex.toml");
-    push_if_present!(algorithms, config_dir, Syllable, "syllable.toml");
-    push_if_present!(algorithms, config_dir, CharTfIdf, "tfidf.toml");
 
     Ok(algorithms)
+}
+
+/// Build one algorithm from a config file, dispatching on its `algorithm` key.
+///
+/// The rest of the file is the algorithm's own config (the `algorithm` key is
+/// ignored by the config structs). Config-less algorithms only need the key.
+fn build_algorithm(path: &Path) -> Result<Box<dyn Algorithm>> {
+    let content = fs::read_to_string(path)?;
+    let table: toml::Table = toml::from_str(&content)?;
+    let kind = table
+        .get("algorithm")
+        .and_then(|value| value.as_str())
+        .ok_or_else(|| Error::MissingAlgorithmKey {
+            file: path.display().to_string(),
+        })?
+        .trim()
+        .to_ascii_lowercase();
+
+    // Deserialize the whole file into the selected config type. The `algorithm`
+    // key is an unknown field to these structs and is silently ignored.
+    macro_rules! build {
+        ($ty:ty) => {
+            Box::new(toml::from_str::<$ty>(&content)?) as Box<dyn Algorithm>
+        };
+    }
+
+    let algorithm = match kind.as_str() {
+        "aline" => build!(Aline),
+        "bisim" => build!(BiSim),
+        "double_metaphone" | "doublemetaphone" => build!(DoubleMetaphone),
+        "editex" => build!(Editex),
+        "jaro_winkler" | "jarowinkler" => build!(JaroWinkler),
+        "keyboard" => build!(Keyboard),
+        "lcs" => build!(LCS),
+        "lcsuf" => build!(LCSuf),
+        "levenshtein" => build!(Levenshtein),
+        "metaphone" => build!(Metaphone),
+        "needleman_wunsch" | "needlemanwunsch" => build!(NeedlemanWunsch),
+        "ngram" => build!(NGram),
+        "prefix" => build!(Prefix),
+        "smith_waterman" | "smithwaterman" => build!(SmithWaterman),
+        "soundex" => build!(Soundex),
+        "syllable" => build!(Syllable),
+        "tfidf" | "chartfidf" => build!(CharTfIdf),
+        other => {
+            return Err(Error::UnknownAlgorithm {
+                algorithm: other.to_string(),
+                file: path.display().to_string(),
+            });
+        }
+    };
+
+    Ok(algorithm)
 }
