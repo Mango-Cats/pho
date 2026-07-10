@@ -66,7 +66,7 @@ fn parse_segments(ipa: &str, variant: &AlineVariant) -> Vec<(String, f32)> {
             c.is_whitespace()
                 || c.is_numeric()
                 || "[]/\\.,;:()|{}<>\"'-+_&".contains(c)
-                || "ːˑ‖‿".contains(c)
+                || "ːˑ‖‿⁻".contains(c)
         });
         if ignorable {
             continue;
@@ -539,6 +539,20 @@ mod tests {
         assert!(
             (compact - spaced).abs() < 1e-6,
             "expected whitespace to be ignored, got compact={compact}, spaced={spaced}"
+        );
+    }
+
+    #[test]
+    fn similarity_ignores_superscript_minus() {
+        let algo = load();
+        let plain = algo.similarity("sa", "si").expect("plain input is valid");
+        let marked = algo
+            .similarity("sa⁻", "si⁻")
+            .expect("U+207B should be ignored, not rejected as unknown");
+
+        assert!(
+            (plain - marked).abs() < 1e-6,
+            "expected U+207B to be ignored, got plain={plain}, marked={marked}"
         );
     }
 }
