@@ -106,9 +106,17 @@ scoring — see
 
 Levenshtein, Editex, and `visual_weighted` support a `separate = true` key. When
 set, the config produces **three** columns instead of one — `{stem}_substitutions`,
-`{stem}_insertions`, and `{stem}_deletions` — each the literal count of that
-operation type in the minimal-cost alignment, rather than a single summed
-distance:
+`{stem}_indels`, and `{stem}_indel_diff` — computed from the minimal-cost
+alignment, rather than a single summed distance. `indels` is the total
+insertion+deletion count and `indel_diff` is `|insertions − deletions|`.
+Insertions and deletions aren't reported separately: which one a given edit
+counts as depends on which of `x_1`/`x_2` a row happens to list first, and
+rows carry no canonical ordering, so a raw insertion/deletion split would
+make their difference (which is really the signed length delta between the
+two strings) an artifact of arbitrary pair order. `indels` and `indel_diff`
+carry the same information — total indel operations and absolute length
+delta — without that sign-arbitrary split. Substitutions are symmetric under
+swapping the pair, so they're reported as-is.
 
 ```toml
 # configs/lev_ops.toml
@@ -121,7 +129,7 @@ delete = 1.0
 substitute = 1.0
 ```
 
-produces `lev_ops_substitutions,lev_ops_insertions,lev_ops_deletions` instead of
+produces `lev_ops_substitutions,lev_ops_indels,lev_ops_indel_diff` instead of
 a single `lev_ops` column.
 
 ### Input CSV format

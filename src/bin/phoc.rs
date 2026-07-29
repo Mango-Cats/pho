@@ -93,21 +93,32 @@ fn parse_delimiter(delimiter: &str) -> Result<u8> {
 }
 
 /// Which operation tally an [`EditOperationColumn`] reports.
+///
+/// Insertions and deletions are directional: whichever of `x_1`/`x_2` a row
+/// happens to put first decides which count is which, and rows carry no
+/// canonical ordering. Reporting raw insertion/deletion counts as separate
+/// columns would therefore make their difference (which encodes the signed
+/// length delta between the two strings) an artifact of arbitrary pair
+/// order rather than a real signal. `Indels` (their order-invariant sum)
+/// and `IndelDiff` (the order-invariant absolute difference) carry the same
+/// information — total indel operations and absolute length delta — without
+/// the sign-arbitrary split. Substitutions are symmetric under swapping the
+/// pair and need no such transform.
 #[derive(Debug, Clone, Copy)]
 enum EditOperation {
     Substitutions,
-    Insertions,
-    Deletions,
+    Indels,
+    IndelDiff,
 }
 
 impl EditOperation {
-    const ALL: [Self; 3] = [Self::Substitutions, Self::Insertions, Self::Deletions];
+    const ALL: [Self; 3] = [Self::Substitutions, Self::Indels, Self::IndelDiff];
 
     fn suffix(self) -> &'static str {
         match self {
             Self::Substitutions => "substitutions",
-            Self::Insertions => "insertions",
-            Self::Deletions => "deletions",
+            Self::Indels => "indels",
+            Self::IndelDiff => "indel_diff",
         }
     }
 
@@ -115,15 +126,15 @@ impl EditOperation {
         let (substitutions, insertions, deletions) = counts;
         match self {
             Self::Substitutions => substitutions as f32,
-            Self::Insertions => insertions as f32,
-            Self::Deletions => deletions as f32,
+            Self::Indels => (insertions + deletions) as f32,
+            Self::IndelDiff => (insertions as i64 - deletions as i64).unsigned_abs() as f32,
         }
     }
 }
 
 /// Adapts a `separate = true` algorithm's `edit_operation_counts` into a
 /// single-column [`Algorithm`], so one config with the flag set fans out into
-/// three columns (substitutions/insertions/deletions) without changing how
+/// three columns (substitutions/indels/indel_diff) without changing how
 /// [`ScoreMatrix`] scores columns.
 struct EditOperationColumn {
     inner: Arc<dyn Algorithm>,
@@ -152,10 +163,13 @@ impl Algorithm for EditOperationColumn {
 /// algorithm is selected by the file's required `algorithm` key — *unless*
 /// the config sets `separate = true` (only meaningful for edit-distance
 /// algorithms that implement `edit_operation_counts`), in which case it
-/// yields three columns instead: `{stem}_substitutions`, `{stem}_insertions`,
-/// and `{stem}_deletions`, each reporting the literal operation tally from
-/// the minimal-cost alignment rather than a single summed distance. Files are
-/// processed in sorted order for deterministic output.
+/// yields three columns instead: `{stem}_substitutions`, `{stem}_indels`,
+/// and `{stem}_indel_diff` — substitutions from the minimal-cost alignment,
+/// the total insertion+deletion count, and the absolute difference between
+/// insertions and deletions, rather than a single summed distance (see
+/// [`EditOperation`] for why insertions/deletions aren't reported
+/// separately). Files are processed in sorted order for deterministic
+/// output.
 ///
 /// This is also how "config-less" algorithms are included: to add `LCS`, drop
 /// an `lcs.toml` containing just `algorithm = "lcs"` into the directory. There
