@@ -31,7 +31,7 @@ mod distance;
 use crate::{algorithms::Algorithm, error::Result, utils::validate::validate_tokens};
 
 use config::Editex;
-use distance::{distance, total_delete_cost};
+use distance::{distance, operation_counts, total_delete_cost};
 
 impl Algorithm for Editex {
     fn distance(&self, x: &str, y: &str) -> Result<f32> {
@@ -88,6 +88,32 @@ impl Algorithm for Editex {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let normalized_distance = self.normalized_distance(x, y)?;
         Ok((1.0 - normalized_distance).clamp(0.0, 1.0))
+    }
+
+    fn edit_operation_counts(&self, x: &str, y: &str) -> Result<(u32, u32, u32)> {
+        let x_chars = validate_tokens(
+            x.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
+            "x",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
+
+        let y_chars = validate_tokens(
+            y.chars()
+                .map(|c| c.to_ascii_lowercase())
+                .filter(|c| c.is_ascii_alphabetic()),
+            "y",
+            "Editex config groups",
+            |symbol| self.group.contains_key(symbol),
+        )?;
+
+        Ok(operation_counts(&x_chars, &y_chars, self))
+    }
+
+    fn separate_enabled(&self) -> bool {
+        self.separate
     }
 }
 

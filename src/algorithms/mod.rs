@@ -11,6 +11,7 @@
 //! - [prefix]
 //! - [levenshtein]
 //! - [ngram]
+//! - [visual]
 //!
 //! ## Polymorphic Algorithms
 //!
@@ -35,6 +36,7 @@ pub mod editex;
 pub mod jaro_winkler;
 pub mod keyboard;
 pub mod lcs;
+pub mod lcsubstring;
 pub mod lcsuf;
 pub mod levenshtein;
 pub mod metaphone;
@@ -45,6 +47,7 @@ pub mod smith_waterman;
 pub mod soundex;
 pub mod syllable;
 pub mod tfidf;
+pub mod visual;
 mod traits;
 
 pub use aline::config::Aline;
@@ -54,6 +57,7 @@ pub use editex::config::Editex;
 pub use jaro_winkler::config::JaroWinkler;
 pub use keyboard::config::Keyboard;
 pub use lcs::LCS;
+pub use lcsubstring::LCSubstring;
 pub use lcsuf::LCSuf;
 pub use levenshtein::config::Levenshtein;
 pub use metaphone::config::Metaphone;
@@ -65,3 +69,4 @@ pub use soundex::config::Soundex;
 pub use syllable::config::Syllable;
 pub use tfidf::config::CharTfIdf;
 pub use traits::Algorithm;
+pub use visual::config::VisualWeighted;

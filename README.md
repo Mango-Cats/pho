@@ -92,10 +92,37 @@ algorithm = "lcs"
 
 To exclude an algorithm, remove its file; to include one, add its file. Ready-made
 configs live in [`algorithm_configs/eng`](algorithm_configs/eng). Recognized
-`algorithm` values: `aline`, `bisim`, `double_metaphone`, `editex`,
-`jaro_winkler`, `keyboard`, `lcs`, `lcsuf`, `levenshtein`, `metaphone`,
+`algorithm` values: `aline`, `bisim`, `double_metaphone`, `editex`, `jaro_winkler`,
+`keyboard`, `lcs`, `lcsubstring`, `lcsuf`, `levenshtein`, `metaphone`,
 `needleman_wunsch`, `ngram`, `prefix`, `smith_waterman`, `soundex`, `syllable`,
-`tfidf`.
+`tfidf`, `visual_weighted`.
+
+Levenshtein also accepts a `consonants_only = true` key to strip vowels
+(`a`, `e`, `i`, `o`, `u`; `y` stays a consonant) from both inputs before
+scoring — see
+[`algorithm_configs/eng/levenshtein_consonant.toml`](algorithm_configs/eng/levenshtein_consonant.toml).
+
+#### Separated edit-operation counts
+
+Levenshtein, Editex, and `visual_weighted` support a `separate = true` key. When
+set, the config produces **three** columns instead of one — `{stem}_substitutions`,
+`{stem}_insertions`, and `{stem}_deletions` — each the literal count of that
+operation type in the minimal-cost alignment, rather than a single summed
+distance:
+
+```toml
+# configs/lev_ops.toml
+algorithm = "levenshtein"
+separate = true
+
+[costs]
+insert = 1.0
+delete = 1.0
+substitute = 1.0
+```
+
+produces `lev_ops_substitutions,lev_ops_insertions,lev_ops_deletions` instead of
+a single `lev_ops` column.
 
 ### Input CSV format
 
@@ -132,7 +159,13 @@ Row order matches the input.
 - `--delimiter <char>`: CSV delimiter byte (default: `,`)
 - `--no-headers`: treat input as headerless
 - `--flexible`: allow variable-length rows
-- `--include-word-features`: add length-based features
+- `--include-word-features`: add length/position-based features:
+  `len_x1`, `len_x2`, `len_min`, `len_max`, `len_diff`, `len_ratio`,
+  `common_prefix_len`, `common_prefix_ratio`, `common_suffix_len`,
+  `common_suffix_ratio`, `first_mismatch_pos`, `first_char_match`. These are
+  always computed on the raw `x_1`/`x_2` strings (no `case_insensitive`
+  option). If a configured algorithm is named `Prefix`, its column is renamed
+  to `common_prefix_ratio` instead of duplicating that feature.
 - `--progress`: show a progress bar
 
 ## Moving Around

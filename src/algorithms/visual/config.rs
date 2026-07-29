@@ -15,19 +15,27 @@ impl Costs {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Editex {
+pub struct VisualWeighted {
     pub(crate) costs: Costs,
     pub(crate) group: HashMap<char, Vec<usize>>,
+    #[serde(default)]
+    pub(crate) case_insensitive: bool,
     #[serde(default)]
     pub(crate) separate: bool,
 }
 
-impl Editex {
-    pub fn new(costs: Costs, group: HashMap<char, Vec<usize>>) -> Self {
+impl VisualWeighted {
+    pub fn new(
+        costs: Costs,
+        group: HashMap<char, Vec<usize>>,
+        case_insensitive: bool,
+        separate: bool,
+    ) -> Self {
         Self {
             costs,
             group,
-            separate: false,
+            case_insensitive,
+            separate,
         }
     }
 }

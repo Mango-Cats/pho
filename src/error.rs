@@ -27,6 +27,9 @@ pub enum Error {
     #[error("Algorithm '{algorithm}' does not support distance queries")]
     DistanceNotSupported { algorithm: &'static str },
 
+    #[error("Algorithm '{algorithm}' does not support separated edit-operation counts")]
+    SeparatedCountsNotSupported { algorithm: &'static str },
+
     #[error("N-gram size must be greater than zero, got {0}")]
     InvalidNGramSize(usize),
 

@@ -49,6 +49,25 @@ fn distance_and_normalized_distance_are_available() {
 }
 
 #[test]
+fn edit_operation_counts_matches_hand_worked_alignment() {
+    let config = load();
+
+    // kitten -> sitting: substitute k->s, substitute e->i, insert g.
+    let (substitutions, insertions, deletions) =
+        config.edit_operation_counts("kitten", "sitting").unwrap();
+    assert_eq!((substitutions, insertions, deletions), (2, 1, 0));
+}
+
+#[test]
+fn edit_operation_counts_identical_strings_are_all_zero() {
+    let config = load();
+
+    let (substitutions, insertions, deletions) =
+        config.edit_operation_counts("smith", "smith").unwrap();
+    assert_eq!((substitutions, insertions, deletions), (0, 0, 0));
+}
+
+#[test]
 fn ignores_non_alphabet_characters() {
     let config = load();
 

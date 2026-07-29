@@ -21,27 +21,26 @@ pub struct ScoreMatrix {
     pub labels: Vec<Option<f32>>,
     pub algorithm_names: Vec<String>,
     pub base_scores: Vec<Vec<f32>>,
-    /// Optional pass-through columns preserved from the original input.
-    ///
-    /// When non-empty, CSV export writes these columns verbatim (in this order)
-    /// followed by the computed feature columns, instead of the default
-    /// `x_1,x_2,label` trio. Populate via [`ScoreMatrix::with_passthrough`].
     pub passthrough_headers: Vec<String>,
-    /// Raw string cells for each row, aligned with `base_scores` by index.
     pub passthrough_rows: Vec<Vec<String>>,
 }
 
 impl ScoreMatrix {
     const PREFIX_ALGORITHM_NAME: &'static str = "Prefix";
     const COMMON_PREFIX_RATIO_NAME: &'static str = "common_prefix_ratio";
-    const WORD_LEVEL_FEATURES: [&'static str; 7] = [
+    const WORD_LEVEL_FEATURES: [&'static str; 12] = [
         "len_x1",
         "len_x2",
+        "len_min",
+        "len_max",
         "len_diff",
         "len_ratio",
         "common_prefix_len",
         "common_prefix_ratio",
         "common_suffix_len",
+        "common_suffix_ratio",
+        "first_mismatch_pos",
+        "first_char_match",
     ];
 
     fn validate_shape(&self) -> Result<()> {
@@ -157,6 +156,8 @@ impl ScoreMatrix {
             .map(|name| match *name {
                 "len_x1" => left_len as f32,
                 "len_x2" => right_len as f32,
+                "len_min" => min_len,
+                "len_max" => max_len,
                 "len_diff" => length_diff,
                 "len_ratio" => {
                     if max_len == 0.0 {
@@ -174,6 +175,33 @@ impl ScoreMatrix {
                     }
                 }
                 "common_suffix_len" => suffix_len,
+                "common_suffix_ratio" => {
+                    if max_len == 0.0 {
+                        1.0
+                    } else {
+                        (suffix_len / max_len).clamp(0.0, 1.0)
+                    }
+                }
+                // The index of the first mismatching character equals the
+                // common prefix length; normalizing by min_len (rather than
+                // max_len, as common_prefix_ratio does) means a string that
+                // is a strict prefix of the other still reports full
+                // agreement (1.0) over the range where a mismatch could
+                // possibly occur.
+                "first_mismatch_pos" => {
+                    if min_len == 0.0 {
+                        1.0
+                    } else {
+                        (prefix_len / min_len).clamp(0.0, 1.0)
+                    }
+                }
+                "first_char_match" => {
+                    if (left_len == 0 && right_len == 0) || prefix_len >= 1.0 {
+                        1.0
+                    } else {
+                        0.0
+                    }
+                }
                 _ => unreachable!("unknown length feature name"),
             })
             .collect()

@@ -84,22 +84,32 @@ mod tests {
                 "common_prefix_ratio",
                 "len_x1",
                 "len_x2",
+                "len_min",
+                "len_max",
                 "len_diff",
                 "len_ratio",
                 "common_prefix_len",
                 "common_suffix_len",
+                "common_suffix_ratio",
+                "first_mismatch_pos",
+                "first_char_match",
             ]
         );
 
         let scores = &dataset.base_scores[0];
-        assert_eq!(scores.len(), 7);
+        assert_eq!(scores.len(), 12);
         assert!((scores[0] - 2.0 / 3.0).abs() < 1e-6);
         assert_eq!(scores[1], 3.0);
         assert_eq!(scores[2], 2.0);
-        assert_eq!(scores[3], 1.0);
-        assert!((scores[4] - 2.0 / 3.0).abs() < 1e-6);
-        assert_eq!(scores[5], 2.0);
-        assert_eq!(scores[6], 0.0);
+        assert_eq!(scores[3], 2.0);
+        assert_eq!(scores[4], 3.0);
+        assert_eq!(scores[5], 1.0);
+        assert!((scores[6] - 2.0 / 3.0).abs() < 1e-6);
+        assert_eq!(scores[7], 2.0);
+        assert_eq!(scores[8], 0.0);
+        assert_eq!(scores[9], 0.0);
+        assert_eq!(scores[10], 1.0);
+        assert_eq!(scores[11], 1.0);
     }
 
     #[test]

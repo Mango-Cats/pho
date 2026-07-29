@@ -51,6 +51,32 @@ pub trait Algorithm: Send + Sync {
         false
     }
 
+    /// Returns the number of substitutions, insertions, and deletions used
+    /// by the minimal-cost alignment between two inputs, as `(substitutions,
+    /// insertions, deletions)`.
+    ///
+    /// Unlike [`Algorithm::distance`], these are literal operation tallies
+    /// from the alignment path, not weighted costs — so they do not
+    /// necessarily sum back to `distance(x, y)` for algorithms with
+    /// non-uniform costs.
+    ///
+    /// Algorithms without a well-defined edit-operation decomposition can
+    /// keep the default implementation, which reports that separated counts
+    /// are unsupported.
+    fn edit_operation_counts(&self, x: &str, y: &str) -> Result<(u32, u32, u32)> {
+        let _ = (x, y);
+        Err(crate::Error::SeparatedCountsNotSupported {
+            algorithm: self.name(),
+        })
+    }
+
+    /// Whether this algorithm's config requests separated edit-operation
+    /// counts (via a `separate = true` key) instead of a single summed
+    /// distance/similarity column.
+    fn separate_enabled(&self) -> bool {
+        false
+    }
+
     fn name(&self) -> &'static str {
         std::any::type_name::<Self>()
             .rsplit("::")

@@ -1,7 +1,7 @@
-use super::config::Editex;
+use super::config::VisualWeighted;
 use super::edit::{delete, replace};
 
-fn build_matrix(x: &[char], y: &[char], config: &Editex) -> (Vec<f32>, usize, usize) {
+fn build_matrix(x: &[char], y: &[char], config: &VisualWeighted) -> (Vec<f32>, usize, usize) {
     let m = x.len();
     let n = y.len();
 
@@ -33,8 +33,9 @@ fn build_matrix(x: &[char], y: &[char], config: &Editex) -> (Vec<f32>, usize, us
     (d, m, n)
 }
 
-/// Editex distance using substitution/insertion/deletion costs.
-pub fn distance(x: &[char], y: &[char], config: &Editex) -> f32 {
+/// Visual-weighted edit distance using substitution/insertion/deletion costs
+/// drawn from a visual letter-confusability grouping.
+pub fn distance(x: &[char], y: &[char], config: &VisualWeighted) -> f32 {
     let (d, m, n) = build_matrix(x, y, config);
     d[m * (n + 1) + n]
 }
@@ -46,7 +47,7 @@ pub fn distance(x: &[char], y: &[char], config: &Editex) -> f32 {
 /// On ties between multiple minimal-cost moves at a cell, the diagonal
 /// (match/substitution) move is preferred, then deletion, then insertion —
 /// a deterministic rule chosen to minimize the total operation count.
-pub fn operation_counts(x: &[char], y: &[char], config: &Editex) -> (u32, u32, u32) {
+pub fn operation_counts(x: &[char], y: &[char], config: &VisualWeighted) -> (u32, u32, u32) {
     let (d, m, n) = build_matrix(x, y, config);
     let idx = |i: usize, j: usize| -> usize { i * (n + 1) + j };
 
@@ -91,7 +92,7 @@ pub fn operation_counts(x: &[char], y: &[char], config: &Editex) -> (u32, u32, u
     (substitutions, insertions, deletions)
 }
 
-pub(super) fn total_delete_cost(chars: &[char], config: &Editex) -> f32 {
+pub(super) fn total_delete_cost(chars: &[char], config: &VisualWeighted) -> f32 {
     let mut total = 0.0;
 
     for (idx, symbol) in chars.iter().enumerate() {

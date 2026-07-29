@@ -13,6 +13,12 @@
 //!
 //! The algorithm uses dynamic programming to compute the optimal alignment.
 //!
+//! Set `consonants_only = true` in the config to strip vowels (`a`, `e`,
+//! `i`, `o`, `u`; `y` stays a consonant) from both inputs before computing
+//! distance — vowels are less reliably perceived than consonants, so this
+//! trades exact-string sensitivity for robustness to vowel-only differences
+//! (e.g. "color" vs "colour").
+//!
 //! ## Example
 //!
 //! ```rust
@@ -35,19 +41,33 @@ pub mod distance;
 use crate::{algorithms::Algorithm, error::Result, utils::normalize::normalize_input};
 
 use config::Levenshtein;
-use distance::distance;
+use distance::{distance, operation_counts};
+
+const VOWELS: [char; 5] = ['a', 'e', 'i', 'o', 'u'];
+
+fn normalized_chars(input: &str, config: &Levenshtein) -> Vec<char> {
+    let chars = normalize_input(input, config.case_insensitive);
+    if !config.consonants_only {
+        return chars;
+    }
+
+    chars
+        .into_iter()
+        .filter(|c| !VOWELS.contains(&c.to_ascii_lowercase()))
+        .collect()
+}
 
 impl Algorithm for Levenshtein {
     fn distance(&self, x: &str, y: &str) -> Result<f32> {
-        let x_chars = normalize_input(x, self.case_insensitive);
-        let y_chars = normalize_input(y, self.case_insensitive);
+        let x_chars = normalized_chars(x, self);
+        let y_chars = normalized_chars(y, self);
 
         Ok(distance(&x_chars, &y_chars, self))
     }
 
     fn normalized_distance(&self, x: &str, y: &str) -> Result<f32> {
-        let x_chars = normalize_input(x, self.case_insensitive);
-        let y_chars = normalize_input(y, self.case_insensitive);
+        let x_chars = normalized_chars(x, self);
+        let y_chars = normalized_chars(y, self);
 
         let distance = distance(&x_chars, &y_chars, self);
         let max_length = x_chars.len().max(y_chars.len()) as f32;
@@ -62,5 +82,16 @@ impl Algorithm for Levenshtein {
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         let normalized_distance = self.normalized_distance(x, y)?;
         Ok((1.0 - normalized_distance).clamp(0.0, 1.0))
+    }
+
+    fn edit_operation_counts(&self, x: &str, y: &str) -> Result<(u32, u32, u32)> {
+        let x_chars = normalized_chars(x, self);
+        let y_chars = normalized_chars(y, self);
+
+        Ok(operation_counts(&x_chars, &y_chars, self))
+    }
+
+    fn separate_enabled(&self) -> bool {
+        self.separate
     }
 }

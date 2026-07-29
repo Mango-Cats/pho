@@ -1,10 +1,12 @@
 use clap::Parser;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use pho::algorithms::{
-    Algorithm, Aline, BiSim, CharTfIdf, DoubleMetaphone, Editex, JaroWinkler, Keyboard, LCS, LCSuf,
-    Levenshtein, Metaphone, NGram, NeedlemanWunsch, Prefix, SmithWaterman, Soundex, Syllable,
+    Algorithm, Aline, BiSim, CharTfIdf, DoubleMetaphone, Editex, JaroWinkler, Keyboard, LCS,
+    LCSubstring, LCSuf, Levenshtein, Metaphone, NGram, NeedlemanWunsch, Prefix, SmithWaterman,
+    Soundex, Syllable, VisualWeighted,
 };
 use pho::dataset::{Row, ScoreMatrix};
 use pho::utils::io::{CSVOptions, read_csv_records};
@@ -24,8 +26,9 @@ struct Cli {
     #[arg(short, long)]
     output: PathBuf,
     /// Directory containing algorithm config TOML files. Each `.toml` file
-    /// produces one feature column named after the file; the file's `algorithm`
-    /// key selects which algorithm computes it.
+    /// produces one feature column named after the file (or three, if the
+    /// file sets `separate = true`); the file's `algorithm` key selects which
+    /// algorithm computes it.
     #[arg(long)]
     config_dir: PathBuf,
     /// CSV field delimiter (single byte).
@@ -81,11 +84,69 @@ fn parse_delimiter(delimiter: &str) -> Result<u8> {
     Ok(bytes[0])
 }
 
+/// Which operation tally an [`EditOperationColumn`] reports.
+#[derive(Debug, Clone, Copy)]
+enum EditOperation {
+    Substitutions,
+    Insertions,
+    Deletions,
+}
+
+impl EditOperation {
+    const ALL: [Self; 3] = [Self::Substitutions, Self::Insertions, Self::Deletions];
+
+    fn suffix(self) -> &'static str {
+        match self {
+            Self::Substitutions => "substitutions",
+            Self::Insertions => "insertions",
+            Self::Deletions => "deletions",
+        }
+    }
+
+    fn select(self, counts: (u32, u32, u32)) -> f32 {
+        let (substitutions, insertions, deletions) = counts;
+        match self {
+            Self::Substitutions => substitutions as f32,
+            Self::Insertions => insertions as f32,
+            Self::Deletions => deletions as f32,
+        }
+    }
+}
+
+/// Adapts a `separate = true` algorithm's `edit_operation_counts` into a
+/// single-column [`Algorithm`], so one config with the flag set fans out into
+/// three columns (substitutions/insertions/deletions) without changing how
+/// [`ScoreMatrix`] scores columns.
+struct EditOperationColumn {
+    inner: Arc<dyn Algorithm>,
+    op: EditOperation,
+}
+
+impl Algorithm for EditOperationColumn {
+    fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+        let counts = self.inner.edit_operation_counts(x, y)?;
+        Ok(self.op.select(counts))
+    }
+
+    fn requires_transcription(&self) -> bool {
+        self.inner.requires_transcription()
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
+}
+
 /// Load one algorithm per `.toml` file in `config_dir`.
 ///
-/// Each file yields a `(column_name, algorithm)` pair where the column name is
-/// the file stem (so `my_sim.toml` produces a `my_sim` column) and the
-/// algorithm is selected by the file's required `algorithm` key. Files are
+/// Each file yields one `(column_name, algorithm)` pair where the column name
+/// is the file stem (so `my_sim.toml` produces a `my_sim` column) and the
+/// algorithm is selected by the file's required `algorithm` key — *unless*
+/// the config sets `separate = true` (only meaningful for edit-distance
+/// algorithms that implement `edit_operation_counts`), in which case it
+/// yields three columns instead: `{stem}_substitutions`, `{stem}_insertions`,
+/// and `{stem}_deletions`, each reporting the literal operation tally from
+/// the minimal-cost alignment rather than a single summed distance. Files are
 /// processed in sorted order for deterministic output.
 ///
 /// This is also how "config-less" algorithms are included: to add `LCS`, drop
@@ -107,7 +168,21 @@ fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, Box<dyn Algorithm>)
             .unwrap_or_default()
             .to_string();
         let algorithm = build_algorithm(&path)?;
-        algorithms.push((column_name, algorithm));
+
+        if algorithm.separate_enabled() {
+            let shared: Arc<dyn Algorithm> = Arc::from(algorithm);
+            for op in EditOperation::ALL {
+                algorithms.push((
+                    format!("{column_name}_{}", op.suffix()),
+                    Box::new(EditOperationColumn {
+                        inner: shared.clone(),
+                        op,
+                    }) as Box<dyn Algorithm>,
+                ));
+            }
+        } else {
+            algorithms.push((column_name, algorithm));
+        }
     }
 
     Ok(algorithms)
@@ -145,6 +220,7 @@ fn build_algorithm(path: &Path) -> Result<Box<dyn Algorithm>> {
         "jaro_winkler" | "jarowinkler" => build!(JaroWinkler),
         "keyboard" => build!(Keyboard),
         "lcs" => build!(LCS),
+        "lcsubstring" => build!(LCSubstring),
         "lcsuf" => build!(LCSuf),
         "levenshtein" => build!(Levenshtein),
         "metaphone" => build!(Metaphone),
@@ -155,6 +231,7 @@ fn build_algorithm(path: &Path) -> Result<Box<dyn Algorithm>> {
         "soundex" => build!(Soundex),
         "syllable" => build!(Syllable),
         "tfidf" | "chartfidf" => build!(CharTfIdf),
+        "visual_weighted" | "visualweighted" => build!(VisualWeighted),
         other => {
             return Err(Error::UnknownAlgorithm {
                 algorithm: other.to_string(),

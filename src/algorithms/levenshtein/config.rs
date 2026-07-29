@@ -30,10 +30,12 @@ impl Costs {
 /// different edit operations are weighted when computing string distance.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Levenshtein {
-    /// Edit operation costs.
     pub(crate) costs: Costs,
-    /// Whether to perform case-insensitive comparison.
     pub(crate) case_insensitive: bool,
+    #[serde(default)]
+    pub(crate) separate: bool,
+    #[serde(default)]
+    pub(crate) consonants_only: bool,
 }
 
 impl Levenshtein {
@@ -41,6 +43,8 @@ impl Levenshtein {
         Self {
             costs,
             case_insensitive,
+            separate: false,
+            consonants_only: false,
         }
     }
 }
