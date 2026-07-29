@@ -1,3 +1,4 @@
+mod fil_features;
 pub mod row;
 pub mod score_matrix;
 
@@ -93,11 +94,14 @@ mod tests {
                 "common_suffix_ratio",
                 "first_mismatch_pos",
                 "first_char_match",
+                "consonant_count_diff",
+                "syllable_diff",
+                "vowel_count_diff",
             ]
         );
 
         let scores = &dataset.base_scores[0];
-        assert_eq!(scores.len(), 12);
+        assert_eq!(scores.len(), 15);
         assert!((scores[0] - 2.0 / 3.0).abs() < 1e-6);
         assert_eq!(scores[1], 3.0);
         assert_eq!(scores[2], 2.0);
@@ -110,6 +114,41 @@ mod tests {
         assert_eq!(scores[9], 0.0);
         assert_eq!(scores[10], 1.0);
         assert_eq!(scores[11], 1.0);
+        // consonant_count_diff: "abc" has 2 (b, c), "ab" has 1 (b)
+        assert_eq!(scores[12], 1.0);
+        // syllable_diff: single vowel-run in both "abc" and "ab"
+        assert_eq!(scores[13], 0.0);
+        // vowel_count_diff: one vowel ('a') in both
+        assert_eq!(scores[14], 0.0);
+    }
+
+    #[test]
+    fn with_fil_features_adds_nativization_indicator_columns() {
+        let algorithms: Vec<Box<dyn Algorithm>> = vec![Box::new(Prefix::new(false))];
+        let rows = vec![
+            Row::builder("chocolate", "chocolate").label(1.0).build(),
+            Row::builder("chocolate", "banana").label(0.0).build(),
+        ];
+
+        let dataset = ScoreMatrix::from_slice(algorithms, &rows, false, false)
+            .expect("dataset")
+            .with_fil_features()
+            .expect("dataset with fil features");
+
+        assert_eq!(
+            dataset.algorithm_names,
+            vec![
+                "Prefix",
+                "fil_vowel_skeleton_match",
+                "fil_penult_vowel_match",
+                "fil_onset_match",
+                "fil_coda_match",
+                "fil_phonetic_equal",
+            ]
+        );
+        assert_eq!(dataset.base_scores.len(), 2);
+        // Identical inputs must be identical under nativization on every indicator.
+        assert_eq!(&dataset.base_scores[0][1..], &[1.0, 1.0, 1.0, 1.0, 1.0]);
     }
 
     #[test]

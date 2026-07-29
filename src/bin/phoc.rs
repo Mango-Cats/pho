@@ -43,6 +43,11 @@ struct Cli {
     /// Include word-level length features in the output.
     #[arg(long)]
     include_word_features: bool,
+    /// Include Filipino (Tagalog) nativization indicator features
+    /// (fil_vowel_skeleton_match, fil_penult_vowel_match, fil_onset_match,
+    /// fil_coda_match, fil_phonetic_equal) in the output.
+    #[arg(long)]
+    include_fil_features: bool,
     /// Show a progress bar while computing scores.
     #[arg(long)]
     progress: bool,
@@ -65,9 +70,12 @@ fn main() -> Result<()> {
     )?;
 
     let algorithms = load_algorithms(&cli.config_dir)?;
-    let dataset =
-        ScoreMatrix::from_named(algorithms, &rows, cli.include_word_features, cli.progress)?
-            .with_passthrough(headers, raw_rows)?;
+    let mut dataset =
+        ScoreMatrix::from_named(algorithms, &rows, cli.include_word_features, cli.progress)?;
+    if cli.include_fil_features {
+        dataset = dataset.with_fil_features()?;
+    }
+    let dataset = dataset.with_passthrough(headers, raw_rows)?;
 
     dataset.export(&cli.output.to_string_lossy())?;
     Ok(())

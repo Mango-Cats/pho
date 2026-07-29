@@ -7,6 +7,7 @@ use rayon::prelude::*;
 
 use crate::Result;
 use crate::algorithms::Algorithm;
+use crate::dataset::fil_features;
 use crate::dataset::row::Row;
 use crate::ensemble::types::EnsembleAlgorithm;
 use crate::ensemble::weighted_function::WeightedFunction;
@@ -28,7 +29,7 @@ pub struct ScoreMatrix {
 impl ScoreMatrix {
     const PREFIX_ALGORITHM_NAME: &'static str = "Prefix";
     const COMMON_PREFIX_RATIO_NAME: &'static str = "common_prefix_ratio";
-    const WORD_LEVEL_FEATURES: [&'static str; 12] = [
+    const WORD_LEVEL_FEATURES: [&'static str; 15] = [
         "len_x1",
         "len_x2",
         "len_min",
@@ -41,7 +42,42 @@ impl ScoreMatrix {
         "common_suffix_ratio",
         "first_mismatch_pos",
         "first_char_match",
+        "consonant_count_diff",
+        "syllable_diff",
+        "vowel_count_diff",
     ];
+
+    /// Vowel letters used by the structural/prosodic word-level features
+    /// (`syllable_diff`, `vowel_count_diff`, `consonant_count_diff`). Deliberately
+    /// the plain 5-vowel Latin set (no `y`) to match the semantics these
+    /// features were ported from (`walter`'s `src/pipeline/features.py`).
+    fn is_vowel_letter(c: char) -> bool {
+        matches!(c.to_ascii_lowercase(), 'a' | 'e' | 'i' | 'o' | 'u')
+    }
+
+    fn count_vowels(s: &str) -> usize {
+        s.chars().filter(|c| Self::is_vowel_letter(*c)).count()
+    }
+
+    fn count_consonants(s: &str) -> usize {
+        s.chars()
+            .filter(|c| c.is_alphabetic() && !Self::is_vowel_letter(*c))
+            .count()
+    }
+
+    /// Syllable-nucleus count: the number of maximal runs of vowel letters.
+    fn count_syllables(s: &str) -> usize {
+        let mut count = 0;
+        let mut prev_vowel = false;
+        for c in s.chars() {
+            let is_vowel = Self::is_vowel_letter(c);
+            if is_vowel && !prev_vowel {
+                count += 1;
+            }
+            prev_vowel = is_vowel;
+        }
+        count
+    }
 
     fn validate_shape(&self) -> Result<()> {
         if self.inputs.len() != self.labels.len() {
@@ -103,6 +139,42 @@ impl ScoreMatrix {
     ) -> Result<Self> {
         self.passthrough_headers = headers;
         self.passthrough_rows = rows;
+        self.validate_shape()?;
+        Ok(self)
+    }
+
+    /// Append the Filipino (Tagalog) nativization indicator columns
+    /// (`fil_vowel_skeleton_match`, `fil_penult_vowel_match`, `fil_onset_match`,
+    /// `fil_coda_match`, `fil_phonetic_equal`) computed from `self.inputs`.
+    ///
+    /// Unlike [`Self::from_slice`] and friends' `include_word_level_features`
+    /// flag, this is a separate opt-in step: it depends on the `tagabaybay`
+    /// nativization adapter, is Filipino-specific, and isn't meaningful for
+    /// English-only datasets. Columns already present (by name) are left
+    /// untouched, so calling this twice is a no-op.
+    pub fn with_fil_features(mut self) -> Result<Self> {
+        let missing_features: Vec<&'static str> = fil_features::FIL_FEATURES
+            .iter()
+            .copied()
+            .filter(|name| !self.algorithm_names.iter().any(|existing| existing == name))
+            .collect();
+
+        if missing_features.is_empty() {
+            return Ok(self);
+        }
+
+        let extra_scores: Vec<Vec<f32>> = self
+            .inputs
+            .par_iter()
+            .map(|(left, right)| fil_features::feature_values(left, right, &missing_features))
+            .collect();
+
+        self.algorithm_names
+            .extend(missing_features.iter().map(|name| name.to_string()));
+        for (scores, extra) in self.base_scores.iter_mut().zip(extra_scores) {
+            scores.extend(extra);
+        }
+
         self.validate_shape()?;
         Ok(self)
     }
@@ -201,6 +273,15 @@ impl ScoreMatrix {
                     } else {
                         0.0
                     }
+                }
+                "consonant_count_diff" => {
+                    Self::count_consonants(left).abs_diff(Self::count_consonants(right)) as f32
+                }
+                "syllable_diff" => {
+                    Self::count_syllables(left).abs_diff(Self::count_syllables(right)) as f32
+                }
+                "vowel_count_diff" => {
+                    Self::count_vowels(left).abs_diff(Self::count_vowels(right)) as f32
                 }
                 _ => unreachable!("unknown length feature name"),
             })

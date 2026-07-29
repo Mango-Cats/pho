@@ -14,6 +14,7 @@ parquet = { version = "58.2.0", features = ["arrow"] }
 rand = "0.8"
 rayon = "1.12.0"
 serde = { version = "1.0", features = ["derive"] }
+tagabaybay = { git = "https://github.com/Mango-Cats/tagabaybay" }
 thiserror = "2.0.18"
 toml = "1.1.0"
 unicode-segmentation = "1.11.0"

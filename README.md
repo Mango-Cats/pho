@@ -159,13 +159,28 @@ Row order matches the input.
 - `--delimiter <char>`: CSV delimiter byte (default: `,`)
 - `--no-headers`: treat input as headerless
 - `--flexible`: allow variable-length rows
-- `--include-word-features`: add length/position-based features:
-  `len_x1`, `len_x2`, `len_min`, `len_max`, `len_diff`, `len_ratio`,
-  `common_prefix_len`, `common_prefix_ratio`, `common_suffix_len`,
-  `common_suffix_ratio`, `first_mismatch_pos`, `first_char_match`. These are
-  always computed on the raw `x_1`/`x_2` strings (no `case_insensitive`
-  option). If a configured algorithm is named `Prefix`, its column is renamed
-  to `common_prefix_ratio` instead of duplicating that feature.
+- `--include-word-features`: add structural/prosodic features computed on the
+  raw `x_1`/`x_2` strings (no `case_insensitive` option): `len_x1`, `len_x2`,
+  `len_min`, `len_max`, `len_diff`, `len_ratio`, `common_prefix_len`,
+  `common_prefix_ratio`, `common_suffix_len`, `common_suffix_ratio`,
+  `first_mismatch_pos`, `first_char_match`, `consonant_count_diff`,
+  `syllable_diff`, `vowel_count_diff`. The last three are absolute-difference
+  counts (consonant letters, vowel-nucleus runs, vowel letters) using the
+  plain 5-vowel Latin set (`a`, `e`, `i`, `o`, `u`; no `y`). If a configured
+  algorithm is named `Prefix`, its column is renamed to `common_prefix_ratio`
+  instead of duplicating that feature.
+- `--include-fil-features`: add Filipino (Tagalog) loanword-nativization
+  indicators: `fil_vowel_skeleton_match`, `fil_penult_vowel_match`,
+  `fil_onset_match`, `fil_coda_match`, `fil_phonetic_equal`. Each is `1`/`0`,
+  not a similarity score — they flag whether a Filipino speaker would hear
+  the pair as structurally alike *after* nativizing loanword spelling (e.g.
+  `chocolate` and `tsokolate` nativize to the same spelling and agree on
+  every indicator despite sharing no raw prefix). Nativization is done
+  in-process via the [`tagabaybay`](https://github.com/Mango-Cats/tagabaybay)
+  adapter with G2P-based adaptation disabled (it would otherwise shell out to
+  a Python/espeak-ng subprocess on first use), so a handful of
+  ambiguous-vowel words may nativize slightly differently here than through
+  `tbb-cli`, which enables G2P by default.
 - `--progress`: show a progress bar
 
 ## Moving Around
