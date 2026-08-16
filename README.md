@@ -33,16 +33,9 @@ to get a Rust Jupyter Kernel.
 
 ## CLI with `phoc`
 
-`phoc` generates similarity feature datasets from CSV input.
-
-### Quick start
-
-```bash
-cargo run --bin phoc -- \
-   --input examples/data/dataset.csv \
-   --output output.csv \
-   --progress
-```
+`phoc` has two modes: `csv` batch-scores a whole dataset, and three
+single-pair subcommands (`orth`, `phon-nipa`, `phon-yipa`) score one pair of
+strings immediately and print the result to the terminal.
 
 ### Build only phoc
 
@@ -50,12 +43,64 @@ cargo run --bin phoc -- \
 cargo build --bin phoc
 ```
 
-### Configs
+### Single-pair mode
 
-`phoc` loads algorithm configs from the directory you provide:
+Each single-pair subcommand runs every algorithm in its group — loaded from
+`--config-dir`, or by default the repo's ready-made
+[`algorithm_configs/eng`](algorithm_configs/eng), which is **embedded into
+the `phoc` binary at compile time** (via `include_dir!`) so a built binary
+works out of the box no matter what directory it's run from or copied to —
+on one `(x, y)` pair and prints `name : score`, names left-aligned so the
+colons line up, sorted by name. The three groups:
+
+- **`orth`** — plain orthographic / string-similarity algorithms: general
+  string metrics (Levenshtein, Jaro-Winkler, N-gram, LCS family, TF-IDF,
+  Prefix, Smith-Waterman, Keyboard, Visual-Weighted) that aren't designed to
+  model pronunciation, even though they're commonly run on spelling.
+- **`phon-nipa`** — orthography-based phonetic algorithms: phonetic
+  algorithms designed to run on plain spelling rather than IPA (Soundex,
+  Metaphone, Double Metaphone, Editex, BI-SIM, Syllable, Needleman-Wunsch).
+- **`phon-yipa`** — IPA-based phonetic algorithms: algorithms that require
+  IPA transcriptions (ALINE).
 
 ```bash
-cargo run --bin phoc -- \
+$ cargo run -q --bin phoc -- orth hello hilo
+jaro_winkler          : 0.8050
+keyboard              : 0.7549
+lcs                   : 0.6000
+...
+
+$ cargo run -q --bin phoc -- phon-nipa hello hilo
+bisim            : 0.4000
+double_metaphone : 1.0000
+editex           : 0.8667
+...
+
+$ cargo run -q --bin phoc -- phon-yipa hɛloʊ hilo
+aline : 0.8966
+```
+
+Pass `--config-dir path/to/configs` to score against a custom set of configs
+instead of the embedded defaults; only the `.toml` files whose `algorithm`
+key falls in that subcommand's group are used. Note that editing files under
+`algorithm_configs/eng` requires rebuilding `phoc` to take effect, since
+they're baked into the binary rather than read at runtime.
+
+### Batch (CSV) mode
+
+`phoc csv` generates a similarity feature dataset from CSV input.
+
+```bash
+cargo run --bin phoc -- csv \
+   --input examples/data/dataset.csv \
+   --output output.csv \
+   --progress
+```
+
+`phoc csv` loads algorithm configs from the directory you provide:
+
+```bash
+cargo run --bin phoc -- csv \
    --input examples/data/dataset.csv \
    --output output.csv \
    --config-dir path/to/configs

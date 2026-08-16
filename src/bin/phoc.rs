@@ -1,4 +1,5 @@
-use clap::Parser;
+use clap::{Args, Parser, Subcommand};
+use include_dir::{Dir, include_dir};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -12,13 +13,45 @@ use pho::dataset::{Row, ScoreMatrix};
 use pho::utils::io::{CSVOptions, read_csv_records};
 use pho::{Error, Result};
 
+/// Ready-made algorithm configs shipped in the repo, embedded into the
+/// binary at compile time. Used as the default config source for the
+/// single-pair subcommands (`orth`, `phon-nipa`, `phon-yipa`) so they work
+/// out of the box without `--config-dir`, regardless of the current working
+/// directory the binary happens to be run from (unlike a plain relative
+/// path, which would only resolve when run from the repo root).
+static DEFAULT_CONFIGS: Dir = include_dir!("$CARGO_MANIFEST_DIR/algorithm_configs/eng");
+
 #[derive(Parser, Debug)]
 #[command(
     name = "phoc",
     version,
-    about = "Generate a similarity feature CSV from input pairs."
+    about = "Compute phonetic/orthographic similarity: batch-score a CSV, or run one pair immediately."
 )]
 struct Cli {
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand, Debug)]
+enum Command {
+    /// Generate a similarity feature CSV from input pairs (batch mode).
+    Csv(CsvArgs),
+    /// Run every plain orthographic (non-phonetic) string-similarity
+    /// algorithm on one pair of spellings, e.g. `phoc orth hello hilo`.
+    Orth(PairArgs),
+    /// Run every orthography-based phonetic algorithm (phonetic algorithms
+    /// that take plain spelling rather than IPA, e.g. Soundex, Metaphone) on
+    /// one pair of spellings.
+    #[command(name = "phon-nipa")]
+    PhonNipa(PairArgs),
+    /// Run every IPA-based phonetic algorithm (e.g. ALINE) on one pair of
+    /// IPA transcriptions.
+    #[command(name = "phon-yipa")]
+    PhonYipa(PairArgs),
+}
+
+#[derive(Args, Debug)]
+struct CsvArgs {
     /// Input CSV file containing x_1/x_2 columns (optional: label, t_1, t_2).
     #[arg(short, long)]
     input: PathBuf,
@@ -53,31 +86,115 @@ struct Cli {
     progress: bool,
 }
 
+#[derive(Args, Debug)]
+struct PairArgs {
+    /// First input string.
+    x: String,
+    /// Second input string.
+    y: String,
+    /// Directory containing algorithm config TOML files to draw this
+    /// group's algorithms from. Defaults to the repo's ready-made configs,
+    /// which are embedded in the binary at build time.
+    #[arg(long)]
+    config_dir: Option<PathBuf>,
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let delimiter = parse_delimiter(&cli.delimiter)?;
+    match cli.command {
+        Command::Csv(args) => run_csv(args),
+        Command::Orth(args) => run_pair(args, Group::Orth),
+        Command::PhonNipa(args) => run_pair(args, Group::PhonNipa),
+        Command::PhonYipa(args) => run_pair(args, Group::PhonYipa),
+    }
+}
+
+fn run_csv(args: CsvArgs) -> Result<()> {
+    let delimiter = parse_delimiter(&args.delimiter)?;
 
     // Read the input CSV keeping every original column. Only x_1/x_2/t_1/t_2/label
     // are used for scoring; all other columns are ignored for computation but
     // carried through verbatim to the output.
     let (headers, raw_rows, rows) = read_csv_records::<Row, _>(
-        &cli.input,
+        &args.input,
         Some(CSVOptions {
             delimiter,
-            has_headers: !cli.no_headers,
-            flexible: cli.flexible,
+            has_headers: !args.no_headers,
+            flexible: args.flexible,
         }),
     )?;
 
-    let algorithms = load_algorithms(&cli.config_dir)?;
+    let algorithms = load_algorithms(&args.config_dir)?
+        .into_iter()
+        .map(|(name, _kind, algorithm)| (name, algorithm))
+        .collect();
     let mut dataset =
-        ScoreMatrix::from_named(algorithms, &rows, cli.include_word_features, cli.progress)?;
-    if cli.include_fil_features {
+        ScoreMatrix::from_named(algorithms, &rows, args.include_word_features, args.progress)?;
+    if args.include_fil_features {
         dataset = dataset.with_fil_features()?;
     }
     let dataset = dataset.with_passthrough(headers, raw_rows)?;
 
-    dataset.export(&cli.output.to_string_lossy())?;
+    dataset.export(&args.output.to_string_lossy())?;
+    Ok(())
+}
+
+/// Which of the three CLI-facing algorithm groups a config belongs to.
+///
+/// This is a presentation-layer grouping for `phoc`'s single-pair
+/// subcommands, distinct from [`Algorithm::requires_transcription`] (which
+/// only distinguishes IPA input from everything else): `PhonNipa` and `Orth`
+/// both take plain spelling, but only `PhonNipa` algorithms are *designed*
+/// to model pronunciation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Group {
+    /// Plain orthographic / string-similarity algorithms: general string
+    /// metrics, not designed to model pronunciation, even though they're
+    /// commonly run on spelling here.
+    Orth,
+    /// Phonetic algorithms designed to run on plain spelling rather than
+    /// IPA (Soundex, Metaphone, Double Metaphone, Editex, BI-SIM, Syllable,
+    /// Needleman-Wunsch with its phonetic-confusability matrix).
+    PhonNipa,
+    /// Phonetic algorithms that require IPA transcriptions (ALINE).
+    PhonYipa,
+}
+
+impl Group {
+    fn of(kind: &str) -> Self {
+        match kind {
+            "aline" => Group::PhonYipa,
+            "bisim" | "double_metaphone" | "doublemetaphone" | "editex" | "metaphone"
+            | "needleman_wunsch" | "needlemanwunsch" | "soundex" | "syllable" => Group::PhonNipa,
+            _ => Group::Orth,
+        }
+    }
+}
+
+/// Run every algorithm in `group` (loaded from `args.config_dir`, or the
+/// embedded default configs when unset) on `(args.x, args.y)` and print
+/// `name : score` for each, names left-aligned to the widest name so the
+/// colons line up, sorted by name.
+fn run_pair(args: PairArgs, group: Group) -> Result<()> {
+    let algorithms = match &args.config_dir {
+        Some(config_dir) => load_algorithms(config_dir)?,
+        None => load_embedded_algorithms()?,
+    };
+
+    let mut results: Vec<(String, f32)> = algorithms
+        .into_iter()
+        .filter(|(_, kind, _)| Group::of(kind) == group)
+        .map(|(name, _kind, algorithm)| {
+            let score = algorithm.similarity(&args.x, &args.y)?;
+            Ok((name, score))
+        })
+        .collect::<Result<_>>()?;
+    results.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let width = results.iter().map(|(name, _)| name.len()).max().unwrap_or(0);
+    for (name, score) in &results {
+        println!("{name:width$} : {score:.4}");
+    }
     Ok(())
 }
 
@@ -175,27 +292,81 @@ impl Algorithm for EditOperationColumn {
 /// an `lcs.toml` containing just `algorithm = "lcs"` into the directory. There
 /// is no implicit set of always-on algorithms — a column exists iff a file
 /// asks for it.
-fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, Box<dyn Algorithm>)>> {
+///
+/// Returns `(column_name, kind, algorithm)` triples; `kind` is the config's
+/// `algorithm` key (used by [`Group::of`] to sort configs into `phoc`'s
+/// single-pair subcommand groups).
+fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, String, Box<dyn Algorithm>)>> {
     let mut paths: Vec<PathBuf> = fs::read_dir(config_dir)?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))
         .filter(|path| path.extension().and_then(|ext| ext.to_str()) == Some("toml"))
         .collect();
     paths.sort();
 
-    let mut algorithms = Vec::with_capacity(paths.len());
-    for path in paths {
-        let column_name = path
-            .file_stem()
-            .and_then(|stem| stem.to_str())
-            .unwrap_or_default()
-            .to_string();
-        let algorithm = build_algorithm(&path)?;
+    let sources = paths
+        .into_iter()
+        .map(|path| {
+            let column_name = path
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .unwrap_or_default()
+                .to_string();
+            let label = path.display().to_string();
+            let content = fs::read_to_string(&path)?;
+            Ok((column_name, label, content))
+        })
+        .collect::<Result<Vec<_>>>()?;
+
+    algorithms_from_sources(sources)
+}
+
+/// Same as [`load_algorithms`], but sourced from the ready-made configs
+/// embedded in the binary (see [`DEFAULT_CONFIGS`]) instead of a directory
+/// on disk.
+fn load_embedded_algorithms() -> Result<Vec<(String, String, Box<dyn Algorithm>)>> {
+    let mut files: Vec<_> = DEFAULT_CONFIGS
+        .files()
+        .filter(|file| file.path().extension().and_then(|ext| ext.to_str()) == Some("toml"))
+        .collect();
+    files.sort_by_key(|file| file.path());
+
+    let sources = files
+        .into_iter()
+        .map(|file| {
+            let column_name = file
+                .path()
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .unwrap_or_default()
+                .to_string();
+            let label = format!("<embedded>/{}", file.path().display());
+            let content = file.contents_utf8().ok_or_else(|| {
+                Error::InvalidDatasetShape(format!("embedded config {label} is not valid UTF-8"))
+            })?;
+            Ok((column_name, label, content.to_string()))
+        })
+        .collect::<Result<Vec<_>>>()?;
+
+    algorithms_from_sources(sources)
+}
+
+/// Build every algorithm from `(column_name, label, toml_content)` sources,
+/// fanning `separate = true` configs out into three columns each (see
+/// [`load_algorithms`]). `label` identifies the source in error messages
+/// (a file path, or a marker for embedded configs).
+fn algorithms_from_sources(
+    sources: Vec<(String, String, String)>,
+) -> Result<Vec<(String, String, Box<dyn Algorithm>)>> {
+    let mut algorithms = Vec::with_capacity(sources.len());
+    for (column_name, label, content) in sources {
+        let (kind, algorithm) = build_algorithm(&label, &content)?;
 
         if algorithm.separate_enabled() {
             let shared: Arc<dyn Algorithm> = Arc::from(algorithm);
             for op in EditOperation::ALL {
                 algorithms.push((
                     format!("{column_name}_{}", op.suffix()),
+                    kind.clone(),
                     Box::new(EditOperationColumn {
                         inner: shared.clone(),
                         op,
@@ -203,34 +374,36 @@ fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, Box<dyn Algorithm>)
                 ));
             }
         } else {
-            algorithms.push((column_name, algorithm));
+            algorithms.push((column_name, kind, algorithm));
         }
     }
 
     Ok(algorithms)
 }
 
-/// Build one algorithm from a config file, dispatching on its `algorithm` key.
+/// Build one algorithm from a config's TOML content, dispatching on its
+/// `algorithm` key. `label` identifies the source for error messages.
 ///
-/// The rest of the file is the algorithm's own config (the `algorithm` key is
-/// ignored by the config structs). Config-less algorithms only need the key.
-fn build_algorithm(path: &Path) -> Result<Box<dyn Algorithm>> {
-    let content = fs::read_to_string(path)?;
-    let table: toml::Table = toml::from_str(&content)?;
+/// The rest of the content is the algorithm's own config (the `algorithm`
+/// key is ignored by the config structs). Config-less algorithms only need
+/// the key. Returns the `algorithm` key alongside the built algorithm.
+fn build_algorithm(label: &str, content: &str) -> Result<(String, Box<dyn Algorithm>)> {
+    let table: toml::Table = toml::from_str(content)?;
     let kind = table
         .get("algorithm")
         .and_then(|value| value.as_str())
         .ok_or_else(|| Error::MissingAlgorithmKey {
-            file: path.display().to_string(),
+            file: label.to_string(),
         })?
         .trim()
         .to_ascii_lowercase();
 
-    // Deserialize the whole file into the selected config type. The `algorithm`
-    // key is an unknown field to these structs and is silently ignored.
+    // Deserialize the whole content into the selected config type. The
+    // `algorithm` key is an unknown field to these structs and is silently
+    // ignored.
     macro_rules! build {
         ($ty:ty) => {
-            Box::new(toml::from_str::<$ty>(&content)?) as Box<dyn Algorithm>
+            Box::new(toml::from_str::<$ty>(content)?) as Box<dyn Algorithm>
         };
     }
 
@@ -257,10 +430,10 @@ fn build_algorithm(path: &Path) -> Result<Box<dyn Algorithm>> {
         other => {
             return Err(Error::UnknownAlgorithm {
                 algorithm: other.to_string(),
-                file: path.display().to_string(),
+                file: label.to_string(),
             });
         }
     };
 
-    Ok(algorithm)
+    Ok((kind, algorithm))
 }
