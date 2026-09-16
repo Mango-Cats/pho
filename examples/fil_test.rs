@@ -6,7 +6,10 @@ use std::error::Error;
 
 const ENG_TOML_PATH: &str = "algorithm_configs/eng/aline.toml";
 const FIL_TOML_PATH: &str = "algorithm_configs/fil/filipino_aline.toml";
+
 const EVAL_SET: &str = "algorithm_configs/fil/data/eval.csv";
+// const EVAL_SET: &str = "algorithm_configs/fil/data/ph_lasa_en.csv";
+// const EVAL_SET: &str = "algorithm_configs/fil/data/ph_lasa_fil.csv";
 
 #[derive(Debug, serde::Deserialize)]
 struct Row {
