@@ -68,8 +68,10 @@ fn load_fil() -> Aline {
 
 // i used claude to help format this lol
 fn print_scores(pairs: &[Pair]) {
-    let mut pass = 0;
-    let mut fail = 0;
+    let mut eng_passes = 0;
+    let mut eng_fails = 0;
+    let mut fil_passes = 0;
+    let mut fil_fails = 0;
 
     println!(
         "{:<12} {:<12} {:<10} {:>12} {:>12}  {}",
@@ -81,10 +83,12 @@ fn print_scores(pairs: &[Pair]) {
         let passed = (p.eng_score > p.fil_score && p.language == "english")
             || (p.fil_score > p.eng_score && p.language == "filipino");
 
-        if passed {
-            pass += 1;
-        } else {
-            fail += 1;
+        match (p.language.as_str(), passed) {
+            ("english", true) => eng_passes += 1,
+            ("english", false) => eng_fails += 1,
+            ("filipino", true) => fil_passes += 1,
+            ("filipino", false) => fil_fails += 1,
+            _ => {}
         }
 
         let result = if passed { "✓" } else { "x" };
@@ -96,5 +100,13 @@ fn print_scores(pairs: &[Pair]) {
     }
 
     println!("{}", "-".repeat(70));
-    println!("Passed: {pass}   Failed: {fail}   Total: {}", pass + fail);
+
+    println!("English > Passed: {eng_passes}   Failed: {eng_fails}   Total: {}", eng_passes + eng_fails);
+    println!("Filipino > Passed: {fil_passes}   Failed: {fil_fails}   Total: {}", fil_passes + fil_fails);
+    println!(
+        "Overall > Passed: {}   Failed: {}   Total: {}",
+        eng_passes + fil_passes,
+        eng_fails + fil_fails,
+        pairs.len()
+    );
 }
