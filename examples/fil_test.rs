@@ -66,16 +66,35 @@ fn load_fil() -> Aline {
     }
 }
 
+// i used claude to help format this lol
 fn print_scores(pairs: &[Pair]) {
     let mut pass = 0;
     let mut fail = 0;
 
+    println!(
+        "{:<12} {:<12} {:<10} {:>12} {:>12}  {}",
+        "A", "B", "Language", "EngScore", "FilScore", "Result"
+    );
+    println!("{}", "-".repeat(70));
+
     for p in pairs {
-        println!("{:?}", p);
-        if ((p.eng_score > p.fil_score) && p.language == "english") || ((p.fil_score > p.eng_score) && p.language == "filipino") {
-            println!("✓ yipee");
+        let passed = (p.eng_score > p.fil_score && p.language == "english")
+            || (p.fil_score > p.eng_score && p.language == "filipino");
+
+        if passed {
+            pass += 1;
         } else {
-            println!("x :(");
+            fail += 1;
         }
+
+        let result = if passed { "✓" } else { "x" };
+
+        println!(
+            "{:<12} {:<12} {:<10} {:>12} {:>12}  {:>4}",
+            p.a, p.b, p.language, p.eng_score, p.fil_score, result
+        );
     }
+
+    println!("{}", "-".repeat(70));
+    println!("Passed: {pass}   Failed: {fail}   Total: {}", pass + fail);
 }
