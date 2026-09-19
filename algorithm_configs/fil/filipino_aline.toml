@@ -6,7 +6,7 @@ algorithm = "aline"
 # 4. Synchronic analysis of tagalog phonemes - Yap 1967, https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/831/items/1.0105401
 
 # ================================ FEATURES ================================
-variant = "mango_cats"
+variant = "kondrak"
 epsilon = 0.001
 
 [costs]
@@ -24,7 +24,7 @@ nasal = 20
 retroflex = 10
 lateral = 10
 aspirated = 5
-long = 10
+long = 0
 high = 3
 back = 2
 round = 2
