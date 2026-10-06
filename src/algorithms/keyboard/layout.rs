@@ -1,7 +1,7 @@
 /// QWERTY key positions as (row, col) with fractional offsets per row.
 ///
-/// Rows 1-3 are staggered: row 1 shifts right by 0.5, row 2 by 1.0, row 3
-/// by 1.5 — matching the physical layout so diagonal neighbours are ~1.0
+/// Rows 1-3 are staggered: row 1 shifts right by 0.5, row 2 by 1.0, and row 3
+/// by 1.5 to match the physical layout, so diagonal neighbours are ~1.0
 /// apart in Euclidean space.
 fn key_position(c: char) -> Option<(f32, f32)> {
     let c = c.to_ascii_lowercase();

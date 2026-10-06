@@ -35,7 +35,7 @@ pub fn syllabify(word: &str) -> Vec<String> {
     }
 
     if nuclei.is_empty() {
-        // All consonants — treat as one syllable.
+        // All consonants: treat as one syllable.
         return vec![chars.iter().collect()];
     }
 

@@ -57,7 +57,7 @@ pub struct ConsonantFeatures {
 }
 
 impl ConsonantFeatures {
-    /// Infallible constructor for ConsonantFeatures
+    /// Creates consonant features.
     pub fn new(common: CommonFeatures, aspirated: Binary) -> Self {
         Self { common, aspirated }
     }
@@ -75,7 +75,7 @@ pub struct VowelFeatures {
 }
 
 impl VowelFeatures {
-    /// Infallible constructor for VowelFeatures
+    /// Creates vowel features.
     pub fn new(
         common: CommonFeatures,
         back: Back,
@@ -93,7 +93,7 @@ impl VowelFeatures {
     }
 }
 
-/// An enum consonant and vowel features.
+/// Phonetic features for either a consonant or a vowel.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum PhoneticFeatures {

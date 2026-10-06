@@ -3,7 +3,7 @@
 //! These mirror the `fil_*` columns in the `walter` pipeline's
 //! `src/pipeline/features.py`, which derives them from the same nativized
 //! spelling produced by the `tagabaybay` adapter (there, reached over a
-//! subprocess/JSONL protocol to `tbb-cli`; here, linked in-process). They are
+//! subprocess/JSONL protocol to `tbb-cli`, but here linked in-process). They are
 //! indicators of whether a Filipino speaker would hear the two names as
 //! structurally alike after loanword nativization, not similarity scores.
 //!
@@ -60,7 +60,7 @@ fn vowel_skeleton(nativized: &str) -> String {
 }
 
 /// The penultimate (default-stress) vowel, falling back to the only vowel in
-/// a monosyllable; `None` if there is no vowel at all.
+/// a monosyllable, or `None` if there is no vowel at all.
 fn penult_vowel(vowels: &str) -> Option<char> {
     let chars: Vec<char> = vowels.chars().collect();
     if chars.len() >= 2 {

@@ -20,7 +20,7 @@ pub fn normalize(weights: &mut [f32], config: EnsembleConfig) {
 
     match config {
         EnsembleConfig::Linear => {
-            // No constraints; weights can be any finite value
+            // No constraints, weights can be any finite value
             // Nothing to do after cleaning up non-finite values
         }
         EnsembleConfig::Conical => {

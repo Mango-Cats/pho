@@ -60,7 +60,7 @@ struct CsvArgs {
     output: PathBuf,
     /// Directory containing algorithm config TOML files. Each `.toml` file
     /// produces one feature column named after the file (or three, if the
-    /// file sets `separate = true`); the file's `algorithm` key selects which
+    /// file sets `separate = true`). The file's `algorithm` key selects which
     /// algorithm computes it.
     #[arg(long)]
     config_dir: PathBuf,
@@ -222,9 +222,9 @@ fn parse_delimiter(delimiter: &str) -> Result<u8> {
 /// length delta between the two strings) an artifact of arbitrary pair
 /// order rather than a real signal. `Indels` (their order-invariant sum)
 /// and `IndelDiff` (the order-invariant absolute difference) carry the same
-/// information — total indel operations and absolute length delta — without
-/// the sign-arbitrary split. Substitutions are symmetric under swapping the
-/// pair and need no such transform.
+/// information, specifically total indel operations and absolute length delta,
+/// without the sign-arbitrary split. Substitutions are symmetric under swapping
+/// the pair and need no such transform.
 #[derive(Debug, Clone, Copy)]
 enum EditOperation {
     Substitutions,
@@ -277,28 +277,26 @@ impl Algorithm for EditOperationColumn {
     }
 }
 
-/// Load one algorithm per `.toml` file in `config_dir`.
+/// Loads one algorithm per `.toml` file in `config_dir`.
 ///
 /// Each file yields one `(column_name, algorithm)` pair where the column name
 /// is the file stem (so `my_sim.toml` produces a `my_sim` column) and the
-/// algorithm is selected by the file's required `algorithm` key — *unless*
-/// the config sets `separate = true` (only meaningful for edit-distance
-/// algorithms that implement `edit_operation_counts`), in which case it
-/// yields three columns instead: `{stem}_substitutions`, `{stem}_indels`,
-/// and `{stem}_indel_diff` — substitutions from the minimal-cost alignment,
-/// the total insertion+deletion count, and the absolute difference between
-/// insertions and deletions, rather than a single summed distance (see
-/// [`EditOperation`] for why insertions/deletions aren't reported
-/// separately). Files are processed in sorted order for deterministic
-/// output.
+/// algorithm is selected by the file's required `algorithm` key. If the config
+/// sets `separate = true` (only meaningful for edit-distance algorithms that
+/// implement `edit_operation_counts`), it yields three columns instead:
+/// `{stem}_substitutions`, `{stem}_indels`, and `{stem}_indel_diff`. These
+/// correspond to substitutions from the minimal-cost alignment, total indels,
+/// and the absolute difference between insertions and deletions, rather than
+/// a single summed distance (see [`EditOperation`]). Files are processed in
+/// sorted order for deterministic output.
 ///
-/// This is also how "config-less" algorithms are included: to add `LCS`, drop
-/// an `lcs.toml` containing just `algorithm = "lcs"` into the directory. There
-/// is no implicit set of always-on algorithms — a column exists iff a file
-/// asks for it.
+/// This is also how simple algorithms are included: to add `LCS`, drop an
+/// `lcs.toml` containing just `algorithm = "lcs"` into the directory. There
+/// is no implicit set of default algorithms. A column exists only when a file
+/// configures it.
 ///
-/// Returns `(column_name, kind, algorithm)` triples; `kind` is the config's
-/// `algorithm` key (used by [`Group::of`] to sort configs into `phoc`'s
+/// Returns `(column_name, kind, algorithm)` triples. Here `kind` is the config's
+/// `algorithm` key (used by `Group::of` to sort configs into `phoc`'s
 /// single-pair subcommand groups).
 fn load_algorithms(config_dir: &Path) -> Result<Vec<(String, String, Box<dyn Algorithm>)>> {
     let mut paths: Vec<PathBuf> = fs::read_dir(config_dir)?

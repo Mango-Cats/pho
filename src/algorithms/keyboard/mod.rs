@@ -7,9 +7,9 @@
 //! source of handwriting and typing confusions in clinical settings) are
 //! penalised less than arbitrary substitutions.
 //!
-//! The similarity is $1 - \text{normalized\_distance}$, where the normalized
-//! distance is the keyboard edit distance divided by `max(|x|, |y|)` — the
-//! maximum possible cost when every position requires a full insertion or
+//! The similarity is 1.0 minus normalized distance. The normalized
+//! distance is the keyboard edit distance divided by `max(|x|, |y|)`,
+//! which is the maximum possible cost when every position requires an insertion or
 //! deletion.
 
 pub mod config;
@@ -25,7 +25,7 @@ fn substitution_cost(a: char, b: char, scale: f32) -> f32 {
     }
     match key_distance(a, b) {
         Some(d) => (d / MAX_KEY_DISTANCE * scale).clamp(0.0, scale),
-        // Characters not in the layout (e.g. non-ASCII) → treat as full cost.
+        // Characters not in the layout (such as non-ASCII) -> treat as full cost.
         None => scale,
     }
 }

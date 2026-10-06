@@ -8,7 +8,7 @@ pub struct Keyboard {
     /// Cost per deletion.
     pub(crate) delete_cost: f32,
     /// Scale factor for substitution cost derived from keyboard distance.
-    /// substitution_cost = distance / MAX_KEY_DISTANCE × scale.
+    /// substitution_cost = (distance / MAX_KEY_DISTANCE) * scale.
     /// A scale of 1.0 keeps substitution cost in [0, 1].
     pub(crate) substitution_scale: f32,
     pub(crate) case_insensitive: bool,

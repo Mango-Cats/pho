@@ -5,9 +5,9 @@
 ///
 /// - Same character: +2
 /// - Phonetically close pair: +1 (e.g. f/v, d/t, b/p, m/n, s/z, c/k, i/y)
-/// - Unrelated: −1
+/// - Unrelated: -1
 ///
-/// The matrix is symmetric and 26 × 26 (a=0 … z=25).
+/// The matrix is symmetric and 26 by 26 (a=0 through z=25).
 pub struct DrugNameMatrix {
     data: [[f32; 26]; 26],
 }
@@ -38,7 +38,7 @@ impl DrugNameMatrix {
             b"uo", // rounded back vowels
             b"cq", // both map to /k/
             b"xz", // both end in /z/ in many drug names
-            b"ph", // 'ph' is often /f/; single 'h' vs 'f' confusion
+            b"ph", // 'ph' is often /f/, creating single 'h' vs 'f' confusion
         ];
 
         for group in similar {
@@ -72,7 +72,7 @@ impl DrugNameMatrix {
         }
     }
 
-    /// Self-alignment score for a string — the maximum achievable score.
+    /// Self-alignment score for a string, representing the maximum achievable score.
     pub fn self_score(&self, chars: &[char]) -> f32 {
         chars.iter().map(|&c| self.score(c, c)).sum()
     }

@@ -8,9 +8,9 @@
 //!
 //! ## Normalization
 //!
-//! The raw SW score is divided by `min(|x|, |y|) × match_score` — the
-//! maximum possible score for the shorter string aligned perfectly —
-//! giving a value in $[0, 1]$.
+//! The raw score is divided by `min(|x|, |y|) * match_score`, which is the
+//! maximum possible score for the shorter string aligned perfectly.
+//! This yields a normalized score in [0, 1].
 
 mod alignment;
 pub mod config;

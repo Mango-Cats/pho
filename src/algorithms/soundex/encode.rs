@@ -35,7 +35,7 @@ pub fn soundex(s: &str) -> String {
 
     for &c in &chars[1..] {
         if c == 'H' || c == 'W' {
-            // Transparent — do not update prev_code.
+            // Transparent: do not update prev_code.
             continue;
         }
 
@@ -51,7 +51,7 @@ pub fn soundex(s: &str) -> String {
                 break;
             }
         }
-        // Same code as previous → suppress.
+        // Same code as previous: suppress.
     }
 
     while result.len() < 4 {

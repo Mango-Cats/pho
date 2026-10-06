@@ -2,10 +2,10 @@
 //!
 //! Double Metaphone phonetic similarity (Lawrence Philips, 2000).
 //!
-//! Each string produces a *primary* and *secondary* code, accounting for
-//! multiple European-origin pronunciations. The similarity is the maximum
-//! Jaro score across all four primary/secondary code pairings — ensuring
-//! that a match on either variant counts.
+//! Each string produces a primary and secondary code, accounting for
+//! multiple European pronunciations. The similarity is the highest
+//! Jaro score across all four code pairings, ensuring that a match on
+//! either variant counts.
 
 pub mod config;
 mod encode;

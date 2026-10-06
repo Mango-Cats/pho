@@ -33,7 +33,7 @@ fn build_matrix(x: &[char], y: &[char], config: &Levenshtein) -> (Vec<f32>, usiz
     (distance, x_length, y_length)
 }
 
-/// Compute the Levenshtein edit distance between two character sequences.
+/// Computes the Levenshtein edit distance between two character sequences.
 ///
 /// Uses a dynamic programming table where `distance[i][j]` represents the
 /// minimum cost to transform `x[0..i]` into `y[0..j]`.
@@ -42,13 +42,12 @@ pub fn distance(x: &[char], y: &[char], config: &Levenshtein) -> f32 {
     distance[x_length * (y_length + 1) + y_length]
 }
 
-/// Traceback the minimal-cost alignment path and tally how many
-/// substitutions, insertions, and deletions it uses (matches, where the
-/// characters are equal, are not counted).
+/// Traces back the minimal-cost alignment path to count substitutions,
+/// insertions, and deletions. Matches are not counted.
 ///
-/// On ties between multiple minimal-cost moves at a cell, the diagonal
-/// (match/substitution) move is preferred, then deletion, then insertion —
-/// a deterministic rule chosen to minimize the total operation count.
+/// When multiple minimal-cost moves tie at a cell, preference goes to
+/// the diagonal (match or substitution) move, then deletion, then insertion.
+/// This deterministic rule minimizes the total operation count.
 pub fn operation_counts(x: &[char], y: &[char], config: &Levenshtein) -> (u32, u32, u32) {
     let (distance, x_length, y_length) = build_matrix(x, y, config);
     let index = |i: usize, j: usize| -> usize { i * (y_length + 1) + j };

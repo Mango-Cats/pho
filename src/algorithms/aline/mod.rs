@@ -2,33 +2,28 @@
 //!
 //! A Rust implementation of the ALINE phonetic similarity algorithm.
 //!
-//! This ports the core dynamic-programming scoring logic from Kondrak (2002)
-//! (and mirrors NLTK's reference implementation in `.dev/references/actual_aline.py`).
+//! This ports the core dynamic-programming scoring logic from Kondrak (2002).
 //!
 //! ## What ALINE computes
 //!
-//! - `alignment_score(a, b)` computes the *raw* optimal alignment score
-//!   between two phonetic segment sequences (local by default; see
+//! - `alignment_score(a, b)` computes the raw optimal alignment score
+//!   between two phonetic segment sequences (local by default, see
 //!   `alignment_mode`).
 //! - `similarity(a, b)` computes a normalized score in $[0, 1]$:
 //!   $$\text{similarity}(a,b) = \frac{\text{alignment\_score}(a,b)}{\max(\text{alignment\_score}(a,a),\,\text{alignment\_score}(b,b))}$$
 //!
-//! Local alignment means the DP can restart at 0 (Smith–Waterman style), so the
-//! best-matching subsequences dominate the score. With `alignment_mode =
-//! "global"` leading and trailing mismatches are charged as indels and the
-//! normalized score is clamped to $[0, 1]$.
+//! Local alignment allows the dynamic programming to restart at 0 (Smith-Waterman style),
+//! so best-matching subsequences dominate the score. Global alignment charges leading and
+//! trailing mismatches as indels, clamping the normalized score to $[0, 1]$.
 //!
-//! ## Segments and Unicode
+//! ## Segments and Tokenization
 //!
-//! IPA strings may contain multi-codepoint graphemes (e.g. letters with
-//! combining diacritics). Inputs are first split into Unicode grapheme
-//! clusters, then consecutive clusters are matched greedily (longest first)
-//! against the inventory keys, so tie-barred affricates such as `d͡ʒ` form one
-//! segment. Spellings are interchangeable: tie bars are optional and
-//! ligatures (`ʤ ʧ ʦ ʣ ʨ ʥ ꭧ ꭦ ʩ ʪ ʫ`), rhotic-hook vowels (`ɚ ɝ`) and `ɫ`
-//! match their multi-character forms (`dʒ`, `ə˞`, `l̴`, ...) and vice versa. Multi-grapheme vowel entries (diphthongs) are only matched when
-//! `merge_diphthongs = true`. Stress (`ˈ ˌ`), length (`ː ˑ`) and syllable
-//! (`.`) marks are handled before matching and never become segments.
+//! Inputs are split into grapheme clusters and matched against phonetic
+//! inventory keys longest-first. Spellings are flexible: tie bars are optional,
+//! and standard affricate ligatures or rhotic vowels automatically match their
+//! decomposed forms. Multi-grapheme diphthongs are only merged when
+//! `merge_diphthongs = true`. Stress, length, and syllable marks are handled
+//! during parsing and do not become standalone segments.
 //!
 //! ## Example
 //!
@@ -56,25 +51,24 @@ use unicode_segmentation::UnicodeSegmentation;
 pub(crate) struct Segment {
     /// Inventory key (a key of `Aline::sounds`).
     pub(crate) sym: String,
-    /// 0.0 (unstressed), 0.5 (secondary `ˌ`) or 1.0 (primary `ˈ`).
+    /// Stress weight: 0.0 for unstressed, 0.5 for secondary, 1.0 for primary.
     pub(crate) stress: f32,
-    /// Length override from a following `ː` (full) or `ˑ` (half-long).
-    /// `None` means "use the inventory's `long` value". Only scored for
-    /// vowels; on a consonant it records gemination but is not scored.
+    /// Length override from a following full or half-long length mark.
+    /// `None` means use the inventory default. Only scored for vowels.
     pub(crate) long: Option<f32>,
 }
 
 /// A classified grapheme cluster of the input.
 enum Token<'a> {
-    /// Part of a segment; consecutive graphemes are matched greedily.
+    /// Part of a segment, where consecutive graphemes match greedily.
     Grapheme(&'a str),
-    /// `ˈ` (1.0) or `ˌ` (0.5).
+    /// Stress level: 1.0 for primary or 0.5 for secondary.
     Stress(f32),
-    /// `.`, a syllable boundary.
+    /// Syllable boundary marker ('.').
     SyllableBreak,
-    /// Whitespace, or the end of the input.
+    /// Whitespace or end of input.
     WordBreak,
-    /// `ː` (full length) or `ˑ` (half length), modifying the previous segment.
+    /// Length mark, modifying the previous segment.
     Length {
         half: bool,
     },
@@ -99,7 +93,7 @@ fn classify(g: &str) -> Token<'_> {
     }
 }
 
-/// Tie bars joining two letters into one segment (`t͡ʃ`, `t͜ʃ`).
+/// Tie bars joining two letters into one segment.
 const TIE_BARS: [char; 2] = ['\u{0361}', '\u{035C}'];
 
 /// Single-codepoint IPA symbols that are equivalent to a multi-character
@@ -122,9 +116,7 @@ const MULTI_CHAR_SYMBOLS: [(char, &str); 14] = [
     ('ɫ', "l\u{0334}"),
 ];
 
-/// Spelling-independent form of an IPA string: tie bars are dropped and the
-/// symbols in [`MULTI_CHAR_SYMBOLS`] are expanded, so `ʤ`, `d͡ʒ`, `d͜ʒ` and
-/// `dʒ` all become `dʒ`.
+/// Converts an IPA string into canonical form by stripping tie bars and expanding ligatures.
 fn canonical(ipa: &str) -> String {
     let mut out = String::with_capacity(ipa.len());
     for c in ipa.chars().filter(|c| !TIE_BARS.contains(c)) {
@@ -139,9 +131,8 @@ fn canonical(ipa: &str) -> String {
 /// Inventory lookup that accepts any spelling of a symbol.
 struct Inventory<'a> {
     config: &'a Aline,
-    /// Canonical form -> inventory key. When several keys share a canonical
-    /// form (e.g. `ʤ` and `d͡ʒ`) the shortest, then lexicographically first,
-    /// wins.
+    /// Canonical form to inventory key mapping. When several keys share a canonical
+    /// form, the shortest key wins.
     by_canonical: HashMap<String, &'a str>,
     /// Longest key, in graphemes, over both spellings.
     max_len: usize,
@@ -178,15 +169,10 @@ impl<'a> Inventory<'a> {
     }
 }
 
-/// Greedy longest match of a run of graphemes against the sound inventory.
+/// Matches a run of graphemes against the sound inventory using the longest match.
 ///
-/// Spans are compared by [`canonical`] form, so ligatures, tie-barred and
-/// plain spellings of a symbol are interchangeable. Multi-grapheme vowel keys
-/// (diphthongs such as `aj`) are only matched when `merge_diphthongs` is set;
-/// consonant keys (e.g. `d͡ʒ`) and single-grapheme vowels (e.g. `ɚ`, spelled
-/// `ə˞`) always are.
-/// A grapheme that matches no key is emitted on its own so that validation
-/// can report it.
+/// Spans are compared by canonical form so ligatures and decomposed forms are interchangeable.
+/// Graphemes that match no key are emitted directly so validation can report them.
 fn match_run(run: &[&str], stress: f32, inventory: &Inventory, out: &mut Vec<Segment>) {
     let mut i = 0;
     while i < run.len() {
@@ -212,20 +198,12 @@ fn match_run(run: &[&str], stress: f32, inventory: &Inventory, out: &mut Vec<Seg
     }
 }
 
-/// Parse an IPA string into segments.
+/// Parses an IPA string into segments.
 ///
-/// - Graphemes are matched greedily (longest first) against the inventory.
-/// - `ː` / `ˑ` set the previous segment's length to `binary.plus` / the
-///   midpoint of `binary.plus` and `binary.minus`.
-/// - `.` is a syllable boundary and whitespace a word boundary; neither is a
-///   segment.
-/// - In `Kondrak` mode stress marks are stripped and every stress is 0.0. In
-///   `MangoCats` mode `ˈ` / `ˌ` set stress 1.0 / 0.5 on the segments of the
-///   syllable they precede, which ends at the next `.`, the next stress mark,
-///   or the end of the word. A word with a stress mark but no `.` returns
-///   [`Error::AmbiguousStressScope`] unless `stress_scope_fallback =
-///   "until_next_mark"`, in which case the stress runs to the next mark or
-///   the end of the word.
+/// Graphemes are matched greedily against the inventory. Length marks update the previous
+/// segment, while syllable and word boundaries reset state.
+/// In Kondrak mode, stress marks are ignored. In MangoCats mode, stress marks set the stress
+/// level for following segments until the next syllable or stress marker.
 fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result<Vec<Segment>> {
     let use_stress = matches!(config.variant, AlineVariant::MangoCats);
     let inventory = Inventory::new(config);
@@ -305,12 +283,10 @@ impl Algorithm for Aline {
         true
     }
 
-    /// Normalized similarity `score / max(self_x, self_y)`.
+    /// Normalized similarity: `score / max(self_x, self_y)`.
     ///
-    /// In global alignment mode the raw score can be negative (or, in
-    /// principle, exceed a self-score), so the result is clamped to `[0, 1]`;
-    /// a clamped 0.0 means "at least as bad as the worst global alignment we
-    /// normalize for". Local mode is returned unclamped, as in NLTK.
+    /// In global alignment mode the raw score can be negative, so the result
+    /// is clamped to `[0, 1]`. Local mode is returned unclamped.
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
         use alignment::alignment_score;
 

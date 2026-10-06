@@ -36,7 +36,7 @@ where
 
 /// Serialize a config type into a pretty TOML document and write it to disk.
 ///
-/// This is the inverse of [`read`]. The caller owns the schema
+/// This is the inverse of [`import`]. The caller owns the schema
 /// through `T`.
 pub fn export<T>(file_name: &str, config: &T, append_extension: bool) -> Result<()>
 where
@@ -106,10 +106,10 @@ where
 
 /// CSV reader that also preserves every original column for pass-through.
 ///
-/// Like [`read_csv_as`], each record is deserialized into `T` (which only needs
-/// the columns it cares about — unknown columns are ignored). In addition, this
-/// returns the header names and the raw string cells of every row, so callers
-/// can re-emit the untouched input columns alongside computed output.
+/// Like [`read_csv_as`], each record is deserialized into `T`, ignoring unknown
+/// columns. In addition, this returns the header names and the raw string cells
+/// of every row, so callers can re-emit the untouched input columns alongside
+/// computed output.
 ///
 /// The returned tuple is `(headers, raw_rows, items)`:
 /// - `headers`: the column names. When the input has no header row, synthetic

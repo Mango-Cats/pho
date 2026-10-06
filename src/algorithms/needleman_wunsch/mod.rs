@@ -3,9 +3,9 @@
 //! Needleman-Wunsch global sequence alignment with a drug-name-tuned
 //! substitution matrix.
 //!
-//! The substitution matrix assigns higher scores to phonetically confusable
-//! character pairs (b/p, d/t, f/v, m/n, s/z, c/k, i/y, etc.) — patterns
-//! that commonly cause mix-ups in pharmaceutical prescribing.
+//! The substitution matrix gives higher scores to phonetically confusable
+//! character pairs like b and p, d and t, or s and z, which commonly cause
+//! mix-ups in medical prescriptions.
 //!
 //! ## Normalization
 //!
@@ -15,7 +15,7 @@
 //! $$\text{similarity} = \frac{\text{NW}(x,y) - \text{worst}}{\text{best} - \text{worst}}$$
 //!
 //! where $\text{best} = \max(\text{NW}(x,x),\, \text{NW}(y,y))$ and
-//! $\text{worst} = -\text{gap\_penalty} \times (|x| + |y|)$.
+//! $\text{worst} = -\text{gap\_penalty} * (|x| + |y|)$.
 
 mod alignment;
 pub mod config;

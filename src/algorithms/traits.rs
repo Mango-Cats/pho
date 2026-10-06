@@ -56,9 +56,8 @@ pub trait Algorithm: Send + Sync {
     /// insertions, deletions)`.
     ///
     /// Unlike [`Algorithm::distance`], these are literal operation tallies
-    /// from the alignment path, not weighted costs — so they do not
-    /// necessarily sum back to `distance(x, y)` for algorithms with
-    /// non-uniform costs.
+    /// from the alignment path, not weighted costs. For algorithms with
+    /// non-uniform costs, they do not necessarily sum back to `distance(x, y)`.
     ///
     /// Algorithms without a well-defined edit-operation decomposition can
     /// keep the default implementation, which reports that separated counts
@@ -77,6 +76,7 @@ pub trait Algorithm: Send + Sync {
         false
     }
 
+    /// Returns the short display name of this algorithm.
     fn name(&self) -> &'static str {
         std::any::type_name::<Self>()
             .rsplit("::")

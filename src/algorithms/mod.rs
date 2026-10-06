@@ -1,32 +1,15 @@
 //! # Algorithms
 //!
-//! This module contains the source code for the similarity algorithms.
+//! String and phonetic similarity algorithms.
 //!
-//! ## Algorithms
-//!
-//! - [aline]
-//! - [editex]
-//! - [jaro_winkler]
-//! - [bisim]
-//! - [prefix]
-//! - [levenshtein]
-//! - [ngram]
-//! - [visual]
-//!
-//! ## Polymorphic Algorithms
-//!
-//! The direct algorithm structs implement [`Algorithm`], so they can
-//! be used uniformly without a separate wrapper layer.
-//!
-//! This also allows multiple algorithms to be combined into a single
-//! ensemble, see [ensemble].
+//! Each algorithm struct implements the [`Algorithm`] trait, allowing uniform
+//! scoring across the library. Algorithms can also be combined into a weighted
+//! ensemble using [`crate::ensemble`].
 //!
 //! ## Usage
 //!
-//! The top-level module documentation gives an example of each
-//! algorithm's use. In general, you import the direct algorithm type,
-//! deserialize it from TOML if needed, and then call `similarity(a, b)` on
-//! the resulting value.
+//! Import an algorithm, load its configuration from TOML if needed, and call
+//! `similarity(a, b)` on the instance.
 //!
 
 pub mod aline;

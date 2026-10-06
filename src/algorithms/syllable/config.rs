@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum SyllableMetric {
-    /// Dice coefficient: 2|A∩B| / (|A| + |B|).
+    /// Dice coefficient: 2 * |A and B| / (|A| + |B|).
     #[default]
     Dice,
-    /// Jaccard index: |A∩B| / |A∪B|.
+    /// Jaccard index: |A and B| / |A or B|.
     Jaccard,
-    /// Overlap coefficient: |A∩B| / min(|A|, |B|).
+    /// Overlap coefficient: |A and B| / min(|A|, |B|).
     Overlap,
 }
 

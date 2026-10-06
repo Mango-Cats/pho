@@ -397,7 +397,7 @@ impl ScoreMatrix {
     /// Labels are optional and are stored as-is in `Dataset.labels`.
     ///
     /// If an algorithm requires transcriptions, both transcription fields must be present for
-    /// each row; otherwise this returns `Error::MissingTranscription`.
+    /// each row. Otherwise this returns [`crate::Error::MissingTranscription`].
     ///
     /// If `show_progress` is true, a progress bar will be displayed during precomputation.
     pub fn from_slice(

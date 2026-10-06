@@ -38,7 +38,7 @@ pub fn double_metaphone(s: &str) -> (String, String) {
         i = 1;
     }
 
-    // Initial vowel → A.
+    // Initial vowel -> A.
     if i == 0 && is_vowel_char(at(0)) {
         primary.push('A');
         secondary.push('A');
@@ -108,7 +108,7 @@ pub fn double_metaphone(s: &str) -> (String, String) {
                         i += 2;
                         continue;
                     }
-                    // Initial CH: Germanic → K, else X.
+                    // Initial CH: Germanic -> K, else X.
                     let germanic = i == 0 && (slice_eq(i + 2, "AE") || is_vowel_char(at(i + 2)));
                     if germanic {
                         push!("K");

@@ -39,13 +39,12 @@ pub fn distance(x: &[char], y: &[char], config: &Editex) -> f32 {
     d[m * (n + 1) + n]
 }
 
-/// Traceback the minimal-cost alignment path and tally how many
-/// substitutions, insertions, and deletions it uses (matches, where the
-/// characters are equal, are not counted).
+/// Traces back the minimal-cost alignment path to count substitutions,
+/// insertions, and deletions. Matches are not counted.
 ///
-/// On ties between multiple minimal-cost moves at a cell, the diagonal
-/// (match/substitution) move is preferred, then deletion, then insertion —
-/// a deterministic rule chosen to minimize the total operation count.
+/// When multiple minimal-cost moves tie at a cell, preference goes to
+/// the diagonal (match or substitution) move, then deletion, then insertion.
+/// This deterministic rule minimizes the total operation count.
 pub fn operation_counts(x: &[char], y: &[char], config: &Editex) -> (u32, u32, u32) {
     let (d, m, n) = build_matrix(x, y, config);
     let idx = |i: usize, j: usize| -> usize { i * (n + 1) + j };

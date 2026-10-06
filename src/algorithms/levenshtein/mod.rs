@@ -13,11 +13,9 @@
 //!
 //! The algorithm uses dynamic programming to compute the optimal alignment.
 //!
-//! Set `consonants_only = true` in the config to strip vowels (`a`, `e`,
-//! `i`, `o`, `u`; `y` stays a consonant) from both inputs before computing
-//! distance — vowels are less reliably perceived than consonants, so this
-//! trades exact-string sensitivity for robustness to vowel-only differences
-//! (e.g. "color" vs "colour").
+//! Setting `consonants_only = true` removes vowels (a, e, i, o, and u,
+//! while keeping y as a consonant) from both inputs before computing
+//! distance. This helps tolerate vowel variations such as color versus colour.
 //!
 //! ## Example
 //!

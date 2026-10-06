@@ -63,19 +63,19 @@ pub fn metaphone(s: &str) -> String {
 
             'C' => {
                 if next == 'I' && next2 == 'A' || next == 'I' && next2 == 'O' {
-                    out.push('X'); // CIA, CIO → X
+                    out.push('X'); // CIA, CIO -> X
                 } else if next == 'H' {
-                    out.push('X'); // CH → X
+                    out.push('X'); // CH -> X
                     i += 1;
                 } else if next == 'I' || next == 'E' || next == 'Y' {
-                    out.push('S'); // CE, CI, CY → S
+                    out.push('S'); // CE, CI, CY -> S
                 } else if next == 'K' {
-                    i += 1; // CK → skip K (C already handled below)
+                    i += 1; // CK -> skip K (C already handled below)
                     // Do nothing: CK reduces to K, but we already output nothing for C.
                     // Actually let's output K here.
                     out.push('K');
                 } else if prev == 'S' && (next == 'I' || next == 'E' || next == 'Y') {
-                    // SCI/SCE/SCY → S already captured, skip C.
+                    // SCI/SCE/SCY -> S already captured, skip C.
                 } else {
                     out.push('K');
                 }
@@ -83,7 +83,7 @@ pub fn metaphone(s: &str) -> String {
 
             'D' => {
                 if next == 'G' && (next2 == 'E' || next2 == 'I' || next2 == 'Y') {
-                    out.push('J'); // DGE, DGI, DGY → J
+                    out.push('J'); // DGE, DGI, DGY -> J
                     i += 1;
                 } else {
                     out.push('T');
@@ -100,7 +100,7 @@ pub fn metaphone(s: &str) -> String {
 
                 if !is_silent {
                     if next == 'H' {
-                        // GH before vowel → K
+                        // GH before vowel -> K
                         if is_vowel(next2) {
                             out.push('K');
                         }
@@ -157,7 +157,7 @@ pub fn metaphone(s: &str) -> String {
 
             'T' => {
                 if next == 'H' {
-                    out.push('0'); // TH → theta (represented as '0')
+                    out.push('0'); // TH -> theta (represented as '0')
                     i += 1;
                 } else if next == 'I' && (next2 == 'A' || next2 == 'O') {
                     out.push('X');

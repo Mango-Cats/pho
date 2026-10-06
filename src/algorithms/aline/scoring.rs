@@ -42,8 +42,8 @@ pub(crate) fn substitution_score(p: &Segment, q: &Segment, config: &Aline) -> f3
 /// `C_exp - delta(p, q1) - delta(p, q2) - V(p) - max(V(q1), V(q2)) - S_stress * |stress_p - max(stress_q1, stress_q2)|`
 ///
 /// With `stress_on = "vowels"` the stress term applies only when `p` is a
-/// vowel, and only the vowel(s) among `q1`, `q2` contribute to the stress of
-/// the pair; if neither is a vowel the term is 0.
+/// vowel, and only vowels among `q1` and `q2` contribute to the stress of
+/// the pair. If neither is a vowel, the term is 0.
 #[inline]
 pub(crate) fn expansion_score(p: &Segment, q1: &Segment, q2: &Segment, config: &Aline) -> f32 {
     let c_exp = config.costs.expand_compress as f32;
@@ -110,7 +110,7 @@ fn feature_distance(
     let extended = matches!(config.variant, AlineVariant::MangoCats);
 
     if p_sound.is_consonant() || q_sound.is_consonant() {
-        // Consonant length (`ː` after a consonant, i.e. gemination) is parsed
+        // Consonant length (colon mark after a consonant, i.e. gemination) is parsed
         // into `Segment::long` but R_c has no length feature, so it is ignored.
         // TODO: decide whether gemination should be scored for consonants.
         consonant_feature_distance(p_sound, q_sound, values, salience, extended)
@@ -169,11 +169,11 @@ fn consonant_feature_distance(
 }
 
 /// Kondrak R_v: back, lateral, long, manner, nasal, place, retroflex, round, syllabic, voice.
-/// (`high` is intentionally excluded — it is encoded in `manner` as high/mid/low vowel.)
-/// MangoCats adds: phonation, secondary.
+/// High is intentionally excluded because manner encodes high, mid, or low vowels.
+/// MangoCats adds phonation and secondary articulation.
 ///
-/// The `long` value of each side comes from the segment's length mark
-/// (`ː` / `ˑ`) when present, otherwise from the inventory entry.
+/// The long value of each side comes from length marks (such as colon or half-long marks)
+/// when present, otherwise from the inventory entry.
 #[inline]
 fn vowel_feature_distance(
     p_seg: &Segment,

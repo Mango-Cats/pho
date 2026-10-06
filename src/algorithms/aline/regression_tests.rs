@@ -65,7 +65,7 @@ fn tie_bar_affricates_score_like_ligatures() {
 #[test]
 fn multi_char_spellings_resolve_to_inventory_key() {
     let fil = load(FIL);
-    // Exact keys win: FIL has both `ʤ` and `d͡ʒ`.
+    // Exact keys win: FIL has both ligature and decomposed keys.
     assert_eq!(syms(&parse_segments("ʤa", "x", &fil).unwrap()), ["ʤ", "a"]);
     assert_eq!(
         syms(&parse_segments("d͡ʒa", "x", &fil).unwrap()),
@@ -258,7 +258,7 @@ fn filipino_manner_follows_height() {
     assert!(a_i > a_e, "a–i ({a_i}) should exceed a–e ({a_e})");
     assert!(a_i > e_i, "a–i ({a_i}) should exceed e–i ({e_i})");
     // With low_vowel = 0.0, mid_vowel = 0.2, high_vowel = 0.4 the mid vowel
-    // sits exactly halfway, so a–e == e–i. See the strict test below.
+    // sits exactly halfway, so a-e == e-i. See the strict test below.
     assert!(a_e >= e_i, "a–e ({a_e}) should be at least e–i ({e_i})");
 }
 

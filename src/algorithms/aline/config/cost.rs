@@ -10,20 +10,17 @@ use serde::{Deserialize, Serialize};
 ///
 /// ## Cost Variables
 ///
-/// Aline uses four constants for reward or penalty; a negative value
-/// denotes a penalty while a positive denotes a reward.
+/// Aline uses four constants for rewards and penalties. Negative values
+/// denote penalties while positive values denote rewards.
 ///
 /// 1. `skip` is the constant for an indel (insert or delete).
 ///
-/// 2. `subtitute` is the constant for a substitution (when one phoneme
-/// is replaced with another).
+/// 2. `substitute` is the constant for replacing one phoneme with another.
 ///
-/// 3. `expand_compress` is the constant for when a phoneme matches two
-/// phonemes in another. Example: "suit" can be pronounced as /sut/ and
-/// /suwt/, so the /u/ sound is expanded to the /uw/ sound.
+/// 3. `expand_compress` is the constant for when one phoneme matches two
+/// phonemes in another (for example, expanding an /u/ sound into /uw/).
 ///
-/// 4. `vowel_consonant` is the relative weight for vowels versus
-/// consonants.
+/// 4. `vowel_consonant` is the relative weight for vowels versus consonants.
 ///
 /// ## References
 ///

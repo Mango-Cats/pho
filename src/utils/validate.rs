@@ -1,7 +1,8 @@
 // src/utils/validation.rs
 
-/// Consumes an iterator of tokens, validating each one against a provided closure.
-/// Returns a collected `Vec<T>` of the tokens if all are valid, or an `AlgorithmError`
+/// Validates tokens from an iterator against a closure.
+///
+/// Returns a vector of tokens if all are valid, or [`crate::Error::UnknownToken`]
 /// on the first invalid token.
 pub(crate) fn validate_tokens<T, I, F>(
     tokens: I,

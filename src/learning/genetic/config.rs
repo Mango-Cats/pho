@@ -7,7 +7,7 @@ pub struct GeneticConfig {
     pub population_size: usize,
     /// Number of generations to run the evolution.
     pub generations: usize,
-    /// Probability (0.0–1.0) of a weight undergoing mutation each generation.
+    /// Probability (from 0.0 to 1.0) of a weight undergoing mutation each generation.
     pub mutation_rate: f32,
     /// Maximum magnitude of a single mutation adjustment.
     pub mutation_step: f32,

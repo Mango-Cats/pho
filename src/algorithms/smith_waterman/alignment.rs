@@ -3,7 +3,7 @@ use super::config::SmithWaterman;
 /// Smith-Waterman local alignment score.
 ///
 /// The matrix floor at 0.0 means only locally similar subsequences
-/// accumulate score; the best cell gives the optimal local alignment.
+/// accumulate score, and the highest cell gives the optimal local alignment.
 pub fn sw_score(x: &[char], y: &[char], config: &SmithWaterman) -> f32 {
     let m = x.len();
     let n = y.len();

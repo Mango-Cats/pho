@@ -25,10 +25,10 @@ pub use salience::Salience;
 /// - `Kondrak`: the original Kondrak (2002) algorithm. Stress markers in the
 ///   IPA input are ignored entirely.
 /// - `MangoCats`: extends Kondrak with a stress-salience term. Primary stress
-///   (`ˈ`) assigns weight 1.0 and secondary stress (`ˌ`) assigns weight 0.5
-///   to the segments of the syllable it marks (up to the next `.`, the next
-///   stress mark, or the end of the word); the difference in stress between
-///   aligned segments is penalised by `salience.stress`. See
+///   assigns weight 1.0 and secondary stress assigns weight 0.5
+///   to the segments of the syllable it marks (up to the next period, the next
+///   stress mark, or the end of the word). The difference in stress between
+///   aligned segments is penalized by `salience.stress`. See
 ///   [`StressScopeFallback`] and [`StressOn`].
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -67,10 +67,10 @@ pub enum StressOn {
 #[derive(Debug, Clone, Copy, Default, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AlignmentMode {
-    /// Smith–Waterman style local alignment (Kondrak/NLTK behaviour).
+    /// Smith-Waterman style local alignment (Kondrak and NLTK behavior).
     #[default]
     Local,
-    /// Needleman–Wunsch style global alignment: leading/trailing indels are
+    /// Needleman-Wunsch style global alignment: leading and trailing indels are
     /// charged, and the score is read from the bottom-right cell.
     Global,
 }
@@ -83,9 +83,9 @@ pub struct Aline {
     pub sounds: HashMap<String, PhoneticFeatures>,
     pub epsilon: f32,
     pub variant: AlineVariant,
-    /// Allow the tokenizer to produce multi-grapheme *vowel* entries
-    /// (diphthongs such as `aj`). When `false`, only single-grapheme vowels
-    /// and (possibly multi-grapheme) consonants such as `d͡ʒ` are matched.
+    /// Allow the tokenizer to produce multi-grapheme vowel entries
+    /// (such as diphthongs). When `false`, only single-grapheme vowels
+    /// and consonants are matched.
     #[serde(default)]
     pub merge_diphthongs: bool,
     /// See [`StressScopeFallback`]. Only relevant in the MangoCats variant.

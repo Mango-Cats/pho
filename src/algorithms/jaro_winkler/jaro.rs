@@ -1,8 +1,6 @@
-/// Compute the base Jaro similarity between two character sequences.
+/// Computes the base Jaro similarity between two character sequences.
 ///
-/// The Jaro similarity considers:
-/// - Matching characters (characters that are the same and within a certain distance)
-/// - Transpositions (matching characters that are out of order)
+/// The score factors in character matches within a sliding window and transpositions.
 pub(crate) fn jaro_similarity(x: &[char], y: &[char]) -> f32 {
     let x_length = x.len();
     let y_length = y.len();

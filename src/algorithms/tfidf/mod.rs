@@ -5,11 +5,11 @@
 //! Each string is represented as a weighted vector of character n-grams.
 //! The weight of n-gram $g$ in string $d$ is:
 //!
-//! $$w(g, d) = \text{TF}(g, d) \times \text{IDF}(g)$$
+//! $$w(g, d) = \text{TF}(g, d) * \text{IDF}(g)$$
 //!
-//! **TF** (term frequency): raw count, or with `sublinear_tf = true`,
-//! $1 + \ln(1 + \text{count})$ — this dampens the influence of highly
-//! repeated n-grams and is the primary distinction from plain cosine.
+//! **TF** (term frequency): raw count, or `1 + ln(1 + count)` when
+//! `sublinear_tf = true`. Sublinear weighting dampens the influence of
+//! heavily repeated n-grams.
 //!
 //! **IDF** (inverse document frequency): computed from the two-document
 //! mini-corpus formed by the pair being compared:

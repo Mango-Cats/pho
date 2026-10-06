@@ -147,10 +147,10 @@ pub struct SplitConfig {
     pub seed: Option<u64>,
 }
 
-/// Split a slice of rows into (train, test) before precomputation.
+/// Splits a slice of rows into train and test sets before precomputation.
 ///
-/// This is the right place to split — rows are cheap, precomputed
-/// score matrices are not. Call this first, then build a `ScoreMatrix`
+/// Splitting here is efficient because rows are cheap to clone, unlike
+/// precomputed score matrices. Call this first, then build a `ScoreMatrix`
 /// from each half.
 pub fn split_rows(rows: &[Row], config: &SplitConfig) -> Result<(Vec<Row>, Vec<Row>)> {
     if config.train_fraction <= 0.0 || config.train_fraction >= 1.0 {

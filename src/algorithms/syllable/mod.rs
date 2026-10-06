@@ -66,8 +66,8 @@ impl Algorithm for Syllable {
         let x_bigrams: HashSet<(String, String)> = syllable_bigrams(&xs).into_iter().collect();
         let y_bigrams: HashSet<(String, String)> = syllable_bigrams(&ys).into_iter().collect();
 
-        // Single-syllable words produce no bigrams — fall back to full-syllable
-        // exact match.
+        // Single-syllable words produce no bigrams, so fall back to
+        // full-syllable exact match.
         if x_bigrams.is_empty() && y_bigrams.is_empty() {
             return Ok(if xs == ys { 1.0 } else { 0.0 });
         }
