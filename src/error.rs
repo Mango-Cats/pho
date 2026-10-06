@@ -15,6 +15,12 @@ pub enum Error {
         context: &'static str,
     },
 
+    #[error(
+        "Stress mark in {input_name} has no `.` syllable boundary, so its scope is ambiguous \
+         (mark syllables with `.` or set stress_scope_fallback = \"until_next_mark\")"
+    )]
+    AmbiguousStressScope { input_name: &'static str },
+
     #[error("{feature} values must sum to 1.0, but got {sum}")]
     InvalidFeatureSum { feature: &'static str, sum: f32 },
 

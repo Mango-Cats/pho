@@ -47,8 +47,8 @@ pub mod smith_waterman;
 pub mod soundex;
 pub mod syllable;
 pub mod tfidf;
-pub mod visual;
 mod traits;
+pub mod visual;
 
 pub use aline::config::Aline;
 pub use bisim::config::BiSim;
