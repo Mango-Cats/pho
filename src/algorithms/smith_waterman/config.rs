@@ -19,6 +19,11 @@ impl SmithWaterman {
         gap_penalty: f32,
         case_insensitive: bool,
     ) -> Self {
-        Self { match_score, mismatch_penalty, gap_penalty, case_insensitive }
+        Self {
+            match_score,
+            mismatch_penalty,
+            gap_penalty,
+            case_insensitive,
+        }
     }
 }

@@ -23,22 +23,22 @@ impl DrugNameMatrix {
 
         // Phonetically / graphically confusable pairs relevant to drug names.
         let similar: &[&[u8]] = &[
-            b"bp",   // bilabial stops
-            b"dt",   // alveolar stops
-            b"fv",   // labiodentals
-            b"mn",   // nasals
-            b"sz",   // sibilants
-            b"ck",   // velars (c-as-k vs k)
-            b"gj",   // voiced palatal/velar
-            b"lr",   // liquids
-            b"iy",   // high front vowels
-            b"ae",   // low front vowels (common drug suffix confusion)
-            b"ou",   // back vowels
-            b"ei",   // mid/high front vowels
-            b"uo",   // rounded back vowels
-            b"cq",   // both map to /k/
-            b"xz",   // both end in /z/ in many drug names
-            b"ph",   // 'ph' is often /f/; single 'h' vs 'f' confusion
+            b"bp", // bilabial stops
+            b"dt", // alveolar stops
+            b"fv", // labiodentals
+            b"mn", // nasals
+            b"sz", // sibilants
+            b"ck", // velars (c-as-k vs k)
+            b"gj", // voiced palatal/velar
+            b"lr", // liquids
+            b"iy", // high front vowels
+            b"ae", // low front vowels (common drug suffix confusion)
+            b"ou", // back vowels
+            b"ei", // mid/high front vowels
+            b"uo", // rounded back vowels
+            b"cq", // both map to /k/
+            b"xz", // both end in /z/ in many drug names
+            b"ph", // 'ph' is often /f/; single 'h' vs 'f' confusion
         ];
 
         for group in similar {

@@ -94,7 +94,8 @@ pub fn metaphone(s: &str) -> String {
 
             'G' => {
                 let is_silent = (next == 'H' && !is_vowel(next2))
-                    || (next == 'N' && (i + 1 == chars.len() || (next2 == 'E' && i + 3 == chars.len())))
+                    || (next == 'N'
+                        && (i + 1 == chars.len() || (next2 == 'E' && i + 3 == chars.len())))
                     || (prev == 'D' && (next == 'E' || next == 'I' || next == 'Y'));
 
                 if !is_silent {

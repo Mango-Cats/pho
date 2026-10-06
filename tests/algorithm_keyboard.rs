@@ -35,14 +35,16 @@ fn adjacent_key_typo_scores_higher_than_distant() {
     let config = load();
     // 's' and 'd' are adjacent; 's' and 'q' are also close; 's' and 'm' are far.
     let close = config.similarity("sale", "dale").unwrap(); // s→d: adjacent
-    let far = config.similarity("sale", "male").unwrap();   // s→m: far
+    let far = config.similarity("sale", "male").unwrap(); // s→m: far
     assert!(close > far, "close={close}, far={far}");
 }
 
 #[test]
 fn distance_and_similarity_are_complementary() {
     let config = load();
-    let d = config.normalized_distance("lisinopril", "lisanopril").unwrap();
+    let d = config
+        .normalized_distance("lisinopril", "lisanopril")
+        .unwrap();
     let s = config.similarity("lisinopril", "lisanopril").unwrap();
     assert!((d + s - 1.0).abs() < 1e-5, "d={d}, s={s}");
 }

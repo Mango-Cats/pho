@@ -12,8 +12,8 @@
 //! maximum possible score for the shorter string aligned perfectly —
 //! giving a value in $[0, 1]$.
 
-pub mod config;
 mod alignment;
+pub mod config;
 
 use crate::{algorithms::Algorithm, error::Result, utils::normalize::normalize_input};
 use alignment::sw_score;

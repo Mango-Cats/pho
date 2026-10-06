@@ -17,9 +17,9 @@
 //! where $\text{best} = \max(\text{NW}(x,x),\, \text{NW}(y,y))$ and
 //! $\text{worst} = -\text{gap\_penalty} \times (|x| + |y|)$.
 
+mod alignment;
 pub mod config;
 pub(crate) mod matrix;
-mod alignment;
 
 use crate::{algorithms::Algorithm, error::Result, utils::normalize::normalize_input};
 use alignment::nw_score;

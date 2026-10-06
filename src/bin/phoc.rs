@@ -191,7 +191,11 @@ fn run_pair(args: PairArgs, group: Group) -> Result<()> {
         .collect::<Result<_>>()?;
     results.sort_by(|a, b| a.0.cmp(&b.0));
 
-    let width = results.iter().map(|(name, _)| name.len()).max().unwrap_or(0);
+    let width = results
+        .iter()
+        .map(|(name, _)| name.len())
+        .max()
+        .unwrap_or(0);
     for (name, score) in &results {
         println!("{name:width$} : {score:.4}");
     }

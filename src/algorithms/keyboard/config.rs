@@ -21,6 +21,11 @@ impl Keyboard {
         substitution_scale: f32,
         case_insensitive: bool,
     ) -> Self {
-        Self { insert_cost, delete_cost, substitution_scale, case_insensitive }
+        Self {
+            insert_cost,
+            delete_cost,
+            substitution_scale,
+            case_insensitive,
+        }
     }
 }

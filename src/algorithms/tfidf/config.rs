@@ -23,7 +23,11 @@ impl CharTfIdf {
     }
 
     pub fn try_new(n: usize, sublinear_tf: bool, case_insensitive: bool) -> Result<Self> {
-        let cfg = Self { n, sublinear_tf, case_insensitive };
+        let cfg = Self {
+            n,
+            sublinear_tf,
+            case_insensitive,
+        };
         cfg.validate()?;
         Ok(cfg)
     }

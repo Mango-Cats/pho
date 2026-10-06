@@ -36,7 +36,11 @@ impl Algorithm for Soundex {
 
         let score = match self.mode {
             SoundexMode::Binary => {
-                if code_x == code_y { 1.0 } else { 0.0 }
+                if code_x == code_y {
+                    1.0
+                } else {
+                    0.0
+                }
             }
             SoundexMode::Soft => code_similarity(&code_x, &code_y),
         };

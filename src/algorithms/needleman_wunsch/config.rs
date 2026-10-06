@@ -11,6 +11,9 @@ pub struct NeedlemanWunsch {
 
 impl NeedlemanWunsch {
     pub fn new(gap_penalty: f32, case_insensitive: bool) -> Self {
-        Self { gap_penalty, case_insensitive }
+        Self {
+            gap_penalty,
+            case_insensitive,
+        }
     }
 }

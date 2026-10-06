@@ -30,15 +30,27 @@ fn set_similarity(
     match metric {
         SyllableMetric::Dice => {
             let denom = (x.len() + y.len()) as f32;
-            if denom == 0.0 { 1.0 } else { 2.0 * intersection / denom }
+            if denom == 0.0 {
+                1.0
+            } else {
+                2.0 * intersection / denom
+            }
         }
         SyllableMetric::Jaccard => {
             let union = (x.len() + y.len()) as f32 - intersection;
-            if union == 0.0 { 1.0 } else { intersection / union }
+            if union == 0.0 {
+                1.0
+            } else {
+                intersection / union
+            }
         }
         SyllableMetric::Overlap => {
             let denom = x.len().min(y.len()) as f32;
-            if denom == 0.0 { 1.0 } else { intersection / denom }
+            if denom == 0.0 {
+                1.0
+            } else {
+                intersection / denom
+            }
         }
     }
 }

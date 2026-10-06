@@ -31,7 +31,10 @@ fn phonetically_similar_substitutions_score_higher() {
     // f/v are in the same substitution group → "afil" vs "avil" scores higher than random.
     let similar = config.similarity("sildenafil", "sildenaVil").unwrap();
     let dissimilar = config.similarity("sildenafil", "metformin").unwrap();
-    assert!(similar > dissimilar, "similar={similar}, dissimilar={dissimilar}");
+    assert!(
+        similar > dissimilar,
+        "similar={similar}, dissimilar={dissimilar}"
+    );
 }
 
 #[test]

@@ -10,6 +10,9 @@ pub struct DoubleMetaphone {
 
 impl DoubleMetaphone {
     pub fn new(case_insensitive: bool, max_code_length: usize) -> Self {
-        Self { case_insensitive, max_code_length }
+        Self {
+            case_insensitive,
+            max_code_length,
+        }
     }
 }

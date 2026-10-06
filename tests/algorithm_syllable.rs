@@ -31,7 +31,10 @@ fn shared_suffix_class_scores_higher() {
     // -afil drugs share final syllables.
     let same_class = config.similarity("sildenafil", "tadalafil").unwrap();
     let diff_class = config.similarity("sildenafil", "metoprolol").unwrap();
-    assert!(same_class >= diff_class, "same_class={same_class}, diff_class={diff_class}");
+    assert!(
+        same_class >= diff_class,
+        "same_class={same_class}, diff_class={diff_class}"
+    );
 }
 
 #[test]

@@ -63,7 +63,8 @@ fn edit_operation_counts_matches_hand_worked_alignment() {
     let config = load();
 
     // "bat" -> "dot": substitute b->d, substitute a->o.
-    let (substitutions, insertions, deletions) = config.edit_operation_counts("bat", "dot").unwrap();
+    let (substitutions, insertions, deletions) =
+        config.edit_operation_counts("bat", "dot").unwrap();
     assert_eq!((substitutions, insertions, deletions), (2, 0, 0));
 }
 
@@ -71,7 +72,8 @@ fn edit_operation_counts_matches_hand_worked_alignment() {
 fn edit_operation_counts_identical_strings_are_all_zero() {
     let config = load();
 
-    let (substitutions, insertions, deletions) = config.edit_operation_counts("bat", "bat").unwrap();
+    let (substitutions, insertions, deletions) =
+        config.edit_operation_counts("bat", "bat").unwrap();
     assert_eq!((substitutions, insertions, deletions), (0, 0, 0));
 }
 

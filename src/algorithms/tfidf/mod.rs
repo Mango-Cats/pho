@@ -64,11 +64,7 @@ fn tfidf_cosine(
     // Shared TF mass (sum of min TF for each shared gram).
     let shared: f32 = x_counts
         .iter()
-        .filter_map(|(g, &cx)| {
-            y_counts.get(g).map(|&cy| {
-                tf_weight(cx.min(cy), sublinear)
-            })
-        })
+        .filter_map(|(g, &cx)| y_counts.get(g).map(|&cy| tf_weight(cx.min(cy), sublinear)))
         .sum();
 
     let denom = x_total + y_total - shared;

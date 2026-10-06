@@ -20,6 +20,9 @@ pub struct Soundex {
 
 impl Soundex {
     pub fn new(case_insensitive: bool, mode: SoundexMode) -> Self {
-        Self { case_insensitive, mode }
+        Self {
+            case_insensitive,
+            mode,
+        }
     }
 }

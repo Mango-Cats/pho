@@ -22,6 +22,9 @@ pub struct Syllable {
 
 impl Syllable {
     pub fn new(case_insensitive: bool, metric: SyllableMetric) -> Self {
-        Self { case_insensitive, metric }
+        Self {
+            case_insensitive,
+            metric,
+        }
     }
 }

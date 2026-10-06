@@ -92,10 +92,38 @@ fn maximal_onset(consonants: &[char]) -> usize {
         let di: String = consonants[n - 2..].iter().collect();
         if matches!(
             di.as_str(),
-            "bl" | "br" | "cl" | "cr" | "dr" | "fl" | "fr" | "gl" | "gr" | "pl" | "pr"
-            | "sc" | "sk" | "sl" | "sm" | "sn" | "sp" | "st" | "sw"
-            | "th" | "tr" | "tw" | "wh" | "ph" | "ch" | "sh"
-            | "kl" | "kr" | "kn" | "wr" | "gn" | "pn" | "tz"
+            "bl" | "br"
+                | "cl"
+                | "cr"
+                | "dr"
+                | "fl"
+                | "fr"
+                | "gl"
+                | "gr"
+                | "pl"
+                | "pr"
+                | "sc"
+                | "sk"
+                | "sl"
+                | "sm"
+                | "sn"
+                | "sp"
+                | "st"
+                | "sw"
+                | "th"
+                | "tr"
+                | "tw"
+                | "wh"
+                | "ph"
+                | "ch"
+                | "sh"
+                | "kl"
+                | "kr"
+                | "kn"
+                | "wr"
+                | "gn"
+                | "pn"
+                | "tz"
         ) {
             return 2;
         }
@@ -108,5 +136,8 @@ fn maximal_onset(consonants: &[char]) -> usize {
 /// Extract syllable bigrams as pairs of consecutive syllable strings.
 pub fn syllable_bigrams(word: &str) -> Vec<(String, String)> {
     let sylls = syllabify(word);
-    sylls.windows(2).map(|w| (w[0].clone(), w[1].clone())).collect()
+    sylls
+        .windows(2)
+        .map(|w| (w[0].clone(), w[1].clone()))
+        .collect()
 }
