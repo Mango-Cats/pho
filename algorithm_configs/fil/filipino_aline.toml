@@ -6,7 +6,7 @@ algorithm = "aline"
 # 4. Synchronic analysis of tagalog phonemes - Yap 1967, https://open.library.ubc.ca/soa/cIRcle/collections/ubctheses/831/items/1.0105401
 
 # ================================ FEATURES ================================
-variant = "kondrak"
+variant = "mangocats"
 epsilon = 0.001
 
 [costs]
@@ -28,6 +28,8 @@ long = 10
 high = 3
 back = 2
 round = 2
+# TODO(authors): set after calibration; 0 = stress disabled
+stress = 0
 phonation = 10
 airstream = 10
 secondary = 10
@@ -201,10 +203,11 @@ secondary = "none"
 # Describes /e/ as a upper-mid (Schater & Otanes 1972), front, unrounded vowel
 # (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 # change high = "mid" -> high = "high_mid"
+# manner aligned to height scale (was "vowel")
 [sounds."e"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "high_mid"
 lateral = "minus"
@@ -220,10 +223,11 @@ secondary = "none"
 
 # Lower-mid variant of /e/
 # changed high = "mid" -> high = "low_mid"
+# manner aligned to height scale (was "vowel")
 [sounds."ɛ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "low_mid"
 lateral = "minus"
@@ -261,10 +265,11 @@ secondary = "none"
 
 # Lower-high, front variant of /i/ (Llamzon 1966)
 # changed high = "high" -> high = "high_mid"
+# manner aligned to height scale (was "vowel")
 [sounds."ɪ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "near_front"
 high = "high_mid"
 lateral = "minus"
@@ -283,10 +288,11 @@ secondary = "none"
 # Describes /o/ as higher-mid, back, rounded 
 # (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 # changed high = "mid" -> high = "high_mid"
+# manner aligned to height scale (was "vowel")
 [sounds."o"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "high_mid"
 lateral = "minus"
@@ -301,10 +307,11 @@ airstream = "pulmonic"
 secondary = "none"
 
 # Describes /ɔ/ as mid back (Kaufman 2007)
+# manner aligned to height scale (was "vowel")
 [sounds."ɔ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "mid"
 lateral = "minus"
@@ -343,10 +350,11 @@ secondary = "none"
 # Describes /ʊ/ as a lower-high, back vowel
 # (Schater & Otanes 1972)
 # change high = "high" -> high = "near_high"
+# manner aligned to height scale (was "vowel")
 [sounds."ʊ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "back"
 high = "near_high"
 lateral = "minus"
@@ -409,6 +417,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."aɪ"]
 type = "vowel"
 place = "vowel"
@@ -427,6 +436,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."aj"]
 type = "vowel"
 place = "vowel"
@@ -449,6 +459,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."aʊ"]
 type = "vowel"
 place = "vowel"
@@ -467,6 +478,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."aw"]
 type = "vowel"
 place = "vowel"
@@ -490,6 +502,7 @@ secondary = "none"
 
 # Considering /e/ is mid, front, and /a/ is low, central
 # feature high would be low_mid, and back would be near_front
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ea"]
 type = "vowel"
 place = "vowel"
@@ -513,6 +526,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."eɪ"]
 type = "vowel"
 place = "vowel"
@@ -531,6 +545,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ey"]
 type = "vowel"
 place = "vowel"
@@ -548,6 +563,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ej"]
 type = "vowel"
 place = "vowel"
@@ -571,6 +587,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ɪʊ"]
 type = "vowel"
 place = "vowel"
@@ -588,6 +605,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ɪj"]
 type = "vowel"
 place = "vowel"
@@ -606,6 +624,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."iw"]
 type = "vowel"
 place = "vowel"
@@ -623,6 +642,7 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ij"]
 type = "vowel"
 place = "vowel"
@@ -645,6 +665,7 @@ secondary = "none"
 # (Schater & Otanes 1972)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."oʊ"]
 type = "vowel"
 place = "vowel"
@@ -663,6 +684,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ow"]
 type = "vowel"
 place = "vowel"
@@ -685,6 +707,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."oɪ"]
 type = "vowel"
 place = "vowel"
@@ -703,6 +726,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."oj"]
 type = "vowel"
 place = "vowel"
@@ -726,6 +750,7 @@ secondary = "none"
 # (Llamzon 1966, Kaufman 2007, Schater & Otanes 1972)
 
 # For phonetic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."ʊɪ"]
 type = "vowel"
 place = "vowel"
@@ -744,6 +769,7 @@ airstream = "pulmonic"
 secondary = "none"
 
 # For phonemic IPA
+# inactive unless merge_diphthongs = true; features currently equal the first vowel — see thesis notes
 [sounds."uj"]
 type = "vowel"
 place = "vowel"
@@ -1205,10 +1231,11 @@ secondary = "none"
 
 # Wikipedia: https://en.wikipedia.org/wiki/Help:IPA/Tagalog
 
+# manner aligned to height scale (was "vowel")
 [sounds."ä"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "low_vowel"
 back = "central"
 high = "low"
 lateral = "minus"
@@ -1222,10 +1249,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."æ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "low_vowel"
 back = "front"
 high = "low"
 lateral = "minus"
@@ -1239,10 +1267,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."œ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "mid"
 lateral = "minus"
@@ -1256,10 +1285,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɑ̃"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "low_vowel"
 back = "back"
 high = "low"
 lateral = "minus"
@@ -1273,10 +1303,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ʌ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "mid"
 lateral = "minus"
@@ -1290,10 +1321,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɶ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "low_vowel"
 back = "front"
 high = "low"
 lateral = "minus"
@@ -1307,10 +1339,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɒ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "low_vowel"
 back = "back"
 high = "low"
 lateral = "minus"
@@ -1324,10 +1357,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."e̞"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "mid"
 lateral = "minus"
@@ -1341,10 +1375,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɘ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "central"
 high = "mid"
 lateral = "minus"
@@ -1358,10 +1393,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɜ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "central"
 high = "mid"
 lateral = "minus"
@@ -1375,10 +1411,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɚ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "central"
 high = "mid"
 lateral = "minus"
@@ -1409,10 +1446,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."o̞"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "mid"
 lateral = "minus"
@@ -1426,10 +1464,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ø"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "mid"
 lateral = "minus"
@@ -1443,10 +1482,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ø̞"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "mid"
 lateral = "minus"
@@ -1477,10 +1517,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɯ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "back"
 high = "high"
 lateral = "minus"
@@ -1494,10 +1535,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɞ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "central"
 high = "mid"
 lateral = "minus"
@@ -1511,10 +1553,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɤ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "mid"
 lateral = "minus"
@@ -1528,10 +1571,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɤ̞"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "mid"
 lateral = "minus"
@@ -1545,10 +1589,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɨ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "central"
 high = "high"
 lateral = "minus"
@@ -1562,10 +1607,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ʏ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "front"
 high = "high"
 lateral = "minus"
@@ -1579,10 +1625,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ɵ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "central"
 high = "mid"
 lateral = "minus"
@@ -1596,10 +1643,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."ʉ"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "central"
 high = "high"
 lateral = "minus"
@@ -1627,10 +1675,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."y"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "high_vowel"
 back = "front"
 high = "high"
 lateral = "minus"
@@ -1676,10 +1725,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."E"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "front"
 high = "high_mid"
 lateral = "minus"
@@ -2143,10 +2193,11 @@ phonation = "modal"
 airstream = "pulmonic"
 secondary = "none"
 
+# manner aligned to height scale (was "vowel")
 [sounds."O"]
 type = "vowel"
 place = "vowel"
-manner = "vowel"
+manner = "mid_vowel"
 back = "back"
 high = "high_mid"
 lateral = "minus"
