@@ -21,6 +21,11 @@ pub enum Error {
     )]
     AmbiguousStressScope { input_name: &'static str },
 
+    #[error(
+        "Self-alignment scores are non-positive (max = {denominator}), so the similarity is undefined"
+    )]
+    NonPositiveSelfScore { denominator: f32 },
+
     #[error("{feature} values must sum to 1.0, but got {sum}")]
     InvalidFeatureSum { feature: &'static str, sum: f32 },
 

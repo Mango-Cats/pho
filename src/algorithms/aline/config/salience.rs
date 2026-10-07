@@ -61,4 +61,84 @@ impl Salience {
             stress,
         }
     }
+
+    /// Salience weight of the `syllabic` feature.
+    pub fn syllabic(&self) -> u32 {
+        self.syllabic
+    }
+
+    /// Salience weight of the `place` feature.
+    pub fn place(&self) -> u32 {
+        self.place
+    }
+
+    /// Salience weight of the `manner` feature.
+    pub fn manner(&self) -> u32 {
+        self.manner
+    }
+
+    /// Salience weight of the `voice` feature.
+    pub fn voice(&self) -> u32 {
+        self.voice
+    }
+
+    /// Salience weight of the `nasal` feature.
+    pub fn nasal(&self) -> u32 {
+        self.nasal
+    }
+
+    /// Salience weight of the `retroflex` feature.
+    pub fn retroflex(&self) -> u32 {
+        self.retroflex
+    }
+
+    /// Salience weight of the `lateral` feature.
+    pub fn lateral(&self) -> u32 {
+        self.lateral
+    }
+
+    /// Salience weight of the `aspirated` feature.
+    pub fn aspirated(&self) -> u32 {
+        self.aspirated
+    }
+
+    /// Salience weight of the `long` feature.
+    pub fn long(&self) -> u32 {
+        self.long
+    }
+
+    /// Salience weight of the `high` feature.
+    pub fn high(&self) -> u32 {
+        self.high
+    }
+
+    /// Salience weight of the `back` feature.
+    pub fn back(&self) -> u32 {
+        self.back
+    }
+
+    /// Salience weight of the `round` feature.
+    pub fn round(&self) -> u32 {
+        self.round
+    }
+
+    /// Salience weight of the `phonation` feature.
+    pub fn phonation(&self) -> u32 {
+        self.phonation
+    }
+
+    /// Salience weight of the `airstream` feature.
+    pub fn airstream(&self) -> u32 {
+        self.airstream
+    }
+
+    /// Salience weight of the `secondary` feature.
+    pub fn secondary(&self) -> u32 {
+        self.secondary
+    }
+
+    /// Salience weight of the `stress` feature.
+    pub fn stress(&self) -> u32 {
+        self.stress
+    }
 }

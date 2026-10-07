@@ -414,3 +414,145 @@ fn raw_scores_match_nltk_reference() {
         }
     }
 }
+
+// 9. Next-vowel stress scope, unclamped similarity and the public tokenizer.
+fn fil_next_vowel() -> Aline {
+    let mut cfg = load(FIL);
+    assert!(matches!(cfg.variant, AlineVariant::MangoCats));
+    cfg.alignment_mode = AlignmentMode::Global;
+    cfg.salience.stress = 10;
+    cfg.stress_scope_fallback = StressScopeFallback::NextVowel;
+    cfg
+}
+
+#[test]
+fn stress_fallback_next_vowel() {
+    let cfg = fil_next_vowel();
+    let segs = parse_segments("ˈkabajo", "x", &cfg).unwrap();
+    assert_eq!(syms(&segs), ["k", "a", "b", "a", "j", "o"]);
+    assert_eq!(stresses(&segs), [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]);
+
+    let segs = parse_segments("kaˈbajo", "x", &cfg).unwrap();
+    assert_eq!(stresses(&segs), [0.0, 0.0, 0.0, 1.0, 0.0, 0.0]);
+
+    let segs = parse_segments("ˌkabaˈjo", "x", &cfg).unwrap();
+    assert_eq!(stresses(&segs), [0.0, 0.5, 0.0, 0.0, 0.0, 1.0]);
+
+    // Scope is per word, and `.`-delimited words keep the syllable scope.
+    let segs = parse_segments("ˈbata ba.ˈta", "x", &cfg).unwrap();
+    assert_eq!(stresses(&segs), [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]);
+}
+
+#[test]
+fn next_vowel_stress_shifts_are_symmetric() {
+    let cfg = fil_next_vowel();
+    let s = |x, y| cfg.similarity(x, y).unwrap();
+    let a = s("ˈkabajo", "kaˈbajo");
+    let b = s("ˈkabajo", "kabaˈjo");
+    let c = s("kaˈbajo", "kabaˈjo");
+    assert!(a < 1.0, "stress salience should lower the score, got {a}");
+    assert!((a - b).abs() < 1e-6, "{a} != {b}");
+    assert!((a - c).abs() < 1e-6, "{a} != {c}");
+}
+
+#[test]
+fn next_vowel_matches_syllable_scope() {
+    let next_vowel = fil_next_vowel();
+    let mut syllable = fil_next_vowel();
+    syllable.stress_scope_fallback = StressScopeFallback::default();
+
+    const CASES: &[(&str, &str, &str, &str)] = &[
+        ("ˈkabajo", "ˈka.ba.jo", "kaˈbajo", "ka.ˈba.jo"),
+        ("ˈkabajo", "ˈka.ba.jo", "kabaˈjo", "ka.ba.ˈjo"),
+        ("ˈkabajo", "ˈka.ba.jo", "kabajo", "kabajo"),
+        ("ˈkabajo", "ˈka.ba.jo", "ˈkabajo", "ˈka.ba.jo"),
+        ("ˈkabajo", "ˈka.ba.jo", "bata", "bata"),
+    ];
+    for &(x_nv, x_syl, y_nv, y_syl) in CASES {
+        let nv = next_vowel.similarity_unclamped(x_nv, y_nv).unwrap();
+        let syl = syllable.similarity_unclamped(x_syl, y_syl).unwrap();
+        assert!(
+            (nv - syl).abs() < 1e-6,
+            "{x_nv}/{y_nv} = {nv}, {x_syl}/{y_syl} = {syl}"
+        );
+        let nv = next_vowel.similarity(x_nv, y_nv).unwrap();
+        let syl = syllable.similarity(x_syl, y_syl).unwrap();
+        assert!((nv - syl).abs() < 1e-6);
+    }
+}
+
+#[test]
+fn similarity_unclamped_can_be_negative() {
+    let cfg = fil_next_vowel();
+    let raw = cfg.similarity_unclamped("a", "kstrpt").unwrap();
+    assert!(raw < 0.0, "expected a negative raw score, got {raw}");
+    assert_eq!(cfg.similarity("a", "kstrpt").unwrap(), 0.0);
+}
+
+#[test]
+fn similarity_unclamped_matches_similarity_in_range() {
+    let words = [
+        "ˈkabajo", "kaˈbajo", "kabaˈjo", "ˈbata", "a", "kstrpt", "tʃa", "baj", "ˈbahaj", "ˈpusa",
+        "",
+    ];
+    let mut global = fil_next_vowel();
+    for mode in [AlignmentMode::Global, AlignmentMode::Local] {
+        global.alignment_mode = mode;
+        for x in words {
+            for y in words {
+                let sim = global.similarity(x, y).unwrap();
+                match global.similarity_unclamped(x, y) {
+                    Ok(raw) if (0.0..=1.0).contains(&raw) => {
+                        assert_eq!(raw, sim, "{x}/{y} ({mode:?})")
+                    }
+                    Ok(raw) if mode == AlignmentMode::Local => {
+                        assert_eq!(raw, sim, "{x}/{y} ({mode:?})")
+                    }
+                    Ok(raw) => assert_eq!(raw.clamp(0.0, 1.0), sim, "{x}/{y}"),
+                    Err(Error::NonPositiveSelfScore { .. }) => assert_eq!(sim, 0.0),
+                    Err(e) => panic!("{x}/{y}: {e}"),
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn tokenize_returns_inventory_keys() {
+    let cfg = fil_next_vowel();
+    let ligature = cfg.tokenize("ʧa").unwrap();
+    assert_eq!(ligature, ["ʧ", "a"]);
+    assert_eq!(cfg.tokenize("tʃa").unwrap(), ligature);
+    // The fil inventory lists the tie-bar spelling as its own key, so an
+    // exact match keeps it. Its features are identical to `ʧ`.
+    let tied = cfg.tokenize("t͡ʃa").unwrap();
+    assert_eq!(tied, ["t͡ʃ", "a"]);
+    assert_eq!(
+        format!("{:?}", cfg.sounds["t͡ʃ"]),
+        format!("{:?}", cfg.sounds["ʧ"])
+    );
+
+    assert_eq!(cfg.tokenize("baj").unwrap(), ["b", "a", "j"]);
+    assert_eq!(
+        cfg.tokenize("ˈka.ba.jo").unwrap(),
+        ["k", "a", "b", "a", "j", "o"]
+    );
+    assert!(matches!(
+        cfg.tokenize("bQ").unwrap_err(),
+        Error::UnknownToken { position: 1, .. }
+    ));
+}
+
+#[test]
+fn weights_are_readable() {
+    let cfg = load(FIL);
+    assert_eq!(cfg.costs.skip(), -10);
+    assert_eq!(cfg.costs.substitute(), 35);
+    assert_eq!(cfg.costs.expand_compress(), 45);
+    assert_eq!(cfg.costs.vowel_consonant(), 5);
+    assert_eq!(cfg.salience.place(), 40);
+    assert_eq!(cfg.salience.manner(), 50);
+    assert_eq!(cfg.salience.long(), 10);
+    assert_eq!(cfg.salience.stress(), 0);
+    assert_eq!(cfg.salience.secondary(), 10);
+}

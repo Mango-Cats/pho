@@ -50,6 +50,9 @@ pub enum StressScopeFallback {
     /// Legacy behaviour: the stress level applies to every following segment
     /// until the next stress mark (or the end of the word).
     UntilNextMark,
+    /// The stress level applies only to the first vowel segment after the
+    /// mark. Every other segment of the word is unstressed.
+    NextVowel,
 }
 
 /// Which aligned pairs the stress term is applied to.

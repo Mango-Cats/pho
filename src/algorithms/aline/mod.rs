@@ -16,6 +16,13 @@
 //! so best-matching subsequences dominate the score. Global alignment charges leading and
 //! trailing mismatches as indels, clamping the normalized score to $[0, 1]$.
 //!
+//! `similarity_unclamped(a, b)` returns the same ratio without clamping in
+//! either mode, and an `Error::NonPositiveSelfScore` where `similarity`
+//! returns 0.
+//!
+//! The loaded weights can be read through `config.costs` and
+//! `config.salience` getters, such as `config.salience.stress()`.
+//!
 //! ## Segments and Tokenization
 //!
 //! Inputs are split into grapheme clusters and matched against phonetic
@@ -23,7 +30,15 @@
 //! and standard affricate ligatures or rhotic vowels automatically match their
 //! decomposed forms. Multi-grapheme diphthongs are only merged when
 //! `merge_diphthongs = true`. Stress, length, and syllable marks are handled
-//! during parsing and do not become standalone segments.
+//! during parsing and do not become standalone segments. `tokenize(ipa)`
+//! returns the inventory key of each segment, exactly as the scorer sees them.
+//!
+//! ## Stress scope (MangoCats)
+//!
+//! A stress mark covers its `.`-delimited syllable. In a word with no `.`
+//! breaks, `stress_scope_fallback` decides: `"error"` (default) rejects the
+//! input, `"until_next_mark"` stresses every following segment until the next
+//! mark, and `"next_vowel"` stresses only the first vowel after the mark.
 //!
 //! ## Example
 //!
@@ -203,7 +218,8 @@ fn match_run(run: &[&str], stress: f32, inventory: &Inventory, out: &mut Vec<Seg
 /// Graphemes are matched greedily against the inventory. Length marks update the previous
 /// segment, while syllable and word boundaries reset state.
 /// In Kondrak mode, stress marks are ignored. In MangoCats mode, stress marks set the stress
-/// level for following segments until the next syllable or stress marker.
+/// level for following segments until the next syllable or stress marker. In a word with no
+/// syllable marks, [`StressScopeFallback`] decides the scope instead.
 fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result<Vec<Segment>> {
     let use_stress = matches!(config.variant, AlineVariant::MangoCats);
     let inventory = Inventory::new(config);
@@ -215,6 +231,10 @@ fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result
     let mut stress = 0.0f32;
     let mut word_has_mark = false;
     let mut word_has_break = false;
+    // Index of the word's first segment, and each stress mark of the word as
+    // (index of the next segment, level), for the `NextVowel` fallback.
+    let mut word_start = 0;
+    let mut word_marks: Vec<(usize, f32)> = Vec::new();
 
     let tokens = ipa
         .graphemes(true)
@@ -237,6 +257,7 @@ fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result
                 if use_stress {
                     stress = level;
                     word_has_mark = true;
+                    word_marks.push((segments.len(), level));
                 }
             }
             Token::SyllableBreak => {
@@ -250,9 +271,22 @@ fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result
                 {
                     return Err(Error::AmbiguousStressScope { input_name });
                 }
+                if word_has_mark
+                    && !word_has_break
+                    && config.stress_scope_fallback == StressScopeFallback::NextVowel
+                {
+                    restress_next_vowel(
+                        &mut segments[word_start..],
+                        &word_marks,
+                        word_start,
+                        config,
+                    );
+                }
                 stress = 0.0;
                 word_has_mark = false;
                 word_has_break = false;
+                word_start = segments.len();
+                word_marks.clear();
             }
             Token::Length { half } => {
                 if follows_segment && let Some(last) = segments.last_mut() {
@@ -262,6 +296,33 @@ fn parse_segments(ipa: &str, input_name: &'static str, config: &Aline) -> Result
         }
     }
     Ok(segments)
+}
+
+/// Applies the `NextVowel` stress scope to one word: each mark stresses only the first vowel
+/// segment at or after its position, and every other segment is unstressed.
+///
+/// `marks` holds (absolute segment index, level) pairs and `offset` is the absolute index of
+/// `word[0]`.
+fn restress_next_vowel(
+    word: &mut [Segment],
+    marks: &[(usize, f32)],
+    offset: usize,
+    config: &Aline,
+) {
+    for seg in word.iter_mut() {
+        seg.stress = 0.0;
+    }
+    for &(pos, level) in marks {
+        let is_vowel = |seg: &&mut Segment| {
+            config
+                .sounds
+                .get(seg.sym.as_str())
+                .is_some_and(PhoneticFeatures::is_vowel)
+        };
+        if let Some(seg) = word[pos - offset..].iter_mut().find(is_vowel) {
+            seg.stress = level;
+        }
+    }
 }
 
 fn validate_segments(segments: &[Segment], input_name: &'static str, config: &Aline) -> Result<()> {
@@ -286,8 +347,29 @@ impl Algorithm for Aline {
     /// Normalized similarity: `score / max(self_x, self_y)`.
     ///
     /// In global alignment mode the raw score can be negative, so the result
-    /// is clamped to `[0, 1]`. Local mode is returned unclamped.
+    /// is clamped to `[0, 1]`. Local mode is returned unclamped. Returns 0 if
+    /// both self-alignment scores are non-positive. See
+    /// [`Aline::similarity_unclamped`] for the raw ratio.
     fn similarity(&self, x: &str, y: &str) -> Result<f32> {
+        let sim = match self.similarity_unclamped(x, y) {
+            Ok(sim) => sim,
+            Err(Error::NonPositiveSelfScore { .. }) => return Ok(0.0),
+            Err(e) => return Err(e),
+        };
+        Ok(match self.alignment_mode {
+            AlignmentMode::Local => sim,
+            AlignmentMode::Global => sim.clamp(0.0, 1.0),
+        })
+    }
+}
+
+impl Aline {
+    /// Normalized similarity `score / max(self_x, self_y)` without clamping,
+    /// in either alignment mode. In global mode the result can be negative.
+    ///
+    /// Returns [`Error::NonPositiveSelfScore`] if both self-alignment scores
+    /// are non-positive, where [`Algorithm::similarity`] returns 0.
+    pub fn similarity_unclamped(&self, x: &str, y: &str) -> Result<f32> {
         use alignment::alignment_score;
 
         let x_segs = parse_segments(x, "x", self)?;
@@ -302,14 +384,20 @@ impl Algorithm for Aline {
 
         let denom = x_self.max(y_self);
         if denom <= 0.0 {
-            return Ok(0.0);
+            return Err(Error::NonPositiveSelfScore { denominator: denom });
         }
+        Ok(score / denom)
+    }
 
-        let sim = score / denom;
-        Ok(match self.alignment_mode {
-            AlignmentMode::Local => sim,
-            AlignmentMode::Global => sim.clamp(0.0, 1.0),
-        })
+    /// Splits an IPA string into segments exactly as the scorer sees them and
+    /// returns the inventory key of each one.
+    ///
+    /// Stress, length and syllable marks do not become segments. Returns
+    /// [`Error::UnknownToken`] for a symbol that is not in the inventory.
+    pub fn tokenize(&self, ipa: &str) -> Result<Vec<String>> {
+        let segments = parse_segments(ipa, "ipa", self)?;
+        validate_segments(&segments, "ipa", self)?;
+        Ok(segments.into_iter().map(|seg| seg.sym).collect())
     }
 }
 

@@ -42,4 +42,24 @@ impl Costs {
             vowel_consonant,
         }
     }
+
+    /// The `skip` cost.
+    pub fn skip(&self) -> i32 {
+        self.skip
+    }
+
+    /// The `substitute` cost.
+    pub fn substitute(&self) -> i32 {
+        self.substitute
+    }
+
+    /// The `expand_compress` cost.
+    pub fn expand_compress(&self) -> i32 {
+        self.expand_compress
+    }
+
+    /// The `vowel_consonant` cost.
+    pub fn vowel_consonant(&self) -> i32 {
+        self.vowel_consonant
+    }
 }
