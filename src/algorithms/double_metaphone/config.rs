@@ -15,4 +15,14 @@ impl DoubleMetaphone {
             max_code_length,
         }
     }
+
+    /// Sets whether to perform case-insensitive comparison.
+    pub fn set_case_insensitive(&mut self, case_insensitive: bool) {
+        self.case_insensitive = case_insensitive;
+    }
+
+    /// Sets the maximum code length considered per string (0 means unlimited).
+    pub fn set_max_code_length(&mut self, max_code_length: usize) {
+        self.max_code_length = max_code_length;
+    }
 }

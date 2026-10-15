@@ -25,4 +25,14 @@ impl Soundex {
             mode,
         }
     }
+
+    /// Sets whether to perform case-insensitive comparison.
+    pub fn set_case_insensitive(&mut self, case_insensitive: bool) {
+        self.case_insensitive = case_insensitive;
+    }
+
+    /// Sets how Soundex codes are compared.
+    pub fn set_mode(&mut self, mode: SoundexMode) {
+        self.mode = mode;
+    }
 }

@@ -24,11 +24,13 @@ fn main() {
     // ...
     //  Configs can be created by using the constructor `::new()`.
     //
-    //  While some special algorithms use the constructor
-    //  `::try_new()` since the values need to be evaluated.
-    //  For instance, the Jaro-Winkler algorithm requires the
-    //  prefix scale to be within the bounds of [0.0, 0.25].
-    let config = Levenshtein::new(Costs::new(1., 2., 3.), true);
+    //  Configs (and cost structs) with constrained values use
+    //  `::try_new()` instead, which returns an error for invalid
+    //  values. For instance, the Jaro-Winkler algorithm requires the
+    //  prefix scale to be within the bounds of [0.0, 0.25], and edit
+    //  costs must be non-negative. Setters for these values validate
+    //  too, and so does importing a config from TOML.
+    let config = Levenshtein::new(Costs::try_new(1., 2., 3.).unwrap(), true);
 
     println!("\t| Constructed config: {:?}", config);
 

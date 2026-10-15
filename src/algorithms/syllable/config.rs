@@ -27,4 +27,14 @@ impl Syllable {
             metric,
         }
     }
+
+    /// Sets whether to perform case-insensitive comparison.
+    pub fn set_case_insensitive(&mut self, case_insensitive: bool) {
+        self.case_insensitive = case_insensitive;
+    }
+
+    /// Sets the syllable bigram overlap metric.
+    pub fn set_metric(&mut self, metric: SyllableMetric) {
+        self.metric = metric;
+    }
 }

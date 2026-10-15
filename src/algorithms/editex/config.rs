@@ -2,15 +2,40 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
+use crate::{
+    Error, Result,
+    utils::validate::{non_negative, validated_serde},
+};
+
+/// Edit costs for characters in the same group (`same`) and in different
+/// groups (`diff`). Both must be finite and non-negative, with
+/// `same <= diff` (identical characters always cost 0).
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(remote = "Self")]
 pub struct Costs {
     pub(crate) same: f32,
     pub(crate) diff: f32,
 }
 
+validated_serde!(Costs);
+
 impl Costs {
-    pub fn new(same: f32, diff: f32) -> Self {
-        Self { same, diff }
+    pub fn validate(&self) -> Result<()> {
+        non_negative("costs.same", self.same)?;
+        non_negative("costs.diff", self.diff)?;
+        if self.same > self.diff {
+            return Err(Error::InvalidCostOrder {
+                same: self.same,
+                diff: self.diff,
+            });
+        }
+        Ok(())
+    }
+
+    pub fn try_new(same: f32, diff: f32) -> Result<Self> {
+        let costs = Self { same, diff };
+        costs.validate()?;
+        Ok(costs)
     }
 }
 
@@ -29,5 +54,20 @@ impl Editex {
             group,
             separate: false,
         }
+    }
+
+    /// Sets the edit costs.
+    pub fn set_costs(&mut self, costs: Costs) {
+        self.costs = costs;
+    }
+
+    /// Sets the character group table.
+    pub fn set_group(&mut self, group: HashMap<char, Vec<usize>>) {
+        self.group = group;
+    }
+
+    /// Sets whether to report separated edit-operation counts.
+    pub fn set_separate(&mut self, separate: bool) {
+        self.separate = separate;
     }
 }

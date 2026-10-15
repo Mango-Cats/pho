@@ -29,8 +29,31 @@ pub enum Error {
     #[error("{feature} values must sum to 1.0, but got {sum}")]
     InvalidFeatureSum { feature: &'static str, sum: f32 },
 
-    #[error("Epsilon must be non-negative, got {0}")]
+    #[error("{feature} feature value {name} is out of range, got {value}")]
+    InvalidFeatureValue {
+        feature: &'static str,
+        name: String,
+        value: f32,
+    },
+
+    #[error("Epsilon must be finite and non-negative, got {0}")]
     NegativeEpsilon(f32),
+
+    #[error("{name} must be finite and non-negative, got {value}")]
+    InvalidCost { name: &'static str, value: f32 },
+
+    #[error("costs.same ({same}) must not exceed costs.diff ({diff})")]
+    InvalidCostOrder { same: f32, diff: f32 },
+
+    #[error("ALINE cost {name} must be {expected}, got {value}")]
+    InvalidAlineCost {
+        name: &'static str,
+        expected: &'static str,
+        value: i32,
+    },
+
+    #[error("Smith-Waterman match_score must be finite and positive, got {0}")]
+    InvalidMatchScore(f32),
 
     #[error("Jaro-Winkler prefix_scale must be in [0.0, 0.25], got {0}")]
     InvalidPrefixScale(f32),

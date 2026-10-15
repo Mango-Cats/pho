@@ -20,6 +20,11 @@ impl LCSubstring {
     pub fn new(case_insensitive: bool) -> Self {
         LCSubstring { case_insensitive }
     }
+
+    /// Sets whether to perform case-insensitive comparison.
+    pub fn set_case_insensitive(&mut self, case_insensitive: bool) {
+        self.case_insensitive = case_insensitive;
+    }
 }
 
 impl Algorithm for LCSubstring {

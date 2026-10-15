@@ -12,7 +12,7 @@ mod phoneme_trait;
 mod phoneme_types;
 pub mod salience;
 
-use crate::{Error, Result};
+use crate::{Error, Result, utils::validate::validated_serde};
 pub use cost::Costs;
 pub use feature_types::{Back, Binary, High, Manner, Place};
 pub use feature_values::FeatureValues;
@@ -79,6 +79,7 @@ pub enum AlignmentMode {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(remote = "Self")]
 pub struct Aline {
     pub costs: Costs,
     pub salience: Salience,
@@ -102,13 +103,21 @@ pub struct Aline {
     pub alignment_mode: AlignmentMode,
 }
 
+validated_serde!(Aline);
+
+fn check_epsilon(epsilon: f32) -> Result<()> {
+    if epsilon.is_finite() && epsilon >= 0.0 {
+        Ok(())
+    } else {
+        Err(Error::NegativeEpsilon(epsilon))
+    }
+}
+
 impl Aline {
     pub fn validate(&self) -> Result<()> {
+        self.costs.validate()?;
         self.values.validate()?;
-        if self.epsilon < 0.0 {
-            return Err(Error::NegativeEpsilon(self.epsilon));
-        }
-        Ok(())
+        check_epsilon(self.epsilon)
     }
 
     pub fn try_new(
@@ -132,5 +141,63 @@ impl Aline {
         };
         config.validate()?;
         Ok(config)
+    }
+
+    /// Sets the ALINE cost constants.
+    pub fn set_costs(&mut self, costs: Costs) {
+        self.costs = costs;
+    }
+
+    /// Sets the feature salience weights.
+    pub fn set_salience(&mut self, salience: Salience) {
+        self.salience = salience;
+    }
+
+    /// Sets the phonetic feature values.
+    ///
+    /// Returns an error and leaves the config unchanged if the value is invalid.
+    pub fn set_values(&mut self, values: FeatureValues) -> Result<()> {
+        values.validate()?;
+        self.values = values;
+        Ok(())
+    }
+
+    /// Sets the phoneme inventory.
+    pub fn set_sounds(&mut self, sounds: HashMap<String, PhoneticFeatures>) {
+        self.sounds = sounds;
+    }
+
+    /// Sets the epsilon used for near-optimal alignments (must be finite and non-negative).
+    ///
+    /// Returns an error and leaves the config unchanged if the value is invalid.
+    pub fn set_epsilon(&mut self, epsilon: f32) -> Result<()> {
+        check_epsilon(epsilon)?;
+        self.epsilon = epsilon;
+        Ok(())
+    }
+
+    /// Sets the ALINE variant.
+    pub fn set_variant(&mut self, variant: AlineVariant) {
+        self.variant = variant;
+    }
+
+    /// Sets whether multi-grapheme vowel entries may be matched.
+    pub fn set_merge_diphthongs(&mut self, merge_diphthongs: bool) {
+        self.merge_diphthongs = merge_diphthongs;
+    }
+
+    /// Sets the stress scope fallback.
+    pub fn set_stress_scope_fallback(&mut self, stress_scope_fallback: StressScopeFallback) {
+        self.stress_scope_fallback = stress_scope_fallback;
+    }
+
+    /// Sets which aligned pairs the stress term applies to.
+    pub fn set_stress_on(&mut self, stress_on: StressOn) {
+        self.stress_on = stress_on;
+    }
+
+    /// Sets the alignment mode.
+    pub fn set_alignment_mode(&mut self, alignment_mode: AlignmentMode) {
+        self.alignment_mode = alignment_mode;
     }
 }

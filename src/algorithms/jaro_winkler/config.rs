@@ -1,12 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{Error, Result};
+use crate::{Error, Result, utils::validate::validated_serde};
 
 /// Configuration for the Jaro-Winkler similarity algorithm.
 ///
 /// The Jaro-Winkler metric is a variant of the Jaro distance metric that
 /// gives more favorable ratings to strings with common prefixes.
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(remote = "Self")]
 pub struct JaroWinkler {
     /// Scaling factor for the common prefix bonus.
     ///
@@ -24,6 +25,8 @@ pub struct JaroWinkler {
     /// Whether to perform case-insensitive comparison.
     pub(crate) case_insensitive: bool,
 }
+
+validated_serde!(JaroWinkler);
 
 impl JaroWinkler {
     pub fn validate(&self) -> Result<()> {
@@ -46,5 +49,26 @@ impl JaroWinkler {
 
         config.validate()?;
         Ok(config)
+    }
+
+    /// Sets the scaling factor for the common prefix bonus (must be in `[0.0, 0.25]`).
+    ///
+    /// Returns an error and leaves the config unchanged if the value is invalid.
+    pub fn set_prefix_scale(&mut self, prefix_scale: f32) -> Result<()> {
+        if !(0.0..=0.25).contains(&prefix_scale) {
+            return Err(Error::InvalidPrefixScale(prefix_scale));
+        }
+        self.prefix_scale = prefix_scale;
+        Ok(())
+    }
+
+    /// Sets the maximum length of common prefix to consider.
+    pub fn set_max_prefix_length(&mut self, max_prefix_length: usize) {
+        self.max_prefix_length = max_prefix_length;
+    }
+
+    /// Sets whether to perform case-insensitive comparison.
+    pub fn set_case_insensitive(&mut self, case_insensitive: bool) {
+        self.case_insensitive = case_insensitive;
     }
 }

@@ -6,6 +6,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::{Error, Result, utils::validate::validated_serde};
+
 /// This struct holds the cost constants for the Aline algorithm.
 ///
 /// ## Cost Variables
@@ -22,10 +24,13 @@ use serde::{Deserialize, Serialize};
 ///
 /// 4. `vowel_consonant` is the relative weight for vowels versus consonants.
 ///
+/// `skip` must be non-positive; the other three must be non-negative.
+///
 /// ## References
 ///
 /// - <https://dl.acm.org/doi/book/10.5555/936774>
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(remote = "Self")]
 pub struct Costs {
     pub(crate) skip: i32,
     pub(crate) substitute: i32,
@@ -33,14 +38,47 @@ pub struct Costs {
     pub(crate) vowel_consonant: i32,
 }
 
+validated_serde!(Costs);
+
 impl Costs {
-    pub fn new(skip: i32, substitute: i32, expand_compress: i32, vowel_consonant: i32) -> Self {
-        Self {
+    pub fn validate(&self) -> Result<()> {
+        if self.skip > 0 {
+            return Err(Error::InvalidAlineCost {
+                name: "skip",
+                expected: "non-positive",
+                value: self.skip,
+            });
+        }
+        for (name, value) in [
+            ("substitute", self.substitute),
+            ("expand_compress", self.expand_compress),
+            ("vowel_consonant", self.vowel_consonant),
+        ] {
+            if value < 0 {
+                return Err(Error::InvalidAlineCost {
+                    name,
+                    expected: "non-negative",
+                    value,
+                });
+            }
+        }
+        Ok(())
+    }
+
+    pub fn try_new(
+        skip: i32,
+        substitute: i32,
+        expand_compress: i32,
+        vowel_consonant: i32,
+    ) -> Result<Self> {
+        let costs = Self {
             skip,
             substitute,
             expand_compress,
             vowel_consonant,
-        }
+        };
+        costs.validate()?;
+        Ok(costs)
     }
 
     /// The `skip` cost.
