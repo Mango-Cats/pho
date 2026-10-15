@@ -20,9 +20,9 @@ fn main() {
     // ...
     //  Kondrak and Dorr's algorithm takes in ALINE, BiSim, NED, and
     //  Prefix to compute confusibility.
-    let aline: Aline = import("tests/config_sample_aline.toml").unwrap();
-    let bisim: BiSim = import("tests/config_sample_bisim.toml").unwrap();
-    let ned: Levenshtein = import("tests/config_sample_levenshtein.toml").unwrap();
+    let aline: Aline = import("algorithm_configs/eng/aline.toml").unwrap();
+    let bisim: BiSim = import("algorithm_configs/eng/bisim.toml").unwrap();
+    let ned: Levenshtein = import("algorithm_configs/eng/levenshtein.toml").unwrap();
     let prefix: Prefix = Prefix::new(false);
 
     // Kondrak and Dorr's algorithm

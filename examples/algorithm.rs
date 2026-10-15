@@ -10,7 +10,7 @@ fn main() {
     //  This example shows how to run algorithms.
 
     // Load the config for the Jaro-Winkler algorithm
-    let my_algorithm: JaroWinkler = import("tests/config_sample_jaro_winkler.toml").unwrap();
+    let my_algorithm: JaroWinkler = import("algorithm_configs/eng/jaro_winkler.toml").unwrap();
     my_algorithm.validate().unwrap();
 
     // Running Algorithms

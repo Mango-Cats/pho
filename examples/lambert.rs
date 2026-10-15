@@ -16,8 +16,8 @@ fn main() {
     //  Since we will learn the weight of each feature function via
     //  Logistic Regression we will not create an ensemble here
     //  nor will we initialize any weights.
-    let editex: Editex = import("tests/config_sample_editex.toml").unwrap();
-    let levenshtein: Levenshtein = import("tests/config_sample_levenshtein.toml").unwrap();
+    let editex: Editex = import("algorithm_configs/eng/editex.toml").unwrap();
+    let levenshtein: Levenshtein = import("algorithm_configs/eng/levenshtein.toml").unwrap();
     let gram3_2_0: NGram = NGram::try_new(3, 2, 0, false, NGramMetric::Dice).unwrap();
 
     // Reading a CSV

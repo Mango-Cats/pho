@@ -27,8 +27,8 @@ fn main() {
     //  of the scaled values is the result of the ensemble!
 
     // Load configs for each algorithm
-    let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
-    let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
+    let levenshtein = import::<Levenshtein>("algorithm_configs/eng/levenshtein.toml").unwrap();
+    let jaro_winkler = import::<JaroWinkler>("algorithm_configs/eng/jaro_winkler.toml").unwrap();
 
     // Validate configs that define invariants
     jaro_winkler.validate().unwrap();

@@ -25,8 +25,8 @@ fn main() {
     //
 
     // Load and validate configs
-    let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
-    let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
+    let levenshtein = import::<Levenshtein>("algorithm_configs/eng/levenshtein.toml").unwrap();
+    let jaro_winkler = import::<JaroWinkler>("algorithm_configs/eng/jaro_winkler.toml").unwrap();
     jaro_winkler.validate().unwrap();
 
     // Build a labelled dataset (either from CSV or inline fallback)

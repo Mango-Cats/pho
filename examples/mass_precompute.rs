@@ -10,19 +10,19 @@ fn main() {
     // Algorithms
     // ...
     //  Construct all algorithm families defined in pho.
-    let aline: Aline = import("tests/config_sample_aline.toml").unwrap();
-    let bisim: BiSim = import("tests/config_sample_bisim.toml").unwrap();
+    let aline: Aline = import("algorithm_configs/eng/aline.toml").unwrap();
+    let bisim: BiSim = import("algorithm_configs/eng/bisim.toml").unwrap();
     let double_metaphone: DoubleMetaphone =
-        import("tests/config_sample_double_metaphone.toml").unwrap();
-    let editex: Editex = import("tests/config_sample_editex.toml").unwrap();
-    let jaro_winkler: JaroWinkler = import("tests/config_sample_jaro_winkler.toml").unwrap();
-    let keyboard: Keyboard = import("tests/config_sample_keyboard.toml").unwrap();
+        import("algorithm_configs/eng/double_metaphone.toml").unwrap();
+    let editex: Editex = import("algorithm_configs/eng/editex.toml").unwrap();
+    let jaro_winkler: JaroWinkler = import("algorithm_configs/eng/jaro_winkler.toml").unwrap();
+    let keyboard: Keyboard = import("algorithm_configs/eng/keyboard.toml").unwrap();
     let lcs: LCS = LCS::new(false);
     let lcsuf: LCSuf = LCSuf::new(false);
-    let levenshtein: Levenshtein = import("tests/config_sample_levenshtein.toml").unwrap();
-    let metaphone: Metaphone = import("tests/config_sample_metaphone.toml").unwrap();
+    let levenshtein: Levenshtein = import("algorithm_configs/eng/levenshtein.toml").unwrap();
+    let metaphone: Metaphone = import("algorithm_configs/eng/metaphone.toml").unwrap();
     let needleman_wunsch: NeedlemanWunsch =
-        import("tests/config_sample_needleman_wunsch.toml").unwrap();
+        import("algorithm_configs/eng/needleman_wunsch.toml").unwrap();
     let gram2_0_0: NGram = NGram::try_new(2, 0, 0, false, NGramMetric::Dice).unwrap();
     let gram2_0_1: NGram = NGram::try_new(2, 0, 1, false, NGramMetric::Dice).unwrap();
     let gram2_1_0: NGram = NGram::try_new(2, 1, 0, false, NGramMetric::Dice).unwrap();
@@ -32,9 +32,9 @@ fn main() {
     let gram3_2_2: NGram = NGram::try_new(3, 2, 2, false, NGramMetric::Dice).unwrap();
     let gram3_2_0: NGram = NGram::try_new(3, 2, 0, false, NGramMetric::Dice).unwrap();
     let prefix: Prefix = Prefix::new(false);
-    let smith_waterman: SmithWaterman = import("tests/config_sample_smith_waterman.toml").unwrap();
-    let soundex: Soundex = import("tests/config_sample_soundex.toml").unwrap();
-    let syllable: Syllable = import("tests/config_sample_syllable.toml").unwrap();
+    let smith_waterman: SmithWaterman = import("algorithm_configs/eng/smith_waterman.toml").unwrap();
+    let soundex: Soundex = import("algorithm_configs/eng/soundex.toml").unwrap();
+    let syllable: Syllable = import("algorithm_configs/eng/syllable.toml").unwrap();
     let char_tfidf: CharTfIdf = CharTfIdf::try_new(2, false, false).unwrap();
 
     // Reading a CSV

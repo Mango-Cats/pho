@@ -16,10 +16,10 @@ fn main() {
     //  how datasets are constructed and used.
 
     // Load and validate configs
-    let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
-    let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
-    let ngram_2_1_1_dice = import::<NGram>("tests/config_sample_ngram.toml").unwrap();
-    let bisim = import::<BiSim>("tests/config_sample_bisim.toml").unwrap();
+    let levenshtein = import::<Levenshtein>("algorithm_configs/eng/levenshtein.toml").unwrap();
+    let jaro_winkler = import::<JaroWinkler>("algorithm_configs/eng/jaro_winkler.toml").unwrap();
+    let ngram_2_1_1_dice = import::<NGram>("algorithm_configs/eng/ngram.toml").unwrap();
+    let bisim = import::<BiSim>("algorithm_configs/eng/bisim.toml").unwrap();
     jaro_winkler.validate().unwrap();
     ngram_2_1_1_dice.validate().unwrap();
 
@@ -80,7 +80,7 @@ fn main() {
 
     // Save both datasets to compare results
     slice_dataset
-        .export("example_dataset_slice.csv.csv")
+        .export("example_dataset_slice.csv")
         .unwrap();
     slice_ensemble
         .export("example_dataset_ensemble.csv")

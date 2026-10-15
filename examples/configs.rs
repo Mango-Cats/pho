@@ -45,10 +45,10 @@ fn main() {
     //  an config file for an Editex algorithm.
     //
     //  Not specifying the type will lead to an error!
-    let levenshtein = import::<Levenshtein>("tests/config_sample_levenshtein.toml").unwrap();
-    let jaro_winkler = import::<JaroWinkler>("tests/config_sample_jaro_winkler.toml").unwrap();
-    let editex = import::<Editex>("tests/config_sample_editex.toml").unwrap();
-    let aline = import::<Aline>("tests/config_sample_aline.toml").unwrap();
+    let levenshtein = import::<Levenshtein>("algorithm_configs/eng/levenshtein.toml").unwrap();
+    let jaro_winkler = import::<JaroWinkler>("algorithm_configs/eng/jaro_winkler.toml").unwrap();
+    let editex = import::<Editex>("algorithm_configs/eng/editex.toml").unwrap();
+    let aline = import::<Aline>("algorithm_configs/eng/aline.toml").unwrap();
 
     // Validating Configs
     // ...
