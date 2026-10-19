@@ -14,7 +14,10 @@ pub mod salience;
 
 use crate::{Error, Result, utils::validate::validated_serde};
 pub use cost::Costs;
-pub use feature_types::{Back, Binary, High, Manner, Place};
+pub use enum_map;
+pub use feature_types::{
+    Airstream, Back, Binary, High, Manner, Phonation, Place, SecondaryArticulation,
+};
 pub use feature_values::FeatureValues;
 pub use phoneme_trait::Phoneme;
 pub use phoneme_types::{CommonFeatures, ConsonantFeatures, PhoneticFeatures, VowelFeatures};
