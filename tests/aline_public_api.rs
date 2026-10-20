@@ -61,8 +61,11 @@ fn consonant(place: Place, voice: Binary) -> PhoneticFeatures {
 
 /// Mirrors `filipino_aline.toml`, restricted to `a`, `i`, `p`, `b`, `k`.
 fn build() -> Aline {
-    let costs = Costs::try_new(-10, 35, 45, 5).unwrap();
-    let salience = Salience::new(5, 40, 50, 5, 20, 10, 10, 5, 10, 3, 2, 2, 10, 10, 10, 0);
+    let costs = Costs::try_new(-10.0, 35.0, 45.0, 5.0).unwrap();
+    let salience = Salience::try_new(
+        5.0, 40.0, 50.0, 5.0, 20.0, 10.0, 10.0, 5.0, 10.0, 3.0, 2.0, 2.0, 10.0, 10.0, 10.0, 0.0,
+    )
+    .unwrap();
     let values = FeatureValues::try_new(
         enum_map! {
             Place::Bilabial => 1.0,

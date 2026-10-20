@@ -119,6 +119,7 @@ fn check_epsilon(epsilon: f32) -> Result<()> {
 impl Aline {
     pub fn validate(&self) -> Result<()> {
         self.costs.validate()?;
+        self.salience.validate()?;
         self.values.validate()?;
         check_epsilon(self.epsilon)
     }

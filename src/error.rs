@@ -49,8 +49,11 @@ pub enum Error {
     InvalidAlineCost {
         name: &'static str,
         expected: &'static str,
-        value: i32,
+        value: f32,
     },
+
+    #[error("ALINE salience {name} must be finite and non-negative, got {value}")]
+    InvalidAlineSalience { name: &'static str, value: f32 },
 
     #[error("Smith-Waterman match_score must be finite and positive, got {0}")]
     InvalidMatchScore(f32),

@@ -424,22 +424,22 @@ mod tests {
 
     #[test]
     fn costs_skip() {
-        assert_eq!(load().costs.skip, -10);
+        assert_eq!(load().costs.skip, -10.0);
     }
 
     #[test]
     fn costs_substitute() {
-        assert_eq!(load().costs.substitute, 35);
+        assert_eq!(load().costs.substitute, 35.0);
     }
 
     #[test]
     fn costs_expand_compress() {
-        assert_eq!(load().costs.expand_compress, 45);
+        assert_eq!(load().costs.expand_compress, 45.0);
     }
 
     #[test]
     fn costs_vowel_consonant() {
-        assert_eq!(load().costs.vowel_consonant, 5);
+        assert_eq!(load().costs.vowel_consonant, 5.0);
     }
 
     #[test]
@@ -453,62 +453,62 @@ mod tests {
 
     #[test]
     fn salience_place() {
-        assert_eq!(load().salience.place, 40);
+        assert_eq!(load().salience.place, 40.0);
     }
 
     #[test]
     fn salience_manner() {
-        assert_eq!(load().salience.manner, 50);
+        assert_eq!(load().salience.manner, 50.0);
     }
 
     #[test]
     fn salience_nasal() {
-        assert_eq!(load().salience.nasal, 20);
+        assert_eq!(load().salience.nasal, 20.0);
     }
 
     #[test]
     fn salience_voice() {
-        assert_eq!(load().salience.voice, 5);
+        assert_eq!(load().salience.voice, 5.0);
     }
 
     #[test]
     fn salience_retroflex() {
-        assert_eq!(load().salience.retroflex, 10);
+        assert_eq!(load().salience.retroflex, 10.0);
     }
 
     #[test]
     fn salience_lateral() {
-        assert_eq!(load().salience.lateral, 10);
+        assert_eq!(load().salience.lateral, 10.0);
     }
 
     #[test]
     fn salience_aspirated() {
-        assert_eq!(load().salience.aspirated, 5);
+        assert_eq!(load().salience.aspirated, 5.0);
     }
 
     #[test]
     fn salience_syllabic() {
-        assert_eq!(load().salience.syllabic, 5);
+        assert_eq!(load().salience.syllabic, 5.0);
     }
 
     #[test]
     fn salience_long() {
-        assert_eq!(load().salience.long, 0);
+        assert_eq!(load().salience.long, 0.0);
     }
 
     #[test]
     fn salience_high() {
-        assert_eq!(load().salience.high, 3);
+        assert_eq!(load().salience.high, 3.0);
     }
 
     #[test]
     fn salience_back() {
-        assert_eq!(load().salience.back, 2);
+        assert_eq!(load().salience.back, 2.0);
     }
 
     #[test]
     fn salience_round() {
-        assert_eq!(load().salience.round, 2);
+        assert_eq!(load().salience.round, 2.0);
     }
 
     #[test]

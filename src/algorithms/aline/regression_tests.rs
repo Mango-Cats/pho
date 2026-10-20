@@ -132,12 +132,12 @@ fn length_mark_uses_salience_long() {
     assert_eq!(long_a.long, Some(1.0));
     assert_eq!(short_a.long, None);
 
-    cfg.salience.long = 10;
+    cfg.salience.long = 10.0;
     let diff =
         substitution_score(short_a, short_a, &cfg) - substitution_score(long_a, short_a, &cfg);
     assert_eq!(diff, 10.0);
 
-    cfg.salience.long = 0;
+    cfg.salience.long = 0.0;
     assert_eq!(
         substitution_score(long_a, short_a, &cfg),
         substitution_score(short_a, short_a, &cfg)
@@ -147,7 +147,7 @@ fn length_mark_uses_salience_long() {
 #[test]
 fn half_long_mark_is_half_of_long() {
     let mut cfg = load(ENG);
-    cfg.salience.long = 10;
+    cfg.salience.long = 10.0;
     let half = &parse_segments("aˑ", "x", &cfg).unwrap()[0];
     let short_a = seg("a");
     assert_eq!(half.long, Some(0.5));
@@ -159,7 +159,7 @@ fn half_long_mark_is_half_of_long() {
 #[test]
 fn length_mark_after_consonant_is_recorded_not_scored() {
     let mut cfg = load(ENG);
-    cfg.salience.long = 10;
+    cfg.salience.long = 10.0;
     let segs = parse_segments("tːa", "x", &cfg).unwrap();
     assert_eq!(syms(&segs), ["t", "a"]);
     assert_eq!(segs[0].long, Some(1.0));
@@ -221,7 +221,7 @@ fn kondrak_ignores_stress_and_syllable_marks() {
 #[test]
 fn stress_on_vowels_ignores_consonant_pairs() {
     let mut cfg = load(FIL);
-    cfg.salience.stress = 10;
+    cfg.salience.stress = 10.0;
     assert_eq!(cfg.stress_on, StressOn::Vowels);
 
     let plain = substitution_score(&seg("b"), &seg("p"), &cfg);
@@ -420,7 +420,7 @@ fn fil_next_vowel() -> Aline {
     let mut cfg = load(FIL);
     assert!(matches!(cfg.variant, AlineVariant::MangoCats));
     cfg.alignment_mode = AlignmentMode::Global;
-    cfg.salience.stress = 10;
+    cfg.salience.stress = 10.0;
     cfg.stress_scope_fallback = StressScopeFallback::NextVowel;
     cfg
 }
@@ -546,13 +546,13 @@ fn tokenize_returns_inventory_keys() {
 #[test]
 fn weights_are_readable() {
     let cfg = load(FIL);
-    assert_eq!(cfg.costs.skip(), -10);
-    assert_eq!(cfg.costs.substitute(), 35);
-    assert_eq!(cfg.costs.expand_compress(), 45);
-    assert_eq!(cfg.costs.vowel_consonant(), 5);
-    assert_eq!(cfg.salience.place(), 40);
-    assert_eq!(cfg.salience.manner(), 50);
-    assert_eq!(cfg.salience.long(), 10);
-    assert_eq!(cfg.salience.stress(), 0);
-    assert_eq!(cfg.salience.secondary(), 10);
+    assert_eq!(cfg.costs.skip(), -10.0);
+    assert_eq!(cfg.costs.substitute(), 35.0);
+    assert_eq!(cfg.costs.expand_compress(), 45.0);
+    assert_eq!(cfg.costs.vowel_consonant(), 5.0);
+    assert_eq!(cfg.salience.place(), 40.0);
+    assert_eq!(cfg.salience.manner(), 50.0);
+    assert_eq!(cfg.salience.long(), 10.0);
+    assert_eq!(cfg.salience.stress(), 0.0);
+    assert_eq!(cfg.salience.secondary(), 10.0);
 }

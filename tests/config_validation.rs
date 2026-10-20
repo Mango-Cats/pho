@@ -1,11 +1,13 @@
 use pho::{
     Error,
     algorithms::{
-        Aline, Editex, JaroWinkler, Keyboard, Levenshtein, NeedlemanWunsch, SmithWaterman,
-        aline::config::Costs as AlineCosts, editex::config::Costs as EditexCosts,
+        Algorithm, Aline, Editex, JaroWinkler, Keyboard, Levenshtein, NeedlemanWunsch,
+        SmithWaterman,
+        aline::config::{Costs as AlineCosts, Salience},
+        editex::config::Costs as EditexCosts,
         levenshtein::config::Costs as LevenshteinCosts,
     },
-    utils::io::import,
+    utils::io::{export, import},
 };
 
 #[test]
@@ -34,17 +36,127 @@ fn editex_costs_require_same_not_above_diff() {
 #[test]
 fn aline_costs_check_signs() {
     assert!(matches!(
-        AlineCosts::try_new(10, 35, 45, 5),
+        AlineCosts::try_new(10.0, 35.0, 45.0, 5.0),
         Err(Error::InvalidAlineCost { name: "skip", .. })
     ));
     assert!(matches!(
-        AlineCosts::try_new(-10, -35, 45, 5),
+        AlineCosts::try_new(-10.0, -35.0, 45.0, 5.0),
         Err(Error::InvalidAlineCost {
             name: "substitute",
             ..
         })
     ));
-    assert!(AlineCosts::try_new(-10, 35, 45, 5).is_ok());
+    assert!(AlineCosts::try_new(-10.0, 35.0, 45.0, 5.0).is_ok());
+}
+
+#[test]
+fn aline_costs_reject_non_finite() {
+    for bad in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+        assert!(matches!(
+            AlineCosts::try_new(bad, 35.0, 45.0, 5.0),
+            Err(Error::InvalidAlineCost { name: "skip", .. })
+        ));
+        assert!(matches!(
+            AlineCosts::try_new(-10.0, 35.0, 45.0, bad),
+            Err(Error::InvalidAlineCost {
+                name: "vowel_consonant",
+                ..
+            })
+        ));
+    }
+    assert!(AlineCosts::try_new(-10.5, 35.25, 45.0, 0.0).is_ok());
+}
+
+fn salience_with_place(place: f32) -> pho::Result<Salience> {
+    Salience::try_new(
+        5.0, place, 50.0, 5.0, 20.0, 10.0, 10.0, 5.0, 10.0, 3.0, 2.0, 2.0, 10.0, 10.0, 10.0, 0.0,
+    )
+}
+
+#[test]
+fn aline_salience_rejects_nan_infinite_and_negative() {
+    for bad in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, -1.0] {
+        assert!(matches!(
+            salience_with_place(bad),
+            Err(Error::InvalidAlineSalience { name: "place", .. })
+        ));
+    }
+    assert!(salience_with_place(0.0).is_ok());
+    assert!(salience_with_place(22.21).is_ok());
+}
+
+const FIL_ALINE: &str = "algorithm_configs/fil/filipino_aline.toml";
+
+/// The Filipino ALINE config with the line `from` replaced by `to`.
+fn fil_aline_with(from: &str, to: &str) -> String {
+    let text = std::fs::read_to_string(FIL_ALINE).unwrap();
+    let lines: Vec<&str> = text.lines().collect();
+    assert_eq!(lines.iter().filter(|l| **l == from).count(), 1, "{from}");
+    lines
+        .iter()
+        .map(|l| if *l == from { to } else { l })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+#[test]
+fn aline_toml_with_integer_weights_loads() {
+    let aline: Aline = import(FIL_ALINE).unwrap();
+    assert_eq!(aline.salience.place(), 40.0);
+    assert_eq!(aline.salience.stress(), 0.0);
+    assert_eq!(aline.costs.skip(), -10.0);
+    assert_eq!(aline.costs.substitute(), 35.0);
+}
+
+#[test]
+fn aline_toml_with_decimal_weights_loads() {
+    let text = fil_aline_with("place = 40", "place = 22.5");
+    let text = text.replace("skip = -10\n", "skip = -10.25\n");
+    let aline: Aline = toml::from_str(&text).unwrap();
+    assert_eq!(aline.salience.place(), 22.5);
+    assert_eq!(aline.costs.skip(), -10.25);
+}
+
+#[test]
+fn aline_toml_rejects_bad_salience_and_costs() {
+    for bad in ["nan", "inf", "-inf", "-1.0"] {
+        let text = fil_aline_with("place = 40", &format!("place = {bad}"));
+        let err = toml::from_str::<Aline>(&text).unwrap_err();
+        assert!(err.to_string().contains("salience place"), "{bad}: {err}");
+    }
+    for bad in ["nan", "inf", "-inf"] {
+        let text = fil_aline_with("skip = -10", &format!("skip = {bad}"));
+        let err = toml::from_str::<Aline>(&text).unwrap_err();
+        assert!(err.to_string().contains("cost skip"), "{bad}: {err}");
+    }
+    let text = fil_aline_with("skip = -10", "skip = 1.5");
+    let err = toml::from_str::<Aline>(&text).unwrap_err();
+    assert!(err.to_string().contains("non-positive"), "{err}");
+}
+
+#[test]
+fn aline_round_trip_keeps_non_integer_weights() {
+    let mut aline: Aline = import(FIL_ALINE).unwrap();
+    aline.set_salience(salience_with_place(22.21).unwrap());
+    aline.set_costs(AlineCosts::try_new(-9.75, 35.5, 44.125, 4.2).unwrap());
+
+    let path = format!("{}/aline_round_trip.toml", env!("CARGO_TARGET_TMPDIR"));
+    export(&path, &aline, false).unwrap();
+    let back: Aline = import(&path).unwrap();
+
+    assert_eq!(back.salience.place(), 22.21);
+    assert_eq!(back.costs.skip(), -9.75);
+    assert_eq!(back.costs.substitute(), 35.5);
+    assert_eq!(back.costs.expand_compress(), 44.125);
+    assert_eq!(back.costs.vowel_consonant(), 4.2);
+    assert_eq!(
+        toml::to_string(&back.salience).unwrap(),
+        toml::to_string(&aline.salience).unwrap()
+    );
+    assert_eq!(
+        back.similarity("pa", "ba").unwrap(),
+        aline.similarity("pa", "ba").unwrap()
+    );
 }
 
 #[test]

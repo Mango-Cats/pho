@@ -6,7 +6,7 @@ use super::config::{
 /// Score for an insertion/deletion (indel). Constant in ALINE.
 #[inline]
 pub(crate) fn indel_score(config: &Aline) -> f32 {
-    config.costs.skip as f32
+    config.costs.skip
 }
 
 /// Score for substituting one segment for another.
@@ -19,13 +19,13 @@ pub(crate) fn indel_score(config: &Aline) -> f32 {
 /// applies when both `p` and `q` are vowels.
 #[inline]
 pub(crate) fn substitution_score(p: &Segment, q: &Segment, config: &Aline) -> f32 {
-    let c_sub = config.costs.substitute as f32;
+    let c_sub = config.costs.substitute;
     let stress_applies = match config.stress_on {
         StressOn::All => true,
         StressOn::Vowels => is_vowel(p, config) && is_vowel(q, config),
     };
     let stress_term = if stress_applies {
-        config.salience.stress as f32 * (p.stress - q.stress).abs()
+        config.salience.stress * (p.stress - q.stress).abs()
     } else {
         0.0
     };
@@ -46,7 +46,7 @@ pub(crate) fn substitution_score(p: &Segment, q: &Segment, config: &Aline) -> f3
 /// the pair. If neither is a vowel, the term is 0.
 #[inline]
 pub(crate) fn expansion_score(p: &Segment, q1: &Segment, q2: &Segment, config: &Aline) -> f32 {
-    let c_exp = config.costs.expand_compress as f32;
+    let c_exp = config.costs.expand_compress;
     let v_p = vowel_weight(p, config);
     let v_q = vowel_weight(q1, config).max(vowel_weight(q2, config));
     let stress_q = match config.stress_on {
@@ -58,9 +58,7 @@ pub(crate) fn expansion_score(p: &Segment, q1: &Segment, q2: &Segment, config: &
             .reduce(f32::max),
         StressOn::Vowels => None,
     };
-    let stress_term = stress_q.map_or(0.0, |sq| {
-        config.salience.stress as f32 * (p.stress - sq).abs()
-    });
+    let stress_term = stress_q.map_or(0.0, |sq| config.salience.stress * (p.stress - sq).abs());
     c_exp
         - feature_distance(p, q1, &config.values, &config.salience, config)
         - feature_distance(p, q2, &config.values, &config.salience, config)
@@ -89,7 +87,7 @@ fn vowel_weight(segment: &Segment, config: &Aline) -> f32 {
     if sound.is_consonant() {
         0.0
     } else {
-        config.costs.vowel_consonant as f32
+        config.costs.vowel_consonant
     }
 }
 
@@ -135,31 +133,31 @@ fn consonant_feature_distance(
     let p_asp = aspirated_or_minus(p);
     let q_asp = aspirated_or_minus(q);
 
-    let mut dist = salience.place as f32
+    let mut dist = salience.place
         * (values.place[*p_common.place()] - values.place[*q_common.place()]).abs()
-        + salience.manner as f32
+        + salience.manner
             * (values.manner[*p_common.manner()] - values.manner[*q_common.manner()]).abs()
-        + salience.syllabic as f32
+        + salience.syllabic
             * (values.binary[*p_common.syllabic()] - values.binary[*q_common.syllabic()]).abs()
-        + salience.voice as f32
+        + salience.voice
             * (values.binary[*p_common.voice()] - values.binary[*q_common.voice()]).abs()
-        + salience.nasal as f32
+        + salience.nasal
             * (values.binary[*p_common.nasal()] - values.binary[*q_common.nasal()]).abs()
-        + salience.retroflex as f32
+        + salience.retroflex
             * (values.binary[*p_common.retroflex()] - values.binary[*q_common.retroflex()]).abs()
-        + salience.lateral as f32
+        + salience.lateral
             * (values.binary[*p_common.lateral()] - values.binary[*q_common.lateral()]).abs()
-        + salience.aspirated as f32 * (values.binary[p_asp] - values.binary[q_asp]).abs();
+        + salience.aspirated * (values.binary[p_asp] - values.binary[q_asp]).abs();
 
     if extended {
-        dist += salience.phonation as f32
+        dist += salience.phonation
             * (values.phonation[*p_common.phonation()] - values.phonation[*q_common.phonation()])
                 .abs()
-            + salience.airstream as f32
+            + salience.airstream
                 * (values.airstream[*p_common.airstream()]
                     - values.airstream[*q_common.airstream()])
                 .abs()
-            + salience.secondary as f32
+            + salience.secondary
                 * (values.secondary[*p_common.secondary()]
                     - values.secondary[*q_common.secondary()])
                 .abs();
@@ -196,28 +194,24 @@ fn vowel_feature_distance(
     let p_long = p_seg.long.unwrap_or(values.binary[pv.long]);
     let q_long = q_seg.long.unwrap_or(values.binary[qv.long]);
 
-    let mut dist = salience.back as f32 * (values.back[pv.back] - values.back[qv.back]).abs()
-        + salience.lateral as f32
+    let mut dist = salience.back * (values.back[pv.back] - values.back[qv.back]).abs()
+        + salience.lateral
             * (values.binary[p_common.lateral] - values.binary[q_common.lateral]).abs()
-        + salience.long as f32 * (p_long - q_long).abs()
-        + salience.manner as f32
-            * (values.manner[p_common.manner] - values.manner[q_common.manner]).abs()
-        + salience.nasal as f32
-            * (values.binary[p_common.nasal] - values.binary[q_common.nasal]).abs()
-        + salience.place as f32
-            * (values.place[p_common.place] - values.place[q_common.place]).abs()
-        + salience.retroflex as f32
+        + salience.long * (p_long - q_long).abs()
+        + salience.manner * (values.manner[p_common.manner] - values.manner[q_common.manner]).abs()
+        + salience.nasal * (values.binary[p_common.nasal] - values.binary[q_common.nasal]).abs()
+        + salience.place * (values.place[p_common.place] - values.place[q_common.place]).abs()
+        + salience.retroflex
             * (values.binary[p_common.retroflex] - values.binary[q_common.retroflex]).abs()
-        + salience.round as f32 * (values.binary[pv.round] - values.binary[qv.round]).abs()
-        + salience.syllabic as f32
+        + salience.round * (values.binary[pv.round] - values.binary[qv.round]).abs()
+        + salience.syllabic
             * (values.binary[p_common.syllabic] - values.binary[q_common.syllabic]).abs()
-        + salience.voice as f32
-            * (values.binary[p_common.voice] - values.binary[q_common.voice]).abs();
+        + salience.voice * (values.binary[p_common.voice] - values.binary[q_common.voice]).abs();
 
     if extended {
-        dist += salience.phonation as f32
+        dist += salience.phonation
             * (values.phonation[p_common.phonation] - values.phonation[q_common.phonation]).abs()
-            + salience.secondary as f32
+            + salience.secondary
                 * (values.secondary[p_common.secondary] - values.secondary[q_common.secondary])
                     .abs();
     }
